@@ -12,40 +12,37 @@ const uiManager = {
         const renderNode = (node, level, path, index) => {
             const fullPath = [...path, index];
             
-            // Рендерим саму категорию
-            const row = document.createElement('tr');
-            row.className = `node-level-${level % 6}`;
-            row.innerHTML = `
-                <td class="indent-${level}">
-                    <strong>${node.name}</strong>
-                    <span class="path-display">${this.getPathDisplay(fullPath)}</span>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                    <button onclick="navigation.viewNode(${JSON.stringify(fullPath)})">👁️ Просмотр</button>
-                    <button onclick="uiManager.showModal('nodeModal', ${JSON.stringify(fullPath)})">+ Подкатегория</button>
-                    <button onclick="uiManager.showModal('techModal', ${JSON.stringify(fullPath)})">+ Технология</button>
-                    <button onclick="dataManager.editNode(${JSON.stringify(path)}, ${index})">✏️</button>
-                    <button class="delete" onclick="dataManager.deleteNode(${JSON.stringify(path)}, ${index})">🗑️</button>
-                </td>
-            `;
-            tbody.appendChild(row);
+            if (node.type === 'technology') {
+                this.renderTechnologyRow(node, level, path, index);
+            } else {
+                // Рендерим категорию или подкатегорию
+                const row = document.createElement('tr');
+                row.className = `node-level-${level % 6}`;
+                row.innerHTML = `
+                    <td class="indent-${level}">
+                        <strong>${node.name}</strong>
+                        <span class="path-display">${this.getPathDisplay(fullPath)}</span>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <button onclick="navigation.viewNode(${JSON.stringify(fullPath)})">👁️ Просмотр</button>
+                        <button onclick="uiManager.showAddNodeModal(${JSON.stringify(fullPath)})">+ Подкатегория</button>
+                        <button onclick="uiManager.showAddTechModal(${JSON.stringify(fullPath)})">+ Технология</button>
+                        <button onclick="dataManager.editNode(${JSON.stringify(path)}, ${index})">✏️</button>
+                        <button class="delete" onclick="dataManager.deleteNode(${JSON.stringify(path)}, ${index})">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
 
-            // Рендерим технологии этой категории
-            if (node.technologies && node.technologies.length > 0) {
-                node.technologies.forEach((tech, techIndex) => {
-                    this.renderTechnologyRow(tech, level + 1, fullPath, techIndex);
-                });
-            }
-
-            // Рекурсивно рендерим дочерние категории
-            if (node.children && node.children.length > 0) {
-                node.children.forEach((child, childIndex) => {
-                    renderNode(child, level + 1, fullPath, childIndex);
-                });
+                // Рекурсивно рендерим дочерние элементы
+                if (node.children && node.children.length > 0) {
+                    node.children.forEach((child, childIndex) => {
+                        renderNode(child, level + 1, fullPath, childIndex);
+                    });
+                }
             }
         };
 
@@ -140,11 +137,20 @@ const uiManager = {
     },
 
     // === УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ===
-    showModal(modalId, path = []) {
-        if (modalId === 'nodeModal' || modalId === 'techModal') {
-            this.updateParentSelect(modalId, path);
-        }
+    showModal(modalId) {
         document.getElementById(modalId).style.display = 'block';
+    },
+
+    showAddNodeModal(path = []) {
+        currentModalPath = path;
+        this.updateParentSelect('nodeModal', path);
+        this.showModal('nodeModal');
+    },
+
+    showAddTechModal(path = []) {
+        currentModalPath = path;
+        this.updateParentSelect('techModal', path);
+        this.showModal('techModal');
     },
 
     hideModals() {
@@ -165,12 +171,6 @@ const uiManager = {
         const title = document.createElement('div');
         title.innerHTML = `<strong>Родительская категория:</strong> ${this.getPathDisplay(currentPath) || 'Корень'}`;
         container.appendChild(title);
-        
-        const hiddenInput = document.createElement('input');
-        hiddenInput.type = 'hidden';
-        hiddenInput.id = modalId === 'nodeModal' ? 'nodeParentPath' : 'techParentPath';
-        hiddenInput.dataset.path = JSON.stringify(currentPath);
-        container.appendChild(hiddenInput);
     },
 
     // === УТИЛИТЫ ===
