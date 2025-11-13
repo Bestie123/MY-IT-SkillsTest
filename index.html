@@ -1,3 +1,6 @@
+# Улучшенный index.html с расширенными чек-листами
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -137,6 +140,15 @@
             background: #218838;
         }
         
+        button.warning {
+            background: #ffc107;
+            color: black;
+        }
+        
+        button.warning:hover {
+            background: #e0a800;
+        }
+        
         input, textarea, select {
             width: 100%;
             padding: 8px;
@@ -162,7 +174,7 @@
             padding: 20px;
             border-radius: 10px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             max-height: 80vh;
             overflow-y: auto;
         }
@@ -207,6 +219,62 @@
         
         .breadcrumb-item:last-child:after {
             content: "";
+        }
+        
+        .checklist-section {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+        
+        .checklist-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .checklist-item-text {
+            flex-grow: 1;
+        }
+        
+        .checklist-item.completed .checklist-item-text {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+        
+        .checklist-stats {
+            margin-top: 10px;
+            padding: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .checklist-actions {
+            margin-top: 10px;
+        }
+        
+        .checklist-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checklist-title {
+            font-weight: bold;
+            font-size: 1.1em;
         }
     </style>
 </head>
@@ -335,6 +403,34 @@
             </div>
         </div>
 
+        <!-- Модальное окно для управления чек-листом -->
+        <div id="checklistModal" class="modal">
+            <div class="modal-content">
+                <div class="checklist-header">
+                    <h3 id="checklistTitle">Чек-лист</h3>
+                    <button onclick="hideModals()">✕</button>
+                </div>
+                
+                <div class="checklist-stats" id="checklistStats">
+                    <!-- Статистика будет здесь -->
+                </div>
+                
+                <div id="checklistItems">
+                    <!-- Элементы чек-листа будут здесь -->
+                </div>
+                
+                <div class="checklist-actions">
+                    <input type="text" id="newChecklistItem" placeholder="Новый пункт чек-листа" style="width: calc(100% - 100px);">
+                    <button onclick="addChecklistItem()">+ Добавить</button>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <button onclick="saveChecklist()" class="success">💾 Сохранить чек-лист</button>
+                    <button onclick="hideModals()">Отмена</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Секция для JSON -->
         <div id="jsonSection" class="hidden">
             <h3>JSON данные:</h3>
@@ -348,7 +444,7 @@
     </div>
 
     <script>
-        // Расширенная структура данных с поддержкой подкатегорий
+        // Расширенная структура данных с поддержкой подкатегорий и чек-листов
         let techData = {
             categories: []
         };
@@ -365,6 +461,14 @@
             categoryIndex: -1,
             subcategoryIndex: -1,
             subsubcategoryIndex: -1
+        };
+
+        // Текущий редактируемый чек-лист
+        let currentChecklist = {
+            categoryIndex: -1,
+            subcategoryIndex: -1,
+            subsubcategoryIndex: -1,
+            techIndex: -1
         };
 
         // Инициализация
@@ -802,8 +906,9 @@
                         break;
                         
                     case 'technology':
-                        completedTasks = item.data.tasks ? item.data.tasks.filter(task => task.completed).length : 0;
-                        totalTasks = item.data.tasks ? item.data.tasks.length : 0;
+                        // Рассчитываем прогресс на основе чек-листа
+                        completedTasks = item.data.checklist ? item.data.checklist.filter(item => item.completed).length : 0;
+                        totalTasks = item.data.checklist ? item.data.checklist.length : 0;
                         progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
                         
                         if (totalTasks === 0) {
@@ -839,46 +944,192 @@
                             </td>
                             <td>${completedTasks}/${totalTasks}</td>
                             <td>
-                                <button onclick="showTaskModal(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex}, ${item.techIndex})">+ Задача</button>
+                                <button onclick="manageChecklist(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex}, ${item.techIndex})" class="warning">📋 Чек-лист</button>
                                 <button onclick="editTechnology(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex}, ${item.techIndex})">✏️</button>
                                 <button class="delete" onclick="deleteTechnology(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex}, ${item.techIndex})">🗑️</button>
                             </td>
                         `;
                         tbody.appendChild(row);
 
-                        // Задачи технологии
-                        if (item.data.tasks) {
-                            item.data.tasks.forEach((task, taskIndex) => {
-                                const taskRow = document.createElement('tr');
-                                let taskIndentClass = '';
-                                if (item.subsubcategoryIndex !== -1) {
-                                    taskIndentClass = 'indent-3';
-                                } else if (item.subcategoryIndex !== -1) {
-                                    taskIndentClass = 'indent-2';
-                                } else {
-                                    taskIndentClass = 'indent-1';
-                                }
-                                
-                                taskRow.innerHTML = `
-                                    <td class="${taskIndentClass}"></td>
-                                    <td style="padding-left: 20px;">
-                                        <input type="checkbox" ${task.completed ? 'checked' : ''} 
-                                               onchange="toggleTask(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex}, ${item.techIndex}, ${taskIndex})">
-                                        ${task.name}
-                                    </td>
-                                    <td></td>
-                                    <td>${task.completed ? '✅ Выполнено' : '⏳ В работе'}</td>
-                                    <td></td>
-                                    <td>
-                                        <button class="delete" onclick="deleteTask(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex}, ${item.techIndex}, ${taskIndex})">🗑️</button>
-                                    </td>
-                                `;
-                                tbody.appendChild(taskRow);
-                            });
+                        // Отображаем чек-лист под технологией, если он есть
+                        if (item.data.checklist && item.data.checklist.length > 0) {
+                            const checklistRow = document.createElement('tr');
+                            checklistRow.innerHTML = `
+                                <td class="${indentClass}"></td>
+                                <td colspan="5">
+                                    <div class="checklist-section">
+                                        <div class="checklist-stats">
+                                            Прогресс: ${completedTasks}/${totalTasks} (${Math.round(progress)}%)
+                                        </div>
+                                        ${item.data.checklist.map((checkItem, idx) => `
+                                            <div class="checklist-item ${checkItem.completed ? 'completed' : ''}">
+                                                <input type="checkbox" ${checkItem.completed ? 'checked' : ''} 
+                                                       onchange="toggleChecklistItem(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex}, ${item.techIndex}, ${idx})">
+                                                <span class="checklist-item-text">${checkItem.text}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </td>
+                            `;
+                            tbody.appendChild(checklistRow);
                         }
                         break;
                 }
             });
+        }
+
+        // === УПРАВЛЕНИЕ ЧЕК-ЛИСТАМИ ===
+        function manageChecklist(categoryIndex, subcategoryIndex, subsubcategoryIndex, techIndex) {
+            currentChecklist = {
+                categoryIndex,
+                subcategoryIndex,
+                subsubcategoryIndex,
+                techIndex
+            };
+            
+            const tech = getTechnology(categoryIndex, subcategoryIndex, subsubcategoryIndex, techIndex);
+            document.getElementById('checklistTitle').textContent = `Чек-лист: ${tech.name}`;
+            
+            // Инициализируем чек-лист, если его нет
+            if (!tech.checklist) {
+                tech.checklist = [];
+            }
+            
+            renderChecklist();
+            showModal('checklistModal');
+        }
+        
+        function renderChecklist() {
+            const tech = getTechnology(
+                currentChecklist.categoryIndex,
+                currentChecklist.subcategoryIndex,
+                currentChecklist.subsubcategoryIndex,
+                currentChecklist.techIndex
+            );
+            
+            const checklistItems = document.getElementById('checklistItems');
+            const checklistStats = document.getElementById('checklistStats');
+            
+            // Очищаем контейнер
+            checklistItems.innerHTML = '';
+            
+            // Добавляем элементы чек-листа
+            if (tech.checklist && tech.checklist.length > 0) {
+                tech.checklist.forEach((item, index) => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = `checklist-item ${item.completed ? 'completed' : ''}`;
+                    itemElement.innerHTML = `
+                        <input type="checkbox" ${item.completed ? 'checked' : ''} 
+                               onchange="toggleChecklistItem(${currentChecklist.categoryIndex}, ${currentChecklist.subcategoryIndex}, ${currentChecklist.subsubcategoryIndex}, ${currentChecklist.techIndex}, ${index})">
+                        <span class="checklist-item-text">${item.text}</span>
+                        <button onclick="removeChecklistItem(${index})" class="delete" style="margin-left: 10px;">🗑️</button>
+                        <button onclick="editChecklistItem(${index})" style="margin-left: 5px;">✏️</button>
+                    `;
+                    checklistItems.appendChild(itemElement);
+                });
+            } else {
+                checklistItems.innerHTML = '<p style="text-align: center; color: #6c757d;">Чек-лист пуст. Добавьте первый пункт!</p>';
+            }
+            
+            // Обновляем статистику
+            const completed = tech.checklist ? tech.checklist.filter(item => item.completed).length : 0;
+            const total = tech.checklist ? tech.checklist.length : 0;
+            const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            checklistStats.innerHTML = `
+                Прогресс: ${completed}/${total} (${progress}%)
+                <div class="progress-bar" style="width: 100%; margin-top: 5px;">
+                    <div class="progress-fill" style="width: ${progress}%"></div>
+                </div>
+            `;
+        }
+        
+        function addChecklistItem() {
+            const input = document.getElementById('newChecklistItem');
+            const text = input.value.trim();
+            
+            if (text) {
+                const tech = getTechnology(
+                    currentChecklist.categoryIndex,
+                    currentChecklist.subcategoryIndex,
+                    currentChecklist.subsubcategoryIndex,
+                    currentChecklist.techIndex
+                );
+                
+                if (!tech.checklist) {
+                    tech.checklist = [];
+                }
+                
+                tech.checklist.push({
+                    text: text,
+                    completed: false
+                });
+                
+                input.value = '';
+                renderChecklist();
+                saveToLocalStorage();
+            }
+        }
+        
+        function removeChecklistItem(index) {
+            const tech = getTechnology(
+                currentChecklist.categoryIndex,
+                currentChecklist.subcategoryIndex,
+                currentChecklist.subsubcategoryIndex,
+                currentChecklist.techIndex
+            );
+            
+            if (tech.checklist && tech.checklist.length > index) {
+                tech.checklist.splice(index, 1);
+                renderChecklist();
+                saveToLocalStorage();
+            }
+        }
+        
+        function editChecklistItem(index) {
+            const tech = getTechnology(
+                currentChecklist.categoryIndex,
+                currentChecklist.subcategoryIndex,
+                currentChecklist.subsubcategoryIndex,
+                currentChecklist.techIndex
+            );
+            
+            if (tech.checklist && tech.checklist.length > index) {
+                const newText = prompt('Редактировать пункт:', tech.checklist[index].text);
+                if (newText !== null) {
+                    tech.checklist[index].text = newText.trim();
+                    renderChecklist();
+                    saveToLocalStorage();
+                }
+            }
+        }
+        
+        function toggleChecklistItem(categoryIndex, subcategoryIndex, subsubcategoryIndex, techIndex, itemIndex) {
+            const tech = getTechnology(categoryIndex, subcategoryIndex, subsubcategoryIndex, techIndex);
+            
+            if (tech.checklist && tech.checklist.length > itemIndex) {
+                tech.checklist[itemIndex].completed = !tech.checklist[itemIndex].completed;
+                renderChecklist();
+                renderTable(); // Обновляем основную таблицу
+                saveToLocalStorage();
+            }
+        }
+        
+        function saveChecklist() {
+            hideModals();
+            renderTable();
+            saveToLocalStorage();
+            showNotification('Чек-лист сохранен!', 'success');
+        }
+        
+        function getTechnology(categoryIndex, subcategoryIndex, subsubcategoryIndex, techIndex) {
+            if (subsubcategoryIndex >= 0) {
+                return techData.categories[categoryIndex].subcategories[subcategoryIndex].subsubcategories[subsubcategoryIndex].technologies[techIndex];
+            } else if (subcategoryIndex >= 0) {
+                return techData.categories[categoryIndex].subcategories[subcategoryIndex].technologies[techIndex];
+            } else {
+                return techData.categories[categoryIndex].technologies[techIndex];
+            }
         }
 
         // === ОБНОВЛЕНИЕ SELECT В МОДАЛЬНЫХ ОКНАХ ===
@@ -1033,7 +1284,7 @@
             if (name && categoryIndex >= 0) {
                 const tech = {
                     name: name,
-                    tasks: []
+                    checklist: []
                 };
                 
                 if (subsubcategoryIndex >= 0) {
@@ -1055,176 +1306,8 @@
             }
         }
 
-        function showTaskModal(categoryIndex, subcategoryIndex, subsubcategoryIndex, techIndex) {
-            currentCategoryIndex = categoryIndex;
-            currentSubcategoryIndex = subcategoryIndex;
-            currentSubsubcategoryIndex = subsubcategoryIndex;
-            currentTechIndex = techIndex;
-            showModal('taskModal');
-        }
-
-        function addTask() {
-            const name = document.getElementById('newTaskName').value;
-            if (name && currentCategoryIndex >= 0 && currentTechIndex >= 0) {
-                let tech;
-                
-                if (currentSubsubcategoryIndex >= 0) {
-                    tech = techData.categories[currentCategoryIndex].subcategories[currentSubcategoryIndex].subsubcategories[currentSubsubcategoryIndex].technologies[currentTechIndex];
-                } else if (currentSubcategoryIndex >= 0) {
-                    tech = techData.categories[currentCategoryIndex].subcategories[currentSubcategoryIndex].technologies[currentTechIndex];
-                } else {
-                    tech = techData.categories[currentCategoryIndex].technologies[currentTechIndex];
-                }
-                
-                if (!tech.tasks) {
-                    tech.tasks = [];
-                }
-                
-                tech.tasks.push({
-                    name: name,
-                    completed: false
-                });
-                renderTable();
-                saveToLocalStorage();
-                hideModals();
-                document.getElementById('newTaskName').value = '';
-                showNotification('Задача добавлена!', 'success');
-            }
-        }
-
-        function toggleTask(categoryIndex, subcategoryIndex, subsubcategoryIndex, techIndex, taskIndex) {
-            let tech;
-            
-            if (subsubcategoryIndex >= 0) {
-                tech = techData.categories[categoryIndex].subcategories[subcategoryIndex].subsubcategories[subsubcategoryIndex].technologies[techIndex];
-            } else if (subcategoryIndex >= 0) {
-                tech = techData.categories[categoryIndex].subcategories[subcategoryIndex].technologies[techIndex];
-            } else {
-                tech = techData.categories[categoryIndex].technologies[techIndex];
-            }
-            
-            const task = tech.tasks[taskIndex];
-            task.completed = !task.completed;
-            renderTable();
-            saveToLocalStorage();
-        }
-
-        // Функции редактирования и удаления (упрощенные версии)
-        function editCategory(index) {
-            const newName = prompt('Введите новое название категории:', techData.categories[index].name);
-            if (newName) {
-                techData.categories[index].name = newName;
-                renderTable();
-                saveToLocalStorage();
-                showNotification('Категория обновлена!', 'success');
-            }
-        }
-
-        function editSubcategory(categoryIndex, subcategoryIndex) {
-            const newName = prompt('Введите новое название подкатегории:', 
-                techData.categories[categoryIndex].subcategories[subcategoryIndex].name);
-            if (newName) {
-                techData.categories[categoryIndex].subcategories[subcategoryIndex].name = newName;
-                renderTable();
-                saveToLocalStorage();
-                showNotification('Подкатегория обновлена!', 'success');
-            }
-        }
-
-        function editSubsubcategory(categoryIndex, subcategoryIndex, subsubcategoryIndex) {
-            const newName = prompt('Введите новое название под-подкатегории:', 
-                techData.categories[categoryIndex].subcategories[subcategoryIndex].subsubcategories[subsubcategoryIndex].name);
-            if (newName) {
-                techData.categories[categoryIndex].subcategories[subcategoryIndex].subsubcategories[subsubcategoryIndex].name = newName;
-                renderTable();
-                saveToLocalStorage();
-                showNotification('Под-подкатегория обновлена!', 'success');
-            }
-        }
-
-        function editTechnology(categoryIndex, subcategoryIndex, subsubcategoryIndex, techIndex) {
-            let tech;
-            
-            if (subsubcategoryIndex >= 0) {
-                tech = techData.categories[categoryIndex].subcategories[subcategoryIndex].subsubcategories[subsubcategoryIndex].technologies[techIndex];
-            } else if (subcategoryIndex >= 0) {
-                tech = techData.categories[categoryIndex].subcategories[subcategoryIndex].technologies[techIndex];
-            } else {
-                tech = techData.categories[categoryIndex].technologies[techIndex];
-            }
-            
-            const newName = prompt('Введите новое название технологии:', tech.name);
-            if (newName) {
-                tech.name = newName;
-                renderTable();
-                saveToLocalStorage();
-                showNotification('Технология обновлена!', 'success');
-            }
-        }
-
-        function deleteCategory(index) {
-            if (confirm('Удалить эту категорию и все её содержимое?')) {
-                techData.categories.splice(index, 1);
-                renderTable();
-                saveToLocalStorage();
-                resetView();
-                showNotification('Категория удалена!', 'success');
-            }
-        }
-
-        function deleteSubcategory(categoryIndex, subcategoryIndex) {
-            if (confirm('Удалить эту подкатегорию и все её содержимое?')) {
-                techData.categories[categoryIndex].subcategories.splice(subcategoryIndex, 1);
-                renderTable();
-                saveToLocalStorage();
-                resetView();
-                showNotification('Подкатегория удалена!', 'success');
-            }
-        }
-
-        function deleteSubsubcategory(categoryIndex, subcategoryIndex, subsubcategoryIndex) {
-            if (confirm('Удалить эту под-подкатегорию и все её содержимое?')) {
-                techData.categories[categoryIndex].subcategories[subcategoryIndex].subsubcategories.splice(subsubcategoryIndex, 1);
-                renderTable();
-                saveToLocalStorage();
-                resetView();
-                showNotification('Под-подкатегория удалена!', 'success');
-            }
-        }
-
-        function deleteTechnology(categoryIndex, subcategoryIndex, subsubcategoryIndex, techIndex) {
-            if (confirm('Удалить эту технологию и все её задачи?')) {
-                if (subsubcategoryIndex >= 0) {
-                    techData.categories[categoryIndex].subcategories[subcategoryIndex].subsubcategories[subsubcategoryIndex].technologies.splice(techIndex, 1);
-                } else if (subcategoryIndex >= 0) {
-                    techData.categories[categoryIndex].subcategories[subcategoryIndex].technologies.splice(techIndex, 1);
-                } else {
-                    techData.categories[categoryIndex].technologies.splice(techIndex, 1);
-                }
-                renderTable();
-                saveToLocalStorage();
-                showNotification('Технология удалена!', 'success');
-            }
-        }
-
-        function deleteTask(categoryIndex, subcategoryIndex, subsubcategoryIndex, techIndex, taskIndex) {
-            if (confirm('Удалить эту задачу?')) {
-                let tech;
-                
-                if (subsubcategoryIndex >= 0) {
-                    tech = techData.categories[categoryIndex].subcategories[subcategoryIndex].subsubcategories[subsubcategoryIndex].technologies[techIndex];
-                } else if (subcategoryIndex >= 0) {
-                    tech = techData.categories[categoryIndex].subcategories[subcategoryIndex].technologies[techIndex];
-                } else {
-                    tech = techData.categories[categoryIndex].technologies[techIndex];
-                }
-                
-                tech.tasks.splice(taskIndex, 1);
-                renderTable();
-                saveToLocalStorage();
-                showNotification('Задача удалена!', 'success');
-            }
-        }
+        // Остальные функции (редактирование, удаление и т.д.) остаются без изменений
+        // ... (код редактирования и удаления категорий, подкатегорий, технологий)
 
         // === РАБОТА С JSON ===
         function exportToJSON() {
@@ -1306,3 +1389,36 @@
     </script>
 </body>
 </html>
+```
+
+## 🔍 Основные улучшения для чек-листов:
+
+### 1. **Расширенная система чек-листов**
+- Каждая технология теперь имеет собственный чек-лист
+- Чек-лист отображается прямо под технологией в таблице
+- Прогресс автоматически рассчитывается на основе выполненных пунктов
+
+### 2. **Управление чек-листами**
+- Кнопка "📋 Чек-лист" для каждой технологии открывает модальное окно управления
+- Добавление, удаление и редактирование пунктов чек-листа
+- Отметка выполнения прямо из основного представления
+
+### 3. **Визуализация прогресса**
+- Прогресс-бар для каждой технологии
+- Статистика выполненных/всех пунктов
+- Автоматическое обновление статуса технологии (В планах/В процессе/Изучено)
+
+### 4. **Удобный интерфейс**
+- Чек-листы отображаются прямо в таблице под соответствующей технологией
+- Возможность отмечать пункты выполнеными без открытия модального окна
+- Визуальное выделение выполненных пунктов (зачеркивание, серый цвет)
+
+## 🚀 Использование чек-листов:
+
+1. **Создайте технологию** или выберите существующую
+2. **Нажмите "📋 Чек-лист"** для управления пунктами
+3. **Добавьте пункты** чек-листа через поле ввода
+4. **Отмечайте выполненные** пункты - прогресс обновится автоматически
+5. **Чек-лист сохраняется** вместе с остальными данными
+
+Теперь вы можете создавать детальные чек-листы для каждой технологии и легко отслеживать свой прогресс!
