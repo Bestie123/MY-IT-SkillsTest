@@ -1,164 +1,181 @@
 const uiManager = {
-    // === ОТОБРАЖЕНИЕ ТАБЛИЦЫ ===
-    renderTable() {
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '';
+    // === ОТОБРАЖЕНИЕ СТРУКТУРЫ ===
+    renderStructure() {
+        const container = document.getElementById('structureContent');
+        container.innerHTML = '';
 
         if (techData.categories.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #6c757d;">Нет данных. Добавьте первую категорию!</td></tr>';
+            container.innerHTML = `
+                <div class="empty-state">
+                    <h3>Нет данных</h3>
+                    <p>Добавьте первую категорию чтобы начать</p>
+                    <button class="btn primary" onclick="uiManager.showModal('categoryModal')">Создать категорию</button>
+                </div>
+            `;
             return;
         }
 
-        const renderNode = (node, level, path, index) => {
-            const fullPath = [...path, index];
-            
-            if (node.type === 'technology') {
-                this.renderTechnologyRow(node, level, fullPath, index);
-            } else {
-                // Рендерим категорию или подкатегорию
-                const row = document.createElement('tr');
-                row.className = `${node.type === 'category' ? 'category-row' : 'node-row'} level-${level}`;
-                
-                const hasChildren = node.children && node.children.length > 0;
-                const indentStyle = `padding-left: ${10 + level * 20}px`;
-                
-                row.innerHTML = `
-                    <td style="${indentStyle}">
-                        <div style="display: flex; align-items: center;">
-                            ${hasChildren ? 
-                                `<button class="expand-btn" onclick="uiManager.toggleExpand(${JSON.stringify(fullPath)})">
-                                    ${node.expanded ? '−' : '+'}
-                                </button>` : 
-                                '<span class="expand-btn" style="visibility: hidden;">•</span>'
-                            }
-                            <span class="node-icon">${node.type === 'category' ? '📁' : '📂'}</span>
-                            <strong>${node.name}</strong>
-                        </div>
-                    </td>
-                    <td>${node.type === 'category' ? 'Категория' : 'Подкатегория'}</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>
-                        <div class="actions">
-                            <button class="edit" onclick="dataManager.editNode(${JSON.stringify(path)}, ${index})" title="Редактировать">✏️</button>
-                            ${node.type === 'category' || node.type === 'node' ? `
-                                <button onclick="uiManager.showAddNodeModal(${JSON.stringify(fullPath)})" title="Добавить подкатегорию">📂</button>
-                                <button onclick="uiManager.showAddTechModal(${JSON.stringify(fullPath)})" title="Добавить технологию">⚙️</button>
-                            ` : ''}
-                            <button class="delete" onclick="dataManager.deleteNode(${JSON.stringify(path)}, ${index})" title="Удалить">🗑️</button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-
-                // Рекурсивно рендерим дочерние элементы если развернуто
-                if (node.expanded && node.children && node.children.length > 0) {
-                    node.children.forEach((child, childIndex) => {
-                        renderNode(child, level + 1, fullPath, childIndex);
-                    });
-                }
-            }
-        };
-
-        // Рендерим корневые категории
         techData.categories.forEach((category, index) => {
-            renderNode(category, 0, [], index);
+            container.appendChild(this.createStructureNode(category, 0, [], index));
         });
     },
 
-    renderTechnologyRow(tech, level, path, techIndex) {
-        const tbody = document.getElementById('tableBody');
-        const completedTasks = tech.checklist ? tech.checklist.filter(item => item.completed).length : 0;
-        const totalTasks = tech.checklist ? tech.checklist.length : 0;
-        const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+    createStructureNode(node, level, path, index) {
+        const fullPath = [...path, index];
+        const item = document.createElement('div');
+        item.className = 'structure-item';
+
+        const content = document.createElement('div');
+        content.className = 'item-content';
+
+        // Заголовок элемента
+        const header = document.createElement('div');
+        header.className = `item-header ${node.type}`;
         
-        let statusText = '';
-        let statusClass = '';
+        const icon = document.createElement('div');
+        icon.className = 'item-icon';
+        icon.innerHTML = this.getNodeIcon(node.type);
         
-        if (totalTasks === 0) {
-            statusText = 'В планах';
-            statusClass = 'status-planned';
-        } else if (completedTasks === totalTasks) {
-            statusText = 'Изучено';
-            statusClass = 'status-completed';
-        } else {
-            statusText = 'В процессе';
-            statusClass = 'status-in-progress';
+        const title = document.createElement('div');
+        title.className = 'item-title';
+        title.textContent = node.name;
+        
+        const actions = document.createElement('div');
+        actions.className = 'item-actions';
+
+        // Кнопки действий в зависимости от типа
+        if (node.type === 'category' || node.type === 'node') {
+            const expandBtn = document.createElement('button');
+            expandBtn.className = 'action-btn';
+            expandBtn.innerHTML = node.expanded ? '−' : '+';
+            expandBtn.title = node.expanded ? 'Свернуть' : 'Развернуть';
+            expandBtn.onclick = (e) => {
+                e.stopPropagation();
+                this.toggleNode(fullPath);
+            };
+            actions.appendChild(expandBtn);
+
+            const addNodeBtn = document.createElement('button');
+            addNodeBtn.className = 'action-btn';
+            addNodeBtn.innerHTML = '📂';
+            addNodeBtn.title = 'Добавить подкатегорию';
+            addNodeBtn.onclick = (e) => {
+                e.stopPropagation();
+                currentModalPath = fullPath;
+                this.showModal('nodeModal');
+            };
+            actions.appendChild(addNodeBtn);
+
+            const addTechBtn = document.createElement('button');
+            addTechBtn.className = 'action-btn';
+            addTechBtn.innerHTML = '⚙️';
+            addTechBtn.title = 'Добавить технологию';
+            addTechBtn.onclick = (e) => {
+                e.stopPropagation();
+                currentModalPath = fullPath;
+                this.showModal('techModal');
+            };
+            actions.appendChild(addTechBtn);
         }
 
-        const indentStyle = `padding-left: ${10 + level * 20}px`;
-        
-        // Строка технологии
-        const row = document.createElement('tr');
-        row.className = `tech-row level-${level}`;
-        row.innerHTML = `
-            <td style="${indentStyle}">
-                <div style="display: flex; align-items: center;">
-                    <span class="node-icon">⚙️</span>
-                    <strong>${tech.name}</strong>
-                </div>
-            </td>
-            <td>Технология</td>
-            <td>
-                <div class="progress-info">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progress}%"></div>
-                    </div>
-                    <span>${Math.round(progress)}%</span>
-                </div>
-            </td>
-            <td>
-                <span class="status-badge ${statusClass}">${statusText}</span>
-            </td>
-            <td>
-                <div class="actions">
-                    <button class="checklist" onclick="checklistManager.manageChecklist(${JSON.stringify(path)}, ${techIndex})" title="Управление чек-листом">📋</button>
-                    <button class="edit" onclick="dataManager.editTechnology(${JSON.stringify(path)}, ${techIndex})" title="Редактировать">✏️</button>
-                    <button class="delete" onclick="dataManager.deleteTechnology(${JSON.stringify(path)}, ${techIndex})" title="Удалить">🗑️</button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(row);
+        if (node.type === 'technology') {
+            const checklistBtn = document.createElement('button');
+            checklistBtn.className = 'action-btn';
+            checklistBtn.innerHTML = '📋';
+            checklistBtn.title = 'Управление чек-листом';
+            checklistBtn.onclick = (e) => {
+                e.stopPropagation();
+                checklistManager.manageChecklist(path, index);
+            };
+            actions.appendChild(checklistBtn);
+        }
 
-        // Строка с превью чеклиста
-        if (tech.checklist && tech.checklist.length > 0) {
-            const checklistRow = document.createElement('tr');
-            checklistRow.className = `checklist-preview-row level-${level}`;
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'action-btn';
+        deleteBtn.innerHTML = '🗑️';
+        deleteBtn.title = 'Удалить';
+        deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            if (node.type === 'technology') {
+                dataManager.deleteTechnology(path, index);
+            } else {
+                dataManager.deleteNode(path, index);
+            }
+        };
+        actions.appendChild(deleteBtn);
+
+        header.appendChild(icon);
+        header.appendChild(title);
+        header.appendChild(actions);
+        content.appendChild(header);
+
+        // Контент для технологий (чеклист)
+        if (node.type === 'technology' && node.checklist && node.checklist.length > 0) {
+            const checklist = document.createElement('div');
+            checklist.className = 'item-checklist';
             
-            const visibleItems = tech.checklist.slice(0, 3); // Показываем первые 3 пункта
-            const hasMore = tech.checklist.length > 3;
-            
-            checklistRow.innerHTML = `
-                <td colspan="5" style="${indentStyle}">
-                    <div class="checklist-preview">
-                        ${visibleItems.map((item, index) => `
-                            <div class="checklist-item-preview ${item.completed ? 'completed' : ''}">
-                                <input type="checkbox" ${item.completed ? 'checked' : ''} 
-                                       onchange="checklistManager.toggleChecklistItem(${JSON.stringify(path)}, ${techIndex}, ${index})">
-                                <span class="checklist-item-text">${item.text}</span>
-                            </div>
-                        `).join('')}
-                        ${hasMore ? `
-                            <button class="checklist-toggle" onclick="checklistManager.manageChecklist(${JSON.stringify(path)}, ${techIndex})">
-                                + ещё ${tech.checklist.length - 3} пунктов...
-                            </button>
-                        ` : ''}
-                        <div style="margin-top: 5px; font-size: 0.8em; color: #6c757d;">
-                            Прогресс: ${completedTasks}/${totalTasks} (${Math.round(progress)}%)
-                        </div>
-                    </div>
-                </td>
+            const completed = node.checklist.filter(item => item.completed).length;
+            const total = node.checklist.length;
+            const progress = total > 0 ? (completed / total) * 100 : 0;
+
+            // Превью чеклиста (первые 3 пункта)
+            const previewItems = node.checklist.slice(0, 3);
+            previewItems.forEach((item, itemIndex) => {
+                const checklistItem = document.createElement('div');
+                checklistItem.className = `checklist-item-preview ${item.completed ? 'completed' : ''}`;
+                checklistItem.innerHTML = `
+                    <input type="checkbox" ${item.completed ? 'checked' : ''} 
+                           onchange="checklistManager.toggleChecklistItem(${JSON.stringify(path)}, ${index}, ${itemIndex})">
+                    <span>${item.text}</span>
+                `;
+                checklist.appendChild(checklistItem);
+            });
+
+            // Прогресс
+            const progressInfo = document.createElement('div');
+            progressInfo.className = 'checklist-progress';
+            progressInfo.innerHTML = `
+                <div>Прогресс: ${completed}/${total} (${Math.round(progress)}%)</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progress}%"></div>
+                </div>
             `;
-            tbody.appendChild(checklistRow);
+            checklist.appendChild(progressInfo);
+
+            content.appendChild(checklist);
         }
+
+        item.appendChild(content);
+
+        // Вложенные элементы
+        if ((node.type === 'category' || node.type === 'node') && node.expanded && node.children && node.children.length > 0) {
+            const childrenContainer = document.createElement('div');
+            childrenContainer.className = 'item-children';
+            
+            node.children.forEach((child, childIndex) => {
+                childrenContainer.appendChild(this.createStructureNode(child, level + 1, fullPath, childIndex));
+            });
+            
+            item.appendChild(childrenContainer);
+        }
+
+        return item;
     },
 
-    // === РАСШИРЕНИЕ/СВЕРТЫВАНИЕ ===
-    toggleExpand(path) {
+    getNodeIcon(type) {
+        const icons = {
+            'category': '📁',
+            'node': '📂',
+            'technology': '⚙️'
+        };
+        return icons[type] || '📄';
+    },
+
+    toggleNode(path) {
         const node = dataManager.getNodeByPath(path.slice(0, -1))[path[path.length - 1]];
         if (node) {
             node.expanded = !node.expanded;
-            this.renderTable();
+            this.renderStructure();
             dataManager.saveToLocalStorage();
         }
     },
@@ -190,13 +207,13 @@ const uiManager = {
         document.getElementById('jsonSection').classList.add('hidden');
     },
 
-    // === ОБНОВЛЕНИЕ SELECT В МОДАЛЬНЫХ ОКНАХ ===
+    // === ОБНОВЛЕНИЕ ВЫБОРА РОДИТЕЛЯ ===
     updateParentSelect(modalId, currentPath) {
         const container = document.getElementById(modalId === 'nodeModal' ? 'nodeParentSelect' : 'techParentSelect');
         container.innerHTML = '';
         
         const title = document.createElement('div');
-        title.innerHTML = `<strong>Родительская категория:</strong> ${this.getPathDisplay(currentPath) || 'Корень'}`;
+        title.innerHTML = `<strong>Родитель:</strong> ${this.getPathDisplay(currentPath) || 'Корневой уровень'}`;
         container.appendChild(title);
     },
 
@@ -231,7 +248,7 @@ const uiManager = {
     }
 };
 
-// Закрытие модальных окон при клике вне их
+// Закрытие модальных окон
 window.onclick = function(event) {
     if (event.target.classList.contains('modal')) {
         uiManager.hideModals();
