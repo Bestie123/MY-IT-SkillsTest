@@ -5,53 +5,7 @@
       "technologies": [],
       "subcategories": [
         {
-          "name": "Java",
-          "technologies": [
-            {
-              "name": "Ghg",
-              "tasks": [
-                {
-                  "name": "Hhhh",
-                  "completed": false
-                },
-                {
-                  "name": "Gjgjvj",
-                  "completed": false
-                }
-              ],
-              "checklist": [
-                {
-                  "text": "Ошлрлр",
-                  "completed": true
-                },
-                {
-                  "text": "Ршрлр",
-                  "completed": false
-                },
-                {
-                  "text": "Ьмьпор про но лтшх",
-                  "completed": false
-                },
-                {
-                  "text": "Тютдр",
-                  "completed": false
-                },
-                {
-                  "text": "Нина",
-                  "completed": true
-                }
-              ]
-            },
-            {
-              "name": "Hvgcfh by g",
-              "tasks": [],
-              "checklist": []
-            }
-          ],
-          "subsubcategories": []
-        },
-        {
-          "name": "Hghb",
+          "name": "Java Core",
           "technologies": [],
           "subsubcategories": []
         }
