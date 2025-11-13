@@ -303,3 +303,22 @@ button.auto-save-disabled:hover {
     margin-left: 10px;
     font-style: italic;
 }
+
+.parent-select-item {
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #f8f9fa;
+}
+
+.parent-select-item:hover {
+    background: #e9ecef;
+}
+
+.parent-select-item.selected {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
+}
