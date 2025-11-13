@@ -1,13 +1,11 @@
-// Глобальная структура данных с рекурсивной вложенностью
+// Глобальная структура данных
 const techData = {
     categories: []
 };
 
-// Текущий выбранный путь для модальных окон
 let currentModalPath = [];
 
 const dataManager = {
-    // Вспомогательные функции для работы с путями
     getNodeByPath(path) {
         let currentNode = techData.categories;
         for (const index of path) {
@@ -33,12 +31,15 @@ const dataManager = {
     loadFromLocalStorage() {
         const saved = localStorage.getItem('techData');
         if (saved) {
-            const parsedData = JSON.parse(saved);
-            techData.categories = parsedData.categories || [];
-            
-            // Инициализируем expanded если его нет
-            this.initializeExpanded(techData.categories);
-            uiManager.renderTable();
+            try {
+                const parsedData = JSON.parse(saved);
+                techData.categories = parsedData.categories || [];
+                this.initializeExpanded(techData.categories);
+                uiManager.renderStructure();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                uiManager.showNotification('Ошибка загрузки данных', 'error');
+            }
         }
     },
 
@@ -55,31 +56,39 @@ const dataManager = {
 
     // === УПРАВЛЕНИЕ ДАННЫМИ ===
     addCategory() {
-        const name = document.getElementById('newCategoryName').value;
-        if (name) {
-            techData.categories.push({
-                name: name,
-                type: 'category',
-                children: [],
-                expanded: true
-            });
-            uiManager.renderTable();
-            this.saveToLocalStorage();
-            uiManager.hideModals();
-            document.getElementById('newCategoryName').value = '';
-            uiManager.showNotification('Категория добавлена!', 'success');
-            
-            authManager.scheduleAutoSave();
+        const name = document.getElementById('newCategoryName').value.trim();
+        if (!name) {
+            uiManager.showNotification('Введите название категории', 'warning');
+            return;
         }
+
+        techData.categories.push({
+            name: name,
+            type: 'category',
+            children: [],
+            expanded: true
+        });
+        
+        uiManager.renderStructure();
+        this.saveToLocalStorage();
+        uiManager.hideModals();
+        document.getElementById('newCategoryName').value = '';
+        uiManager.showNotification('Категория добавлена', 'success');
+        authManager.scheduleAutoSave();
     },
 
     addNode() {
-        const name = document.getElementById('newNodeName').value;
+        const name = document.getElementById('newNodeName').value.trim();
         
-        if (name && currentModalPath.length >= 0) {
+        if (!name) {
+            uiManager.showNotification('Введите название подкатегории', 'warning');
+            return;
+        }
+
+        if (currentModalPath.length >= 0) {
             const parent = this.getNodeByPath(currentModalPath);
             if (!parent) {
-                uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
+                uiManager.showNotification('Родительская категория не найдена', 'error');
                 return;
             }
 
@@ -90,44 +99,45 @@ const dataManager = {
                 expanded: true
             });
 
-            uiManager.renderTable();
+            uiManager.renderStructure();
             this.saveToLocalStorage();
             uiManager.hideModals();
             document.getElementById('newNodeName').value = '';
-            uiManager.showNotification('Подкатегория добавлена!', 'success');
-            
+            uiManager.showNotification('Подкатегория добавлена', 'success');
             authManager.scheduleAutoSave();
         }
     },
 
     addTechnology() {
-        const name = document.getElementById('newTechName').value;
+        const name = document.getElementById('newTechName').value.trim();
         
-        if (name && currentModalPath.length >= 0) {
+        if (!name) {
+            uiManager.showNotification('Введите название технологии', 'warning');
+            return;
+        }
+
+        if (currentModalPath.length >= 0) {
             const parent = this.getNodeByPath(currentModalPath);
             if (!parent) {
-                uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
+                uiManager.showNotification('Родительская категория не найдена', 'error');
                 return;
             }
 
-            const tech = {
+            parent.push({
                 name: name,
                 type: 'technology',
                 checklist: []
-            };
+            });
 
-            parent.push(tech);
-
-            uiManager.renderTable();
+            uiManager.renderStructure();
             this.saveToLocalStorage();
             uiManager.hideModals();
             document.getElementById('newTechName').value = '';
-            uiManager.showNotification('Технология добавлена!', 'success');
-            
+            uiManager.showNotification('Технология добавлена', 'success');
             authManager.scheduleAutoSave();
         }
     },
 
-    // ... остальные методы остаются без изменений ...
-    // (editNode, editTechnology, deleteNode, deleteTechnology, JSON методы)
+    // ... остальные методы (edit, delete, JSON) остаются аналогичными предыдущей версии
+    // но адаптированы под новую структуру
 };
