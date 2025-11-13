@@ -32,6 +32,9 @@ const dataManager = {
             uiManager.hideModals();
             document.getElementById('newCategoryName').value = '';
             uiManager.showNotification('Категория добавлена!', 'success');
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
 
@@ -54,6 +57,9 @@ const dataManager = {
             uiManager.hideModals();
             document.getElementById('newSubcategoryName').value = '';
             uiManager.showNotification('Подкатегория добавлена!', 'success');
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
 
@@ -77,6 +83,9 @@ const dataManager = {
             uiManager.hideModals();
             document.getElementById('newSubsubcategoryName').value = '';
             uiManager.showNotification('Под-подкатегория добавлена!', 'success');
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
 
@@ -105,6 +114,9 @@ const dataManager = {
             uiManager.hideModals();
             document.getElementById('newTechName').value = '';
             uiManager.showNotification('Технология добавлена!', 'success');
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
 
@@ -132,6 +144,9 @@ const dataManager = {
                     dataManager.saveToLocalStorage();
                     navigation.resetView();
                     uiManager.showNotification('Данные импортированы!', 'success');
+                    
+                    // Запуск автосохранения
+                    authManager.scheduleAutoSave();
                 } catch (error) {
                     uiManager.showNotification('Ошибка при чтении JSON файла', 'error');
                 }
@@ -150,6 +165,9 @@ const dataManager = {
             this.saveToLocalStorage();
             navigation.resetView();
             uiManager.showNotification('Данные импортированы из JSON!', 'success');
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         } catch (error) {
             uiManager.showNotification('Ошибка при разборе JSON', 'error');
         }
