@@ -307,7 +307,7 @@ const uiManager = {
         }, 3000);
     },
 
-    // Функции редактирования (упрощенные версии)
+    // Функции редактирования
     editCategory(index) {
         const newName = prompt('Введите новое название категории:', techData.categories[index].name);
         if (newName) {
@@ -315,6 +315,9 @@ const uiManager = {
             this.renderTable();
             dataManager.saveToLocalStorage();
             this.showNotification('Категория обновлена!', 'success');
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
 
@@ -326,6 +329,9 @@ const uiManager = {
             this.renderTable();
             dataManager.saveToLocalStorage();
             this.showNotification('Подкатегория обновлена!', 'success');
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
 
@@ -337,6 +343,9 @@ const uiManager = {
             this.renderTable();
             dataManager.saveToLocalStorage();
             this.showNotification('Под-подкатегория обновлена!', 'success');
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
 
@@ -348,6 +357,9 @@ const uiManager = {
             this.renderTable();
             dataManager.saveToLocalStorage();
             this.showNotification('Технология обновлена!', 'success');
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
 
@@ -358,6 +370,9 @@ const uiManager = {
             dataManager.saveToLocalStorage();
             navigation.resetView();
             this.showNotification('Категория удалена!', 'success');
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
 
@@ -368,6 +383,9 @@ const uiManager = {
             dataManager.saveToLocalStorage();
             navigation.resetView();
             this.showNotification('Подкатегория удалена!', 'success');
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
 
@@ -378,6 +396,9 @@ const uiManager = {
             dataManager.saveToLocalStorage();
             navigation.resetView();
             this.showNotification('Под-подкатегория удалена!', 'success');
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
 
@@ -393,6 +414,9 @@ const uiManager = {
             this.renderTable();
             dataManager.saveToLocalStorage();
             this.showNotification('Технология удалена!', 'success');
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
 
