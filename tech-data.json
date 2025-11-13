@@ -4,7 +4,42 @@
       "name": "Не гпн",
       "type": "category",
       "technologies": [],
-      "children": []
+      "children": [
+        {
+          "name": "Олллл",
+          "type": "node",
+          "technologies": [],
+          "children": [
+            {
+              "name": "Диллилх",
+              "type": "node",
+              "technologies": [],
+              "children": [
+                {
+                  "name": "Момом но п",
+                  "type": "node",
+                  "technologies": [],
+                  "children": [
+                    {
+                      "name": "Грпгиорм",
+                      "type": "node",
+                      "technologies": [],
+                      "children": [
+                        {
+                          "name": " Лоиом",
+                          "type": "node",
+                          "technologies": [],
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
