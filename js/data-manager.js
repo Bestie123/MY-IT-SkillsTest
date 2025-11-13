@@ -151,7 +151,6 @@ const dataManager = {
                 parent.splice(index, 1);
                 uiManager.renderTable();
                 this.saveToLocalStorage();
-                navigation.resetView();
                 uiManager.showNotification('Категория удалена!', 'success');
                 authManager.scheduleAutoSave();
             }
@@ -193,7 +192,6 @@ const dataManager = {
                     techData.categories = parsedData.categories || [];
                     uiManager.renderTable();
                     dataManager.saveToLocalStorage();
-                    navigation.resetView();
                     uiManager.showNotification('Данные импортированы!', 'success');
                     authManager.scheduleAutoSave();
                 } catch (error) {
@@ -212,7 +210,6 @@ const dataManager = {
             techData.categories = parsedData.categories || [];
             uiManager.renderTable();
             this.saveToLocalStorage();
-            navigation.resetView();
             uiManager.showNotification('Данные импортированы из JSON!', 'success');
             authManager.scheduleAutoSave();
         } catch (error) {
