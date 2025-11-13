@@ -1,4 +1,9 @@
 const authManager = {
+    autoSaveEnabled: false,
+    autoSaveInterval: null,
+    lastSaveTime: null,
+    autoSaveTimeout: null,
+
     // === АУТЕНТИФИКАЦИЯ С ПРОВЕРКОЙ ===
     async testAuth() {
         const token = document.getElementById('githubToken').value;
@@ -27,6 +32,8 @@ const authManager = {
                 const permissions = responseData.permissions;
                 if (permissions && permissions.push) {
                     this.showAuthStatus('✅ Подключение успешно! Репозиторий доступен для записи.', 'success');
+                    // Включаем автосохранение при успешной проверке
+                    this.enableAutoSave();
                 } else {
                     this.showAuthStatus('⚠️ Репозиторий доступен, но нет прав на запись.', 'warning');
                 }
@@ -82,6 +89,165 @@ const authManager = {
         authStatus.classList.add(type === 'success' ? 'auth-success' : 
                                type === 'warning' ? 'auth-warning' : 'auth-error');
         authStatus.style.display = 'block';
+    },
+
+    // === АВТОСОХРАНЕНИЕ ===
+    enableAutoSave() {
+        if (this.autoSaveEnabled) return;
+        
+        this.autoSaveEnabled = true;
+        this.updateAutoSaveButton();
+        
+        // Автосохранение каждые 2 минуты
+        this.autoSaveInterval = setInterval(() => {
+            this.autoSaveToGitHub();
+        }, 2 * 60 * 1000);
+        
+        // Автосохранение при закрытии страницы
+        window.addEventListener('beforeunload', this.autoSaveToGitHub.bind(this));
+        
+        uiManager.showNotification('🔄 Автосохранение включено (каждые 2 минуты)', 'success');
+    },
+    
+    disableAutoSave() {
+        if (this.autoSaveInterval) {
+            clearInterval(this.autoSaveInterval);
+            this.autoSaveInterval = null;
+        }
+        this.autoSaveEnabled = false;
+        this.updateAutoSaveButton();
+        window.removeEventListener('beforeunload', this.autoSaveToGitHub.bind(this));
+        uiManager.showNotification('⏸️ Автосохранение отключено', 'warning');
+    },
+    
+    toggleAutoSave() {
+        if (this.autoSaveEnabled) {
+            this.disableAutoSave();
+        } else {
+            this.enableAutoSave();
+        }
+    },
+    
+    updateAutoSaveButton() {
+        const button = document.getElementById('autoSaveBtn');
+        if (this.autoSaveEnabled) {
+            button.innerHTML = '✅ Автосохранение';
+            button.className = 'auto-save-enabled';
+        } else {
+            button.innerHTML = '🚫 Автосохранение';
+            button.className = 'auto-save-disabled';
+        }
+    },
+    
+    async autoSaveToGitHub() {
+        const token = localStorage.getItem('githubToken');
+        const owner = localStorage.getItem('repoOwner');
+        const repo = localStorage.getItem('repoName');
+        
+        if (!token || !owner || !repo || !this.autoSaveEnabled) {
+            return;
+        }
+
+        // Проверяем, что прошло достаточно времени с последнего сохранения
+        const now = Date.now();
+        if (this.lastSaveTime && (now - this.lastSaveTime) < 30000) {
+            return;
+        }
+
+        try {
+            console.log('🔄 Автосохранение на GitHub...');
+            
+            let sha = null;
+            
+            try {
+                const getResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'User-Agent': 'TechDocs-App'
+                    }
+                });
+                
+                if (getResponse.status === 200) {
+                    const data = await getResponse.json();
+                    sha = data.sha;
+                }
+            } catch (e) {
+                console.error('Ошибка при проверке файла для автосохранения:', e);
+                return;
+            }
+
+            const content = JSON.stringify(techData, null, 2);
+            const contentBase64 = btoa(unescape(encodeURIComponent(content)));
+            const message = `Auto-save: ${new Date().toLocaleString()}`;
+            
+            const requestBody = {
+                message: message,
+                content: contentBase64
+            };
+
+            if (sha) {
+                requestBody.sha = sha;
+            }
+
+            const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'TechDocs-App'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (response.status === 200 || response.status === 201) {
+                this.lastSaveTime = Date.now();
+                console.log('✅ Автосохранение выполнено успешно');
+                
+                if (!document.hidden) {
+                    this.showAutoSaveNotification();
+                }
+            } else {
+                console.warn('⚠️ Автосохранение не удалось:', response.status);
+            }
+        } catch (error) {
+            console.error('❌ Ошибка автосохранения:', error);
+        }
+    },
+    
+    showAutoSaveNotification() {
+        const notification = document.createElement('div');
+        notification.innerHTML = '💾 Автосохранено';
+        notification.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 1002;
+            opacity: 0.9;
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 2000);
+    },
+    
+    scheduleAutoSave() {
+        if (!this.autoSaveEnabled) return;
+        
+        if (this.autoSaveTimeout) {
+            clearTimeout(this.autoSaveTimeout);
+        }
+        
+        this.autoSaveTimeout = setTimeout(() => {
+            this.autoSaveToGitHub();
+        }, 10000);
     },
 
     // === РАБОТА С GITHUB API ===
