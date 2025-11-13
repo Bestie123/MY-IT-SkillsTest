@@ -1,17 +1,13 @@
 const checklistManager = {
     currentChecklist: {
-        categoryIndex: -1,
-        subcategoryIndex: -1,
-        subsubcategoryIndex: -1,
+        path: [],
         techIndex: -1
     },
 
     // === УПРАВЛЕНИЕ ЧЕК-ЛИСТАМИ ===
-    manageChecklist(categoryIndex, subcategoryIndex, subsubcategoryIndex, techIndex) {
+    manageChecklist(path, techIndex) {
         this.currentChecklist = {
-            categoryIndex,
-            subcategoryIndex,
-            subsubcategoryIndex,
+            path,
             techIndex
         };
         
@@ -39,7 +35,7 @@ const checklistManager = {
                 itemElement.className = `checklist-item ${item.completed ? 'completed' : ''}`;
                 itemElement.innerHTML = `
                     <input type="checkbox" ${item.completed ? 'checked' : ''} 
-                           onchange="checklistManager.toggleChecklistItem(${this.currentChecklist.categoryIndex}, ${this.currentChecklist.subcategoryIndex}, ${this.currentChecklist.subsubcategoryIndex}, ${this.currentChecklist.techIndex}, ${index})">
+                           onchange="checklistManager.toggleChecklistItem(${JSON.stringify(this.currentChecklist.path)}, ${this.currentChecklist.techIndex}, ${index})">
                     <span class="checklist-item-text">${item.text}</span>
                     <button onclick="checklistManager.removeChecklistItem(${index})" class="delete" style="margin-left: 10px;">🗑️</button>
                     <button onclick="checklistManager.editChecklistItem(${index})" style="margin-left: 5px;">✏️</button>
@@ -81,8 +77,6 @@ const checklistManager = {
             input.value = '';
             this.renderChecklist();
             dataManager.saveToLocalStorage();
-            
-            // Запуск автосохранения
             authManager.scheduleAutoSave();
         }
     },
@@ -94,8 +88,6 @@ const checklistManager = {
             tech.checklist.splice(index, 1);
             this.renderChecklist();
             dataManager.saveToLocalStorage();
-            
-            // Запуск автосохранения
             authManager.scheduleAutoSave();
         }
     },
@@ -109,15 +101,13 @@ const checklistManager = {
                 tech.checklist[index].text = newText.trim();
                 this.renderChecklist();
                 dataManager.saveToLocalStorage();
-                
-                // Запуск автосохранения
                 authManager.scheduleAutoSave();
             }
         }
     },
     
-    toggleChecklistItem(categoryIndex, subcategoryIndex, subsubcategoryIndex, techIndex, itemIndex) {
-        this.currentChecklist = { categoryIndex, subcategoryIndex, subsubcategoryIndex, techIndex };
+    toggleChecklistItem(path, techIndex, itemIndex) {
+        this.currentChecklist = { path, techIndex };
         const tech = this.getTechnology();
         
         if (tech.checklist && tech.checklist.length > itemIndex) {
@@ -125,8 +115,6 @@ const checklistManager = {
             this.renderChecklist();
             uiManager.renderTable();
             dataManager.saveToLocalStorage();
-            
-            // Запуск автосохранения
             authManager.scheduleAutoSave();
         }
     },
@@ -136,19 +124,11 @@ const checklistManager = {
         uiManager.renderTable();
         dataManager.saveToLocalStorage();
         uiManager.showNotification('Чек-лист сохранен!', 'success');
-        
-        // Запуск автосохранения
         authManager.scheduleAutoSave();
     },
     
     getTechnology() {
-        const c = this.currentChecklist;
-        if (c.subsubcategoryIndex >= 0) {
-            return techData.categories[c.categoryIndex].subcategories[c.subcategoryIndex].subsubcategories[c.subsubcategoryIndex].technologies[c.techIndex];
-        } else if (c.subcategoryIndex >= 0) {
-            return techData.categories[c.categoryIndex].subcategories[c.subcategoryIndex].technologies[c.techIndex];
-        } else {
-            return techData.categories[c.categoryIndex].technologies[c.techIndex];
-        }
+        const parent = dataManager.getNodeByPath(this.currentChecklist.path);
+        return parent ? parent[this.currentChecklist.techIndex] : null;
     }
 };
