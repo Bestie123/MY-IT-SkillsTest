@@ -32,12 +32,12 @@ const navigation = {
     resetView() {
         this.currentView = { type: 'all', path: [] };
         this.updateBreadcrumb();
-        uiManager.renderTable();
+        uiManager.renderTree();
     },
 
     viewNode(path) {
         this.currentView = { type: 'node', path: path };
         this.updateBreadcrumb();
-        uiManager.renderTable();
+        uiManager.renderTree();
     }
 };
