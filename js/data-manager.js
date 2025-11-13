@@ -9,10 +9,10 @@ let currentModalPath = [];
 const dataManager = {
     // Вспомогательные функции для работы с путями
     getNodeByPath(path) {
-        let currentNode = techData.categories;
+        let currentNode = techData;
         for (const index of path) {
-            if (currentNode[index] && currentNode[index].children) {
-                currentNode = currentNode[index].children;
+            if (currentNode.children && currentNode.children[index]) {
+                currentNode = currentNode.children[index];
             } else {
                 return null;
             }
@@ -20,9 +20,18 @@ const dataManager = {
         return currentNode;
     },
 
-    getNodeAtIndex(path, index) {
-        const parent = this.getNodeByPath(path);
-        return parent ? parent[index] : null;
+    getParentByPath(path) {
+        if (path.length === 0) return techData;
+        let currentNode = techData;
+        for (let i = 0; i < path.length - 1; i++) {
+            const index = path[i];
+            if (currentNode.children && currentNode.children[index]) {
+                currentNode = currentNode.children[index];
+            } else {
+                return null;
+            }
+        }
+        return currentNode;
     },
 
     // === ЛОКАЛЬНОЕ ХРАНИЛИЩЕ ===
@@ -46,7 +55,6 @@ const dataManager = {
             techData.categories.push({
                 name: name,
                 type: 'category',
-                technologies: [],
                 children: []
             });
             uiManager.renderTable();
@@ -69,10 +77,13 @@ const dataManager = {
                 return;
             }
 
-            parent.push({
+            if (!parent.children) {
+                parent.children = [];
+            }
+
+            parent.children.push({
                 name: name,
                 type: 'node',
-                technologies: [],
                 children: []
             });
 
@@ -96,13 +107,17 @@ const dataManager = {
                 return;
             }
 
+            if (!parent.children) {
+                parent.children = [];
+            }
+
             const tech = {
                 name: name,
                 type: 'technology',
                 checklist: []
             };
 
-            parent.push(tech);
+            parent.children.push(tech);
 
             uiManager.renderTable();
             this.saveToLocalStorage();
@@ -115,8 +130,8 @@ const dataManager = {
     },
 
     // Функции редактирования
-    editNode(path, index) {
-        const node = this.getNodeAtIndex(path, index);
+    editNode(path) {
+        const node = this.getNodeByPath(path);
         if (!node) return;
 
         const newName = prompt('Введите новое название:', node.name);
@@ -129,8 +144,8 @@ const dataManager = {
         }
     },
 
-    editTechnology(path, index) {
-        const node = this.getNodeAtIndex(path, index);
+    editTechnology(path) {
+        const node = this.getNodeByPath(path);
         if (!node) return;
 
         const newName = prompt('Введите новое название технологии:', node.name);
@@ -144,11 +159,12 @@ const dataManager = {
     },
 
     // Функции удаления
-    deleteNode(path, index) {
+    deleteNode(path) {
         if (confirm('Удалить эту категорию и все её содержимое?')) {
-            const parent = this.getNodeByPath(path);
-            if (parent) {
-                parent.splice(index, 1);
+            const parent = this.getParentByPath(path);
+            if (parent && parent.children) {
+                const index = path[path.length - 1];
+                parent.children.splice(index, 1);
                 uiManager.renderTable();
                 this.saveToLocalStorage();
                 uiManager.showNotification('Категория удалена!', 'success');
@@ -157,11 +173,12 @@ const dataManager = {
         }
     },
 
-    deleteTechnology(path, index) {
+    deleteTechnology(path) {
         if (confirm('Удалить эту технологию и все её задачи?')) {
-            const parent = this.getNodeByPath(path);
-            if (parent) {
-                parent.splice(index, 1);
+            const parent = this.getParentByPath(path);
+            if (parent && parent.children) {
+                const index = path[path.length - 1];
+                parent.children.splice(index, 1);
                 uiManager.renderTable();
                 this.saveToLocalStorage();
                 uiManager.showNotification('Технология удалена!', 'success');
