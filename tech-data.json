@@ -29,10 +29,11 @@
                           "name": " Лоиом",
                           "type": "node",
                           "technologies": [],
-                          "children": []
+                          "children": [],
+                          "expanded": true
                         }
                       ],
-                      "expanded": true
+                      "expanded": false
                     },
                     {
                       "name": "Огрггрр",
@@ -40,7 +41,7 @@
                       "checklist": []
                     }
                   ],
-                  "expanded": true
+                  "expanded": false
                 },
                 {
                   "name": "По огрн",
@@ -77,7 +78,7 @@
               "type": "node",
               "technologies": [],
               "children": [],
-              "expanded": true
+              "expanded": false
             }
           ],
           "expanded": true
