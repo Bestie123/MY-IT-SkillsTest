@@ -3,114 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tech Learning Tree</title>
+    <title>Tech Learning Structure</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🌳 Tech Learning Tree</h1>
-            <p>Структурированное изучение технологий с отслеживанием прогресса</p>
-        </div>
-
-        <div class="auth-section">
-            <div class="auth-inputs">
-                <input type="password" id="githubToken" placeholder="GitHub Token">
-                <input type="text" id="repoOwner" placeholder="Владелец репозитория">
-                <input type="text" id="repoName" placeholder="Имя репозитория">
-                <button onclick="authManager.saveAuth()" class="success">💾 Сохранить</button>
-                <button onclick="authManager.testAuth()" class="warning">🔍 Проверить</button>
+    <div class="app">
+        <!-- Боковая панель навигации -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Tech Structure</h2>
+                <p>Система обучения технологиям</p>
             </div>
-            <div id="authStatus" class="auth-status"></div>
+            
+            <div class="sidebar-section">
+                <h3>Управление данными</h3>
+                <button class="sidebar-btn" onclick="uiManager.showModal('categoryModal')">
+                    <span class="icon">+</span> Новая категория
+                </button>
+                <button class="sidebar-btn" onclick="authManager.loadFromGitHub()">
+                    <span class="icon">📥</span> Загрузить
+                </button>
+                <button class="sidebar-btn" onclick="authManager.saveToGitHub()">
+                    <span class="icon">💾</span> Сохранить
+                </button>
+                <button class="sidebar-btn" id="autoSaveBtn" onclick="authManager.toggleAutoSave()">
+                    <span class="icon">⭕</span> Автосохранение
+                </button>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>GitHub</h3>
+                <div class="auth-inputs">
+                    <input type="password" id="githubToken" placeholder="GitHub Token">
+                    <input type="text" id="repoOwner" placeholder="Владелец">
+                    <input type="text" id="repoName" placeholder="Репозиторий">
+                    <button class="sidebar-btn small" onclick="authManager.saveAuth()">Сохранить</button>
+                    <button class="sidebar-btn small" onclick="authManager.testAuth()">Проверить</button>
+                </div>
+                <div id="authStatus" class="auth-status"></div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Экспорт/Импорт</h3>
+                <button class="sidebar-btn" onclick="dataManager.exportToJSON()">
+                    <span class="icon">📤</span> Экспорт JSON
+                </button>
+            </div>
         </div>
 
-        <div class="controls">
-            <button onclick="uiManager.showModal('categoryModal')">📁 Добавить категорию</button>
-            <button onclick="authManager.loadFromGitHub()">🔄 Загрузить с GitHub</button>
-            <button onclick="authManager.saveToGitHub()">💾 Сохранить на GitHub</button>
-            <button onclick="authManager.toggleAutoSave()" id="autoSaveBtn">🚫 Автосохранение</button>
-            <button onclick="dataManager.exportToJSON()">📥 Экспорт JSON</button>
-        </div>
+        <!-- Основное содержание -->
+        <div class="main-content">
+            <div class="content-header">
+                <div class="breadcrumb" id="breadcrumb">
+                    <span class="breadcrumb-item" onclick="navigation.resetView()">Все технологии</span>
+                </div>
+                <div class="header-actions">
+                    <button class="btn primary" onclick="uiManager.showModal('categoryModal')">+ Категория</button>
+                    <button class="btn" onclick="uiManager.showAddNodeModal()">+ Подкатегория</button>
+                    <button class="btn" onclick="uiManager.showAddTechModal()">+ Технология</button>
+                </div>
+            </div>
 
-        <div class="breadcrumb" id="breadcrumb">
-            <div class="breadcrumb-item" onclick="navigation.resetView()">Все технологии</div>
-        </div>
-
-        <!-- Обновленная таблица -->
-        <div class="table-container">
-            <table class="tech-table">
-                <thead>
-                    <tr>
-                        <th width="35%">Название</th>
-                        <th width="15%">Тип</th>
-                        <th width="20%">Прогресс</th>
-                        <th width="15%">Статус</th>
-                        <th width="15%">Действия</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- Данные будут здесь -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Модальные окна (остаются без изменений) -->
-        <div id="categoryModal" class="modal">
-            <div class="modal-content">
-                <h3>📁 Добавить категорию</h3>
-                <input type="text" id="newCategoryName" placeholder="Название категории">
-                <div class="modal-actions">
-                    <button onclick="dataManager.addCategory()" class="success">Добавить</button>
-                    <button onclick="uiManager.hideModals()">Отмена</button>
+            <!-- Контейнер структуры -->
+            <div class="structure-container">
+                <div id="structureContent" class="structure-content">
+                    <!-- Структура будет здесь -->
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="nodeModal" class="modal">
-            <div class="modal-content">
-                <h3>📂 Добавить подкатегорию</h3>
-                <div id="nodeParentSelect"></div>
-                <input type="text" id="newNodeName" placeholder="Название подкатегории">
-                <div class="modal-actions">
-                    <button onclick="dataManager.addNode()" class="success">Добавить</button>
-                    <button onclick="uiManager.hideModals()">Отмена</button>
-                </div>
+    <!-- Модальные окна -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <h3>Новая категория</h3>
+            <input type="text" id="newCategoryName" placeholder="Название категории">
+            <div class="modal-actions">
+                <button class="btn primary" onclick="dataManager.addCategory()">Создать</button>
+                <button class="btn" onclick="uiManager.hideModals()">Отмена</button>
             </div>
         </div>
+    </div>
 
-        <div id="techModal" class="modal">
-            <div class="modal-content">
-                <h3>⚙️ Добавить технологию</h3>
-                <div id="techParentSelect"></div>
-                <input type="text" id="newTechName" placeholder="Название технологии">
-                <div class="modal-actions">
-                    <button onclick="dataManager.addTechnology()" class="success">Добавить</button>
-                    <button onclick="uiManager.hideModals()">Отмена</button>
-                </div>
+    <div id="nodeModal" class="modal">
+        <div class="modal-content">
+            <h3>Новая подкатегория</h3>
+            <div id="nodeParentSelect" class="parent-select"></div>
+            <input type="text" id="newNodeName" placeholder="Название подкатегории">
+            <div class="modal-actions">
+                <button class="btn primary" onclick="dataManager.addNode()">Создать</button>
+                <button class="btn" onclick="uiManager.hideModals()">Отмена</button>
             </div>
         </div>
+    </div>
 
-        <div id="checklistModal" class="modal">
-            <div class="modal-content">
-                <h3 id="checklistTitle">📋 Чек-лист</h3>
-                <div id="checklistStats" class="checklist-stats"></div>
-                <div id="checklistItems" class="checklist-items"></div>
+    <div id="techModal" class="modal">
+        <div class="modal-content">
+            <h3>Новая технология</h3>
+            <div id="techParentSelect" class="parent-select"></div>
+            <input type="text" id="newTechName" placeholder="Название технологии">
+            <div class="modal-actions">
+                <button class="btn primary" onclick="dataManager.addTechnology()">Создать</button>
+                <button class="btn" onclick="uiManager.hideModals()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="checklistModal" class="modal">
+        <div class="modal-content wide">
+            <div class="modal-header">
+                <h3 id="checklistTitle">Чек-лист</h3>
+                <button class="btn close" onclick="uiManager.hideModals()">×</button>
+            </div>
+            <div id="checklistStats" class="checklist-stats"></div>
+            <div id="checklistItems" class="checklist-items"></div>
+            <div class="checklist-add">
                 <input type="text" id="newChecklistItem" placeholder="Новый пункт чек-листа">
-                <div class="modal-actions">
-                    <button onclick="checklistManager.addChecklistItem()" class="success">+ Добавить</button>
-                    <button onclick="checklistManager.saveChecklist()">💾 Сохранить</button>
-                    <button onclick="uiManager.hideModals()">Отмена</button>
-                </div>
+                <button class="btn primary" onclick="checklistManager.addChecklistItem()">Добавить</button>
             </div>
         </div>
+    </div>
 
-        <div id="jsonSection" class="json-section hidden">
-            <h3>JSON данные:</h3>
+    <div id="jsonSection" class="modal">
+        <div class="modal-content wide">
+            <h3>JSON данные</h3>
             <textarea id="jsonOutput"></textarea>
-            <div class="json-actions">
-                <button onclick="dataManager.copyToClipboard()">📋 Копировать</button>
-                <button onclick="dataManager.importFromJSONText()">📤 Импорт</button>
-                <button onclick="uiManager.hideJSON()">Скрыть</button>
+            <div class="modal-actions">
+                <button class="btn" onclick="dataManager.copyToClipboard()">Копировать</button>
+                <button class="btn" onclick="dataManager.importFromJSONText()">Импорт</button>
+                <button class="btn" onclick="uiManager.hideModals()">Закрыть</button>
             </div>
         </div>
     </div>
