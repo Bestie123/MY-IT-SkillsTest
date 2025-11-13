@@ -18,6 +18,28 @@
                   "name": "Gjgjvj",
                   "completed": false
                 }
+              ],
+              "checklist": [
+                {
+                  "text": "Ошлрлр",
+                  "completed": true
+                },
+                {
+                  "text": "Ршрлр",
+                  "completed": false
+                },
+                {
+                  "text": "Ьмьпор",
+                  "completed": true
+                },
+                {
+                  "text": "Тютдр",
+                  "completed": true
+                },
+                {
+                  "text": "Нина",
+                  "completed": true
+                }
               ]
             },
             {
