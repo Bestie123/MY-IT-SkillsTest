@@ -1,25 +1,3 @@
 {
-  "categories": [
-    {
-      "name": "Java Ecosystem",
-      "technologies": [],
-      "subcategories": [
-        {
-          "name": "Java Core",
-          "technologies": [
-            {
-              "name": "Многопоточность и Concurrent Collections",
-              "checklist": []
-            }
-          ],
-          "subsubcategories": []
-        }
-      ]
-    },
-    {
-      "name": "Ггнноо",
-      "technologies": [],
-      "children": []
-    }
-  ]
+  "categories": []
 }
