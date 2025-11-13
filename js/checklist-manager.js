@@ -37,8 +37,8 @@ const checklistManager = {
                     <input type="checkbox" ${item.completed ? 'checked' : ''} 
                            onchange="checklistManager.toggleChecklistItem(${JSON.stringify(this.currentChecklist.path)}, ${this.currentChecklist.techIndex}, ${index})">
                     <span class="checklist-item-text">${item.text}</span>
-                    <button onclick="checklistManager.removeChecklistItem(${index})" class="delete" style="margin-left: 10px;">🗑️</button>
-                    <button onclick="checklistManager.editChecklistItem(${index})" style="margin-left: 5px;">✏️</button>
+                    <button onclick="checklistManager.removeChecklistItem(${index})" class="delete" style="margin-left: 10px; background: none; border: none; cursor: pointer;">🗑️</button>
+                    <button onclick="checklistManager.editChecklistItem(${index})" style="margin-left: 5px; background: none; border: none; cursor: pointer;">✏️</button>
                 `;
                 checklistItems.appendChild(itemElement);
             });
@@ -77,6 +77,7 @@ const checklistManager = {
             input.value = '';
             this.renderChecklist();
             dataManager.saveToLocalStorage();
+            uiManager.renderTree();
             authManager.scheduleAutoSave();
         }
     },
@@ -88,6 +89,7 @@ const checklistManager = {
             tech.checklist.splice(index, 1);
             this.renderChecklist();
             dataManager.saveToLocalStorage();
+            uiManager.renderTree();
             authManager.scheduleAutoSave();
         }
     },
@@ -113,7 +115,7 @@ const checklistManager = {
         if (tech.checklist && tech.checklist.length > itemIndex) {
             tech.checklist[itemIndex].completed = !tech.checklist[itemIndex].completed;
             this.renderChecklist();
-            uiManager.renderTable();
+            uiManager.renderTree();
             dataManager.saveToLocalStorage();
             authManager.scheduleAutoSave();
         }
@@ -121,7 +123,7 @@ const checklistManager = {
     
     saveChecklist() {
         uiManager.hideModals();
-        uiManager.renderTable();
+        uiManager.renderTree();
         dataManager.saveToLocalStorage();
         uiManager.showNotification('Чек-лист сохранен!', 'success');
         authManager.scheduleAutoSave();
