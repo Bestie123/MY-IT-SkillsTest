@@ -91,8 +91,8 @@ const uiManager = {
             <td colspan="6">
                 <strong>${item.data.name}</strong>
                 <button onclick="navigation.viewCategory(${item.categoryIndex})">👁️ Просмотр</button>
-                <button onclick="this.editCategory(${item.categoryIndex})">✏️</button>
-                <button class="delete" onclick="this.deleteCategory(${item.categoryIndex})">🗑️</button>
+                <button onclick="uiManager.editCategory(${item.categoryIndex})">✏️</button>
+                <button class="delete" onclick="uiManager.deleteCategory(${item.categoryIndex})">🗑️</button>
             </td>
         `;
         tbody.appendChild(row);
@@ -107,8 +107,8 @@ const uiManager = {
             <td colspan="5">
                 <strong>${item.data.name}</strong>
                 <button onclick="navigation.viewSubcategory(${item.categoryIndex}, ${item.subcategoryIndex})">👁️ Просмотр</button>
-                <button onclick="this.editSubcategory(${item.categoryIndex}, ${item.subcategoryIndex})">✏️</button>
-                <button class="delete" onclick="this.deleteSubcategory(${item.categoryIndex}, ${item.subcategoryIndex})">🗑️</button>
+                <button onclick="uiManager.editSubcategory(${item.categoryIndex}, ${item.subcategoryIndex})">✏️</button>
+                <button class="delete" onclick="uiManager.deleteSubcategory(${item.categoryIndex}, ${item.subcategoryIndex})">🗑️</button>
             </td>
         `;
         tbody.appendChild(row);
@@ -123,8 +123,8 @@ const uiManager = {
             <td colspan="5">
                 <strong>${item.data.name}</strong>
                 <button onclick="navigation.viewSubsubcategory(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex})">👁️ Просмотр</button>
-                <button onclick="this.editSubsubcategory(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex})">✏️</button>
-                <button class="delete" onclick="this.deleteSubsubcategory(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex})">🗑️</button>
+                <button onclick="uiManager.editSubsubcategory(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex})">✏️</button>
+                <button class="delete" onclick="uiManager.deleteSubsubcategory(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex})">🗑️</button>
             </td>
         `;
         tbody.appendChild(row);
@@ -173,8 +173,8 @@ const uiManager = {
             <td>${completedTasks}/${totalTasks}</td>
             <td>
                 <button onclick="checklistManager.manageChecklist(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex}, ${item.techIndex})" class="warning">📋 Чек-лист</button>
-                <button onclick="this.editTechnology(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex}, ${item.techIndex})">✏️</button>
-                <button class="delete" onclick="this.deleteTechnology(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex}, ${item.techIndex})">🗑️</button>
+                <button onclick="uiManager.editTechnology(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex}, ${item.techIndex})">✏️</button>
+                <button class="delete" onclick="uiManager.deleteTechnology(${item.categoryIndex}, ${item.subcategoryIndex}, ${item.subsubcategoryIndex}, ${item.techIndex})">🗑️</button>
             </td>
         `;
         tbody.appendChild(row);
