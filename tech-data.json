@@ -34,12 +34,23 @@
                       ]
                     }
                   ]
+                },
+                {
+                  "name": "По огрн",
+                  "type": "technology",
+                  "checklist": []
                 }
               ]
             }
           ]
         }
       ]
+    },
+    {
+      "name": "То лрлил",
+      "type": "category",
+      "technologies": [],
+      "children": []
     }
   ]
 }
