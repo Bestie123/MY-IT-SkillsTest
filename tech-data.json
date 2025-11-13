@@ -1,3 +1,10 @@
 {
-  "categories": []
+  "categories": [
+    {
+      "name": "Не гпн",
+      "type": "category",
+      "technologies": [],
+      "children": []
+    }
+  ]
 }
