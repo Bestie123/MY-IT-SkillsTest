@@ -31,36 +31,59 @@
                           "technologies": [],
                           "children": []
                         }
-                      ]
+                      ],
+                      "expanded": true
                     },
                     {
                       "name": "Огрггрр",
                       "type": "technology",
                       "checklist": []
                     }
-                  ]
+                  ],
+                  "expanded": true
                 },
                 {
                   "name": "По огрн",
                   "type": "technology",
                   "checklist": []
                 }
-              ]
+              ],
+              "expanded": true
             },
             {
               "name": "От оиги",
               "type": "technology",
-              "checklist": []
+              "checklist": [
+                {
+                  "text": "Им мнп",
+                  "completed": false
+                },
+                {
+                  "text": "Рлшрл",
+                  "completed": true
+                },
+                {
+                  "text": "Рргпг",
+                  "completed": true
+                },
+                {
+                  "text": "Роппо",
+                  "completed": false
+                }
+              ]
             },
             {
               "name": "Рдрштш",
               "type": "node",
               "technologies": [],
-              "children": []
+              "children": [],
+              "expanded": true
             }
-          ]
+          ],
+          "expanded": true
         }
-      ]
+      ],
+      "expanded": true
     },
     {
       "name": "То лрлил",
