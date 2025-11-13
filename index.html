@@ -36,22 +36,10 @@
             <button onclick="dataManager.importFromJSON()">📤 Импорт из JSON</button>
         </div>
 
-        <!-- Хлебные крошки для навигации -->
-        <div class="breadcrumb" id="breadcrumb">
-            <div class="breadcrumb-item"><a href="#" onclick="navigation.resetView()">Все технологии</a></div>
-        </div>
-
-        <!-- Таблица с технологиями -->
+        <!-- Таблица с технологиями в формате столбцов -->
         <table id="techTable">
             <thead>
-                <tr>
-                    <th>Категория</th>
-                    <th>Технология</th>
-                    <th>Статус</th>
-                    <th>Прогресс</th>
-                    <th>Задачи</th>
-                    <th>Действия</th>
-                </tr>
+                <!-- Заголовки будут сгенерированы динамически -->
             </thead>
             <tbody id="tableBody">
                 <!-- Данные будут здесь -->
@@ -140,7 +128,6 @@
 
     <script src="js/data-manager.js"></script>
     <script src="js/auth-manager.js"></script>
-    <script src="js/navigation-manager.js"></script>
     <script src="js/ui-manager.js"></script>
     <script src="js/checklist-manager.js"></script>
     <script src="js/app.js"></script>
