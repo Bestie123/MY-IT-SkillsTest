@@ -81,6 +81,9 @@ const checklistManager = {
             input.value = '';
             this.renderChecklist();
             dataManager.saveToLocalStorage();
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
     
@@ -91,6 +94,9 @@ const checklistManager = {
             tech.checklist.splice(index, 1);
             this.renderChecklist();
             dataManager.saveToLocalStorage();
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
     
@@ -103,6 +109,9 @@ const checklistManager = {
                 tech.checklist[index].text = newText.trim();
                 this.renderChecklist();
                 dataManager.saveToLocalStorage();
+                
+                // Запуск автосохранения
+                authManager.scheduleAutoSave();
             }
         }
     },
@@ -116,6 +125,9 @@ const checklistManager = {
             this.renderChecklist();
             uiManager.renderTable();
             dataManager.saveToLocalStorage();
+            
+            // Запуск автосохранения
+            authManager.scheduleAutoSave();
         }
     },
     
@@ -124,6 +136,9 @@ const checklistManager = {
         uiManager.renderTable();
         dataManager.saveToLocalStorage();
         uiManager.showNotification('Чек-лист сохранен!', 'success');
+        
+        // Запуск автосохранения
+        authManager.scheduleAutoSave();
     },
     
     getTechnology() {
