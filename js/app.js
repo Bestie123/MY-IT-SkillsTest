@@ -2,7 +2,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     authManager.loadAuth();
     dataManager.loadFromLocalStorage();
-    navigation.updateBreadcrumb();
     
     // Включить автосохранение по умолчанию, если настроен GitHub
     const token = localStorage.getItem('githubToken');
