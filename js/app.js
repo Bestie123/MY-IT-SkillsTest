@@ -1,4 +1,3 @@
-
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', function() {
     authManager.loadAuth();
