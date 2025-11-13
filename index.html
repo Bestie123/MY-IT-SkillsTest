@@ -26,7 +26,7 @@
 
         <!-- Основные контролы -->
         <div class="controls">
-            <button onclick="uiManager.showModal('categoryModal')">+ Добавить категорию</button>
+            <button onclick="uiManager.showAddCategoryModal()">+ Добавить категорию</button>
             <button onclick="uiManager.showAddNodeModal()">+ Добавить подкатегорию</button>
             <button onclick="uiManager.showAddTechModal()">+ Добавить технологию</button>
             <button onclick="authManager.loadFromGitHub()">🔄 Загрузить с GitHub</button>
@@ -36,10 +36,18 @@
             <button onclick="dataManager.importFromJSON()">📤 Импорт из JSON</button>
         </div>
 
-        <!-- Таблица с технологиями в формате столбцов -->
+        <!-- Таблица с технологиями -->
         <table id="techTable">
             <thead>
-                <!-- Заголовки будут сгенерированы динамически -->
+                <tr>
+                    <th class="category-column">Категория</th>
+                    <th class="subcategory-column">Подкатегория</th>
+                    <th class="technology-column">Технология</th>
+                    <th class="status-column">Статус</th>
+                    <th class="progress-column">Прогресс</th>
+                    <th class="tasks-column">Задачи</th>
+                    <th class="actions-column">Действия</th>
+                </tr>
             </thead>
             <tbody id="tableBody">
                 <!-- Данные будут здесь -->
@@ -61,7 +69,7 @@
         <div id="nodeModal" class="modal">
             <div class="modal-content">
                 <h3>Добавить подкатегорию</h3>
-                <div id="nodeParentSelect">
+                <div class="parent-select-container" id="nodeParentSelect">
                     <!-- Динамически генерируемый выбор родителя -->
                 </div>
                 <input type="text" id="newNodeName" placeholder="Название подкатегории">
@@ -75,7 +83,7 @@
         <div id="techModal" class="modal">
             <div class="modal-content">
                 <h3>Добавить технологию</h3>
-                <div id="techParentSelect">
+                <div class="parent-select-container" id="techParentSelect">
                     <!-- Динамически генерируемый выбор родителя -->
                 </div>
                 <input type="text" id="newTechName" placeholder="Название технологии">
