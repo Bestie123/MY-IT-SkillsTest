@@ -31,6 +31,11 @@
                           "technologies": [],
                           "children": [],
                           "expanded": true
+                        },
+                        {
+                          "name": "Иир",
+                          "type": "technology",
+                          "checklist": []
                         }
                       ],
                       "expanded": true
