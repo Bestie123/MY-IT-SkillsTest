@@ -41,6 +41,17 @@
                   "checklist": []
                 }
               ]
+            },
+            {
+              "name": "От оиги",
+              "type": "technology",
+              "checklist": []
+            },
+            {
+              "name": "Рдрштш",
+              "type": "node",
+              "technologies": [],
+              "children": []
             }
           ]
         }
