@@ -6,7 +6,7 @@ const checklistManager = {
 
     // === УПРАВЛЕНИЕ ЧЕК-ЛИСТАМИ ===
     manageChecklist(path, techIndex) {
-        console.log('Managing checklist for path:', path, 'techIndex:', techIndex);
+        console.log('Opening checklist for:', path, techIndex);
         this.currentChecklist = { path, techIndex };
         const tech = this.getTechnology();
         
@@ -27,18 +27,12 @@ const checklistManager = {
     
     renderChecklist() {
         const tech = this.getTechnology();
-        if (!tech) {
-            console.error('Technology not found for checklist');
-            return;
-        }
+        if (!tech) return;
 
         const checklistItems = document.getElementById('checklistItems');
         const checklistStats = document.getElementById('checklistStats');
         
-        if (!checklistItems || !checklistStats) {
-            console.error('Checklist elements not found');
-            return;
-        }
+        if (!checklistItems || !checklistStats) return;
         
         checklistItems.innerHTML = '';
         
@@ -49,7 +43,7 @@ const checklistManager = {
                 itemElement.innerHTML = `
                     <input type="checkbox" ${item.completed ? 'checked' : ''} 
                            onchange="checklistManager.toggleChecklistItem(${index})">
-                    <span class="checklist-item-text">${item.text || 'Пустой пункт'}</span>
+                    <span class="checklist-item-text">${item.text}</span>
                     <div class="checklist-item-actions">
                         <button class="action-btn" onclick="checklistManager.editChecklistItem(${index})" title="Редактировать">✏️</button>
                         <button class="action-btn" onclick="checklistManager.removeChecklistItem(${index})" title="Удалить">🗑️</button>
@@ -60,6 +54,16 @@ const checklistManager = {
         } else {
             checklistItems.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">Чек-лист пуст. Добавьте первый пункт!</div>';
         }
+        
+        this.updateChecklistStats();
+    },
+    
+    updateChecklistStats() {
+        const tech = this.getTechnology();
+        if (!tech) return;
+
+        const checklistStats = document.getElementById('checklistStats');
+        if (!checklistStats) return;
         
         const completed = tech.checklist ? tech.checklist.filter(item => item.completed).length : 0;
         const total = tech.checklist ? tech.checklist.length : 0;
@@ -75,10 +79,7 @@ const checklistManager = {
     
     addChecklistItem() {
         const input = document.getElementById('newChecklistItem');
-        if (!input) {
-            console.error('Checklist input not found');
-            return;
-        }
+        if (!input) return;
 
         const text = input.value.trim();
         
@@ -105,11 +106,8 @@ const checklistManager = {
         input.value = '';
         this.renderChecklist();
         dataManager.saveToLocalStorage();
-        uiManager.renderStructure();
-        
-        if (authManager.autoSaveEnabled) {
-            authManager.scheduleAutoSave();
-        }
+        uiManager.renderStructure(); // Обновляем всё дерево для отображения прогресса
+        authManager.scheduleAutoSave();
     },
     
     removeChecklistItem(index) {
@@ -128,11 +126,8 @@ const checklistManager = {
             tech.checklist.splice(index, 1);
             this.renderChecklist();
             dataManager.saveToLocalStorage();
-            uiManager.renderStructure();
-            
-            if (authManager.autoSaveEnabled) {
-                authManager.scheduleAutoSave();
-            }
+            uiManager.renderStructure(); // Обновляем всё дерево
+            authManager.scheduleAutoSave();
         }
     },
     
@@ -148,28 +143,46 @@ const checklistManager = {
             tech.checklist[index].text = newText.trim();
             this.renderChecklist();
             dataManager.saveToLocalStorage();
-            
-            if (authManager.autoSaveEnabled) {
-                authManager.scheduleAutoSave();
-            }
+            authManager.scheduleAutoSave();
         }
     },
     
+    // === ОСНОВНОЙ МЕТОД ДЛЯ ПЕРЕКЛЮЧЕНИЯ ЧЕКБОКСОВ ===
     toggleChecklistItem(index) {
+        console.log('Toggling checklist item:', index);
         const tech = this.getTechnology();
         if (!tech || !tech.checklist || index >= tech.checklist.length) {
             console.error('Checklist item not found at index:', index);
             return;
         }
 
+        // Переключаем состояние
         tech.checklist[index].completed = !tech.checklist[index].completed;
+        console.log('Item toggled, new state:', tech.checklist[index].completed);
+        
+        // Обновляем отображение чеклиста
         this.renderChecklist();
+        
+        // Сохраняем данные
         dataManager.saveToLocalStorage();
+        
+        // ОБНОВЛЯЕМ ВСЁ ДЕРЕВО для отображения измененного прогресса
         uiManager.renderStructure();
         
         if (authManager.autoSaveEnabled) {
             authManager.scheduleAutoSave();
         }
+    },
+
+    // === МЕТОД ДЛЯ ПЕРЕКЛЮЧЕНИЯ ИЗ ДЕРЕВА ===
+    toggleChecklistItemFromTree(path, techIndex, itemIndex) {
+        console.log('Toggling from tree:', path, techIndex, itemIndex);
+        
+        // Устанавливаем текущий контекст
+        this.currentChecklist = { path, techIndex };
+        
+        // Используем основной метод переключения
+        this.toggleChecklistItem(itemIndex);
     },
     
     getTechnology() {
