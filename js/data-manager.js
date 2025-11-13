@@ -1,4 +1,4 @@
-// Глобальная структура данных с рекурсивной вложенностью
+// Глобальная структура данных
 const techData = {
     categories: []
 };
@@ -7,12 +7,17 @@ const techData = {
 let currentModalPath = [];
 
 const dataManager = {
-    // Вспомогательные функции для работы с путями
+    // === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
     getNodeByPath(path) {
-        let currentNode = techData;
-        for (const index of path) {
-            if (currentNode.children && currentNode.children[index]) {
-                currentNode = currentNode.children[index];
+        if (path.length === 0) {
+            return techData.categories;
+        }
+        
+        let currentNode = techData.categories;
+        for (let i = 0; i < path.length; i++) {
+            const index = path[i];
+            if (currentNode[index] && currentNode[index].children) {
+                currentNode = currentNode[index].children;
             } else {
                 return null;
             }
@@ -20,18 +25,9 @@ const dataManager = {
         return currentNode;
     },
 
-    getParentByPath(path) {
-        if (path.length === 0) return techData;
-        let currentNode = techData;
-        for (let i = 0; i < path.length - 1; i++) {
-            const index = path[i];
-            if (currentNode.children && currentNode.children[index]) {
-                currentNode = currentNode.children[index];
-            } else {
-                return null;
-            }
-        }
-        return currentNode;
+    getNodeAtIndex(path, index) {
+        const parent = this.getNodeByPath(path);
+        return parent ? parent[index] : null;
     },
 
     // === ЛОКАЛЬНОЕ ХРАНИЛИЩЕ ===
@@ -48,40 +44,36 @@ const dataManager = {
         }
     },
 
-    // === УПРАВЛЕНИЕ ДАННЫМИ ===
+    // === ДОБАВЛЕНИЕ ДАННЫХ ===
     addCategory() {
-        const name = document.getElementById('newCategoryName').value;
+        const name = document.getElementById('newCategoryName').value.trim();
         if (name) {
             techData.categories.push({
                 name: name,
                 type: 'category',
                 children: []
             });
+            
             uiManager.renderTable();
             this.saveToLocalStorage();
             uiManager.hideModals();
             document.getElementById('newCategoryName').value = '';
             uiManager.showNotification('Категория добавлена!', 'success');
-            
             authManager.scheduleAutoSave();
         }
     },
 
     addNode() {
-        const name = document.getElementById('newNodeName').value;
+        const name = document.getElementById('newNodeName').value.trim();
         
-        if (name && currentModalPath.length >= 0) {
+        if (name) {
             const parent = this.getNodeByPath(currentModalPath);
             if (!parent) {
                 uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
                 return;
             }
 
-            if (!parent.children) {
-                parent.children = [];
-            }
-
-            parent.children.push({
+            parent.push({
                 name: name,
                 type: 'node',
                 children: []
@@ -92,51 +84,43 @@ const dataManager = {
             uiManager.hideModals();
             document.getElementById('newNodeName').value = '';
             uiManager.showNotification('Подкатегория добавлена!', 'success');
-            
             authManager.scheduleAutoSave();
         }
     },
 
     addTechnology() {
-        const name = document.getElementById('newTechName').value;
+        const name = document.getElementById('newTechName').value.trim();
         
-        if (name && currentModalPath.length >= 0) {
+        if (name) {
             const parent = this.getNodeByPath(currentModalPath);
             if (!parent) {
                 uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
                 return;
             }
 
-            if (!parent.children) {
-                parent.children = [];
-            }
-
-            const tech = {
+            parent.push({
                 name: name,
                 type: 'technology',
                 checklist: []
-            };
-
-            parent.children.push(tech);
+            });
 
             uiManager.renderTable();
             this.saveToLocalStorage();
             uiManager.hideModals();
             document.getElementById('newTechName').value = '';
             uiManager.showNotification('Технология добавлена!', 'success');
-            
             authManager.scheduleAutoSave();
         }
     },
 
-    // Функции редактирования
-    editNode(path) {
-        const node = this.getNodeByPath(path);
-        if (!node) return;
+    // === РЕДАКТИРОВАНИЕ ===
+    editCategory(index) {
+        const category = techData.categories[index];
+        if (!category) return;
 
-        const newName = prompt('Введите новое название:', node.name);
+        const newName = prompt('Введите новое название категории:', category.name);
         if (newName) {
-            node.name = newName;
+            category.name = newName;
             uiManager.renderTable();
             this.saveToLocalStorage();
             uiManager.showNotification('Категория обновлена!', 'success');
@@ -144,8 +128,22 @@ const dataManager = {
         }
     },
 
-    editTechnology(path) {
-        const node = this.getNodeByPath(path);
+    editNode(path, index) {
+        const node = this.getNodeAtIndex(path, index);
+        if (!node) return;
+
+        const newName = prompt('Введите новое название:', node.name);
+        if (newName) {
+            node.name = newName;
+            uiManager.renderTable();
+            this.saveToLocalStorage();
+            uiManager.showNotification('Подкатегория обновлена!', 'success');
+            authManager.scheduleAutoSave();
+        }
+    },
+
+    editTechnology(path, index) {
+        const node = this.getNodeAtIndex(path, index);
         if (!node) return;
 
         const newName = prompt('Введите новое название технологии:', node.name);
@@ -158,27 +156,35 @@ const dataManager = {
         }
     },
 
-    // Функции удаления
-    deleteNode(path) {
+    // === УДАЛЕНИЕ ===
+    deleteCategory(index) {
         if (confirm('Удалить эту категорию и все её содержимое?')) {
-            const parent = this.getParentByPath(path);
-            if (parent && parent.children) {
-                const index = path[path.length - 1];
-                parent.children.splice(index, 1);
+            techData.categories.splice(index, 1);
+            uiManager.renderTable();
+            this.saveToLocalStorage();
+            uiManager.showNotification('Категория удалена!', 'success');
+            authManager.scheduleAutoSave();
+        }
+    },
+
+    deleteNode(path, index) {
+        if (confirm('Удалить эту подкатегорию и все её содержимое?')) {
+            const parent = this.getNodeByPath(path);
+            if (parent) {
+                parent.splice(index, 1);
                 uiManager.renderTable();
                 this.saveToLocalStorage();
-                uiManager.showNotification('Категория удалена!', 'success');
+                uiManager.showNotification('Подкатегория удалена!', 'success');
                 authManager.scheduleAutoSave();
             }
         }
     },
 
-    deleteTechnology(path) {
+    deleteTechnology(path, index) {
         if (confirm('Удалить эту технологию и все её задачи?')) {
-            const parent = this.getParentByPath(path);
-            if (parent && parent.children) {
-                const index = path[path.length - 1];
-                parent.children.splice(index, 1);
+            const parent = this.getNodeByPath(path);
+            if (parent) {
+                parent.splice(index, 1);
                 uiManager.renderTable();
                 this.saveToLocalStorage();
                 uiManager.showNotification('Технология удалена!', 'success');
