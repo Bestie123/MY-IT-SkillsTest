@@ -1,9 +1,33 @@
-// Глобальная структура данных
+// Глобальная структура данных с рекурсивной вложенностью
 const techData = {
     categories: []
 };
 
 const dataManager = {
+    // Вспомогательные функции для работы с путями
+    getNodeByPath(path) {
+        let currentNode = techData.categories;
+        for (const index of path) {
+            if (currentNode[index] && currentNode[index].children) {
+                currentNode = currentNode[index].children;
+            } else {
+                return null;
+            }
+        }
+        return currentNode;
+    },
+
+    getParentNodeByPath(path) {
+        if (path.length === 0) return techData.categories;
+        const parentPath = path.slice(0, -1);
+        return this.getNodeByPath(parentPath);
+    },
+
+    getNodeAtIndex(path, index) {
+        const parent = this.getNodeByPath(path);
+        return parent ? parent[index] : null;
+    },
+
     // === ЛОКАЛЬНОЕ ХРАНИЛИЩЕ ===
     saveToLocalStorage() {
         localStorage.setItem('techData', JSON.stringify(techData));
@@ -25,7 +49,7 @@ const dataManager = {
             techData.categories.push({
                 name: name,
                 technologies: [],
-                subcategories: []
+                children: []
             });
             uiManager.renderTable();
             this.saveToLocalStorage();
@@ -33,90 +57,119 @@ const dataManager = {
             document.getElementById('newCategoryName').value = '';
             uiManager.showNotification('Категория добавлена!', 'success');
             
-            // Запуск автосохранения
             authManager.scheduleAutoSave();
         }
     },
 
-    addSubcategory() {
-        const categoryIndex = document.getElementById('subcategoryParentSelect').value;
-        const name = document.getElementById('newSubcategoryName').value;
+    addNode() {
+        const path = JSON.parse(document.getElementById('nodeParentSelect').dataset.path || '[]');
+        const name = document.getElementById('newNodeName').value;
         
-        if (name && categoryIndex >= 0) {
-            if (!techData.categories[categoryIndex].subcategories) {
-                techData.categories[categoryIndex].subcategories = [];
+        if (name) {
+            const parent = this.getNodeByPath(path);
+            if (!parent) {
+                uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
+                return;
             }
-            
-            techData.categories[categoryIndex].subcategories.push({
+
+            parent.push({
                 name: name,
                 technologies: [],
-                subsubcategories: []
+                children: []
             });
+
             uiManager.renderTable();
             this.saveToLocalStorage();
             uiManager.hideModals();
-            document.getElementById('newSubcategoryName').value = '';
+            document.getElementById('newNodeName').value = '';
             uiManager.showNotification('Подкатегория добавлена!', 'success');
             
-            // Запуск автосохранения
-            authManager.scheduleAutoSave();
-        }
-    },
-
-    addSubsubcategory() {
-        const categoryIndex = document.getElementById('subsubcategoryParentSelect').value;
-        const name = document.getElementById('newSubsubcategoryName').value;
-        
-        if (name && categoryIndex >= 0) {
-            const subcategoryIndex = document.getElementById('subsubcategoryParentSelect').value;
-            
-            if (!techData.categories[categoryIndex].subcategories[subcategoryIndex].subsubcategories) {
-                techData.categories[categoryIndex].subcategories[subcategoryIndex].subsubcategories = [];
-            }
-            
-            techData.categories[categoryIndex].subcategories[subcategoryIndex].subsubcategories.push({
-                name: name,
-                technologies: []
-            });
-            uiManager.renderTable();
-            this.saveToLocalStorage();
-            uiManager.hideModals();
-            document.getElementById('newSubsubcategoryName').value = '';
-            uiManager.showNotification('Под-подкатегория добавлена!', 'success');
-            
-            // Запуск автосохранения
             authManager.scheduleAutoSave();
         }
     },
 
     addTechnology() {
-        const categoryIndex = document.getElementById('techCategorySelect').value;
-        const subcategoryIndex = document.getElementById('techSubcategorySelect').value;
-        const subsubcategoryIndex = document.getElementById('techSubsubcategorySelect').value;
+        const path = JSON.parse(document.getElementById('techParentSelect').dataset.path || '[]');
         const name = document.getElementById('newTechName').value;
         
-        if (name && categoryIndex >= 0) {
+        if (name) {
+            const parent = this.getNodeByPath(path);
+            if (!parent) {
+                uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
+                return;
+            }
+
             const tech = {
                 name: name,
                 checklist: []
             };
-            
-            if (subsubcategoryIndex >= 0) {
-                techData.categories[categoryIndex].subcategories[subcategoryIndex].subsubcategories[subsubcategoryIndex].technologies.push(tech);
-            } else if (subcategoryIndex >= 0) {
-                techData.categories[categoryIndex].subcategories[subcategoryIndex].technologies.push(tech);
-            } else {
-                techData.categories[categoryIndex].technologies.push(tech);
-            }
-            
+
+            parent.push(tech);
+
             uiManager.renderTable();
             this.saveToLocalStorage();
             uiManager.hideModals();
             document.getElementById('newTechName').value = '';
             uiManager.showNotification('Технология добавлена!', 'success');
             
-            // Запуск автосохранения
             authManager.scheduleAutoSave();
+        }
+    },
+
+    // Функции редактирования
+    editNode(path, index) {
+        const node = this.getNodeAtIndex(path, index);
+        if (!node) return;
+
+        const newName = prompt('Введите новое название:', node.name);
+        if (newName) {
+            node.name = newName;
+            uiManager.renderTable();
+            this.saveToLocalStorage();
+            uiManager.showNotification('Категория обновлена!', 'success');
+            authManager.scheduleAutoSave();
+        }
+    },
+
+    editTechnology(path, index) {
+        const parent = this.getNodeByPath(path);
+        if (!parent || !parent[index]) return;
+
+        const newName = prompt('Введите новое название технологии:', parent[index].name);
+        if (newName) {
+            parent[index].name = newName;
+            uiManager.renderTable();
+            this.saveToLocalStorage();
+            uiManager.showNotification('Технология обновлена!', 'success');
+            authManager.scheduleAutoSave();
+        }
+    },
+
+    // Функции удаления
+    deleteNode(path, index) {
+        if (confirm('Удалить эту категорию и все её содержимое?')) {
+            const parent = this.getNodeByPath(path);
+            if (parent) {
+                parent.splice(index, 1);
+                uiManager.renderTable();
+                this.saveToLocalStorage();
+                navigation.resetView();
+                uiManager.showNotification('Категория удалена!', 'success');
+                authManager.scheduleAutoSave();
+            }
+        }
+    },
+
+    deleteTechnology(path, index) {
+        if (confirm('Удалить эту технологию и все её задачи?')) {
+            const parent = this.getNodeByPath(path);
+            if (parent) {
+                parent.splice(index, 1);
+                uiManager.renderTable();
+                this.saveToLocalStorage();
+                uiManager.showNotification('Технология удалена!', 'success');
+                authManager.scheduleAutoSave();
+            }
         }
     },
 
@@ -144,8 +197,6 @@ const dataManager = {
                     dataManager.saveToLocalStorage();
                     navigation.resetView();
                     uiManager.showNotification('Данные импортированы!', 'success');
-                    
-                    // Запуск автосохранения
                     authManager.scheduleAutoSave();
                 } catch (error) {
                     uiManager.showNotification('Ошибка при чтении JSON файла', 'error');
@@ -165,8 +216,6 @@ const dataManager = {
             this.saveToLocalStorage();
             navigation.resetView();
             uiManager.showNotification('Данные импортированы из JSON!', 'success');
-            
-            // Запуск автосохранения
             authManager.scheduleAutoSave();
         } catch (error) {
             uiManager.showNotification('Ошибка при разборе JSON', 'error');
