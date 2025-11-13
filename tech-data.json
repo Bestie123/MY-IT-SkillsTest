@@ -33,7 +33,7 @@
                           "expanded": true
                         }
                       ],
-                      "expanded": false
+                      "expanded": true
                     },
                     {
                       "name": "Огрггрр",
@@ -41,7 +41,7 @@
                       "checklist": []
                     }
                   ],
-                  "expanded": false
+                  "expanded": true
                 },
                 {
                   "name": "По огрн",
@@ -78,7 +78,7 @@
               "type": "node",
               "technologies": [],
               "children": [],
-              "expanded": false
+              "expanded": true
             }
           ],
           "expanded": true
@@ -90,12 +90,14 @@
       "name": "То лрлил",
       "type": "category",
       "technologies": [],
-      "children": []
+      "children": [],
+      "expanded": true
     },
     {
       "name": "По ннн",
       "type": "category",
-      "children": []
+      "children": [],
+      "expanded": true
     }
   ]
 }
