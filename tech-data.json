@@ -29,7 +29,7 @@
                   "completed": false
                 },
                 {
-                  "text": "Ьмьпор",
+                  "text": "Ьмьпор про но лтшх",
                   "completed": true
                 },
                 {
@@ -44,7 +44,8 @@
             },
             {
               "name": "Hvgcfh by g",
-              "tasks": []
+              "tasks": [],
+              "checklist": []
             }
           ],
           "subsubcategories": []
