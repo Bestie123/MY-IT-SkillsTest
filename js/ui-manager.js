@@ -1,149 +1,166 @@
 const uiManager = {
-    // === ОТОБРАЖЕНИЕ ДЕРЕВА ===
-    renderTree() {
-        const container = document.getElementById('treeContent');
-        container.innerHTML = '';
+    // === ОТОБРАЖЕНИЕ ТАБЛИЦЫ ===
+    renderTable() {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
 
         if (techData.categories.length === 0) {
-            container.innerHTML = '<div style="text-align: center; padding: 40px; color: #6c757d;">Нет данных. Добавьте первую категорию!</div>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #6c757d;">Нет данных. Добавьте первую категорию!</td></tr>';
             return;
         }
 
-        const tree = document.createElement('ul');
-        tree.className = 'tree';
+        const renderNode = (node, level, path, index) => {
+            const fullPath = [...path, index];
+            
+            if (node.type === 'technology') {
+                this.renderTechnologyRow(node, level, fullPath, index);
+            } else {
+                // Рендерим категорию или подкатегорию
+                const row = document.createElement('tr');
+                row.className = `${node.type === 'category' ? 'category-row' : 'node-row'} level-${level}`;
+                
+                const hasChildren = node.children && node.children.length > 0;
+                const indentStyle = `padding-left: ${10 + level * 20}px`;
+                
+                row.innerHTML = `
+                    <td style="${indentStyle}">
+                        <div style="display: flex; align-items: center;">
+                            ${hasChildren ? 
+                                `<button class="expand-btn" onclick="uiManager.toggleExpand(${JSON.stringify(fullPath)})">
+                                    ${node.expanded ? '−' : '+'}
+                                </button>` : 
+                                '<span class="expand-btn" style="visibility: hidden;">•</span>'
+                            }
+                            <span class="node-icon">${node.type === 'category' ? '📁' : '📂'}</span>
+                            <strong>${node.name}</strong>
+                        </div>
+                    </td>
+                    <td>${node.type === 'category' ? 'Категория' : 'Подкатегория'}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>
+                        <div class="actions">
+                            <button class="edit" onclick="dataManager.editNode(${JSON.stringify(path)}, ${index})" title="Редактировать">✏️</button>
+                            ${node.type === 'category' || node.type === 'node' ? `
+                                <button onclick="uiManager.showAddNodeModal(${JSON.stringify(fullPath)})" title="Добавить подкатегорию">📂</button>
+                                <button onclick="uiManager.showAddTechModal(${JSON.stringify(fullPath)})" title="Добавить технологию">⚙️</button>
+                            ` : ''}
+                            <button class="delete" onclick="dataManager.deleteNode(${JSON.stringify(path)}, ${index})" title="Удалить">🗑️</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+
+                // Рекурсивно рендерим дочерние элементы если развернуто
+                if (node.expanded && node.children && node.children.length > 0) {
+                    node.children.forEach((child, childIndex) => {
+                        renderNode(child, level + 1, fullPath, childIndex);
+                    });
+                }
+            }
+        };
+
+        // Рендерим корневые категории
         techData.categories.forEach((category, index) => {
-            tree.appendChild(this.createTreeNode(category, 0, [], index));
+            renderNode(category, 0, [], index);
         });
-        container.appendChild(tree);
     },
 
-    createTreeNode(node, level, path, index) {
-        const li = document.createElement('li');
-        li.className = 'tree-node';
-
-        const nodeContent = document.createElement('div');
-        nodeContent.className = `node-content ${node.type}`;
-        nodeContent.style.paddingLeft = (level * 20) + 'px';
-
-        // Кнопка раскрытия/сворачивания для категорий
-        if (node.type === 'category' || node.type === 'node') {
-            const toggleBtn = document.createElement('button');
-            toggleBtn.className = 'toggle-btn';
-            toggleBtn.innerHTML = node.expanded ? '−' : '+';
-            toggleBtn.onclick = (e) => {
-                e.stopPropagation();
-                node.expanded = !node.expanded;
-                this.renderTree();
-            };
-            nodeContent.appendChild(toggleBtn);
+    renderTechnologyRow(tech, level, path, techIndex) {
+        const tbody = document.getElementById('tableBody');
+        const completedTasks = tech.checklist ? tech.checklist.filter(item => item.completed).length : 0;
+        const totalTasks = tech.checklist ? tech.checklist.length : 0;
+        const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+        
+        let statusText = '';
+        let statusClass = '';
+        
+        if (totalTasks === 0) {
+            statusText = 'В планах';
+            statusClass = 'status-planned';
+        } else if (completedTasks === totalTasks) {
+            statusText = 'Изучено';
+            statusClass = 'status-completed';
         } else {
-            const spacer = document.createElement('span');
-            spacer.className = 'toggle-btn';
-            spacer.innerHTML = '•';
-            nodeContent.appendChild(spacer);
+            statusText = 'В процессе';
+            statusClass = 'status-in-progress';
         }
 
-        // Иконка и название
-        const icon = document.createElement('span');
-        icon.className = 'node-icon';
-        icon.innerHTML = node.type === 'technology' ? '⚙️' : (node.type === 'category' ? '📁' : '📂');
-        nodeContent.appendChild(icon);
-
-        const name = document.createElement('span');
-        name.className = 'node-name';
-        name.textContent = node.name;
-        nodeContent.appendChild(name);
-
-        // Прогресс для технологий
-        if (node.type === 'technology') {
-            const completed = node.checklist ? node.checklist.filter(item => item.completed).length : 0;
-            const total = node.checklist ? node.checklist.length : 0;
-            const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-            const progressInfo = document.createElement('div');
-            progressInfo.className = 'progress-info';
-
-            if (total > 0) {
-                progressInfo.innerHTML = `
+        const indentStyle = `padding-left: ${10 + level * 20}px`;
+        
+        // Строка технологии
+        const row = document.createElement('tr');
+        row.className = `tech-row level-${level}`;
+        row.innerHTML = `
+            <td style="${indentStyle}">
+                <div style="display: flex; align-items: center;">
+                    <span class="node-icon">⚙️</span>
+                    <strong>${tech.name}</strong>
+                </div>
+            </td>
+            <td>Технология</td>
+            <td>
+                <div class="progress-info">
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: ${progress}%"></div>
                     </div>
-                    <span>${completed}/${total}</span>
-                    <span class="status-badge ${progress === 100 ? 'status-completed' : progress > 0 ? 'status-in-progress' : 'status-planned'}">
-                        ${progress === 100 ? '✅' : progress > 0 ? '🚧' : '📝'}
-                    </span>
-                `;
-            } else {
-                progressInfo.innerHTML = '<span class="status-badge status-planned">📝 В планах</span>';
-            }
+                    <span>${Math.round(progress)}%</span>
+                </div>
+            </td>
+            <td>
+                <span class="status-badge ${statusClass}">${statusText}</span>
+            </td>
+            <td>
+                <div class="actions">
+                    <button class="checklist" onclick="checklistManager.manageChecklist(${JSON.stringify(path)}, ${techIndex})" title="Управление чек-листом">📋</button>
+                    <button class="edit" onclick="dataManager.editTechnology(${JSON.stringify(path)}, ${techIndex})" title="Редактировать">✏️</button>
+                    <button class="delete" onclick="dataManager.deleteTechnology(${JSON.stringify(path)}, ${techIndex})" title="Удалить">🗑️</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
 
-            nodeContent.appendChild(progressInfo);
+        // Строка с превью чеклиста
+        if (tech.checklist && tech.checklist.length > 0) {
+            const checklistRow = document.createElement('tr');
+            checklistRow.className = `checklist-preview-row level-${level}`;
+            
+            const visibleItems = tech.checklist.slice(0, 3); // Показываем первые 3 пункта
+            const hasMore = tech.checklist.length > 3;
+            
+            checklistRow.innerHTML = `
+                <td colspan="5" style="${indentStyle}">
+                    <div class="checklist-preview">
+                        ${visibleItems.map((item, index) => `
+                            <div class="checklist-item-preview ${item.completed ? 'completed' : ''}">
+                                <input type="checkbox" ${item.completed ? 'checked' : ''} 
+                                       onchange="checklistManager.toggleChecklistItem(${JSON.stringify(path)}, ${techIndex}, ${index})">
+                                <span class="checklist-item-text">${item.text}</span>
+                            </div>
+                        `).join('')}
+                        ${hasMore ? `
+                            <button class="checklist-toggle" onclick="checklistManager.manageChecklist(${JSON.stringify(path)}, ${techIndex})">
+                                + ещё ${tech.checklist.length - 3} пунктов...
+                            </button>
+                        ` : ''}
+                        <div style="margin-top: 5px; font-size: 0.8em; color: #6c757d;">
+                            Прогресс: ${completedTasks}/${totalTasks} (${Math.round(progress)}%)
+                        </div>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(checklistRow);
         }
+    },
 
-        // Кнопки действий
-        const actions = document.createElement('div');
-        actions.className = 'node-actions';
-
-        if (node.type === 'category' || node.type === 'node') {
-            const addNodeBtn = document.createElement('button');
-            addNodeBtn.innerHTML = '📂';
-            addNodeBtn.title = 'Добавить подкатегорию';
-            addNodeBtn.onclick = (e) => {
-                e.stopPropagation();
-                currentModalPath = [...path, index];
-                this.showModal('nodeModal');
-            };
-            actions.appendChild(addNodeBtn);
-
-            const addTechBtn = document.createElement('button');
-            addTechBtn.innerHTML = '⚙️';
-            addTechBtn.title = 'Добавить технологию';
-            addTechBtn.onclick = (e) => {
-                e.stopPropagation();
-                currentModalPath = [...path, index];
-                this.showModal('techModal');
-            };
-            actions.appendChild(addTechBtn);
+    // === РАСШИРЕНИЕ/СВЕРТЫВАНИЕ ===
+    toggleExpand(path) {
+        const node = dataManager.getNodeByPath(path.slice(0, -1))[path[path.length - 1]];
+        if (node) {
+            node.expanded = !node.expanded;
+            this.renderTable();
+            dataManager.saveToLocalStorage();
         }
-
-        if (node.type === 'technology') {
-            const checklistBtn = document.createElement('button');
-            checklistBtn.innerHTML = '📋';
-            checklistBtn.title = 'Управление чек-листом';
-            checklistBtn.onclick = (e) => {
-                e.stopPropagation();
-                checklistManager.manageChecklist(path, index);
-            };
-            actions.appendChild(checklistBtn);
-        }
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.innerHTML = '🗑️';
-        deleteBtn.title = 'Удалить';
-        deleteBtn.onclick = (e) => {
-            e.stopPropagation();
-            if (node.type === 'technology') {
-                dataManager.deleteTechnology(path, index);
-            } else {
-                dataManager.deleteNode(path, index);
-            }
-        };
-        actions.appendChild(deleteBtn);
-
-        nodeContent.appendChild(actions);
-        li.appendChild(nodeContent);
-
-        // Рекурсивно рендерим детей
-        if ((node.type === 'category' || node.type === 'node') && node.expanded && node.children && node.children.length > 0) {
-            const childrenContainer = document.createElement('div');
-            childrenContainer.className = 'children';
-            node.children.forEach((child, childIndex) => {
-                childrenContainer.appendChild(this.createTreeNode(child, level + 1, [...path, index], childIndex));
-            });
-            li.appendChild(childrenContainer);
-        }
-
-        return li;
     },
 
     // === УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ===
