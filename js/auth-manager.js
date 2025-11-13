@@ -32,7 +32,6 @@ const authManager = {
                 const permissions = responseData.permissions;
                 if (permissions && permissions.push) {
                     this.showAuthStatus('✅ Подключение успешно! Репозиторий доступен для записи.', 'success');
-                    // Включаем автосохранение при успешной проверке
                     this.enableAutoSave();
                 } else {
                     this.showAuthStatus('⚠️ Репозиторий доступен, но нет прав на запись.', 'warning');
@@ -98,12 +97,10 @@ const authManager = {
         this.autoSaveEnabled = true;
         this.updateAutoSaveButton();
         
-        // Автосохранение каждые 2 минуты
         this.autoSaveInterval = setInterval(() => {
             this.autoSaveToGitHub();
         }, 2 * 60 * 1000);
         
-        // Автосохранение при закрытии страницы
         window.addEventListener('beforeunload', this.autoSaveToGitHub.bind(this));
         
         uiManager.showNotification('🔄 Автосохранение включено (каждые 2 минуты)', 'success');
@@ -132,10 +129,10 @@ const authManager = {
         const button = document.getElementById('autoSaveBtn');
         if (this.autoSaveEnabled) {
             button.innerHTML = '✅ Автосохранение';
-            button.className = 'auto-save-enabled';
+            button.className = 'success';
         } else {
             button.innerHTML = '🚫 Автосохранение';
-            button.className = 'auto-save-disabled';
+            button.className = '';
         }
     },
     
@@ -148,7 +145,6 @@ const authManager = {
             return;
         }
 
-        // Проверяем, что прошло достаточно времени с последнего сохранения
         const now = Date.now();
         if (this.lastSaveTime && (now - this.lastSaveTime) < 30000) {
             return;
@@ -278,13 +274,13 @@ const authManager = {
                 const parsedData = JSON.parse(content);
                 
                 techData.categories = parsedData.categories || [];
-                uiManager.renderTable();
+                uiManager.renderTree();
                 dataManager.saveToLocalStorage();
                 uiManager.showNotification('✅ Данные загружены с GitHub!', 'success');
             } else if (response.status === 404) {
                 uiManager.showNotification('📝 Файл не найден. Создан новый пустой файл.', 'warning');
                 techData.categories = [];
-                uiManager.renderTable();
+                uiManager.renderTree();
                 dataManager.saveToLocalStorage();
             } else {
                 const errorData = await response.json();
