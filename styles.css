@@ -12,7 +12,7 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     background: white;
     border-radius: 15px;
@@ -114,54 +114,69 @@ body {
     border: 1px solid #f5c6cb;
 }
 
-.main-content {
-    display: flex;
-    min-height: 500px;
-}
-
-.tree-container {
-    flex: 1;
+/* Стили для таблицы */
+.table-container {
     padding: 20px;
-    overflow-y: auto;
-    max-height: 600px;
+    overflow-x: auto;
 }
 
-.tree {
-    list-style: none;
+.tech-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.tree-node {
-    margin: 5px 0;
+.tech-table th {
+    background: #34495e;
+    color: white;
+    padding: 15px 12px;
+    text-align: left;
+    font-weight: 600;
+    border: none;
 }
 
-.node-content {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    border-radius: 5px;
-    transition: background 0.2s;
-    cursor: pointer;
+.tech-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ecf0f1;
+    vertical-align: top;
 }
 
-.node-content:hover {
+.tech-table tr:hover {
     background: #f8f9fa;
 }
 
-.node-content.category {
+/* Стили для иерархии */
+.category-row {
     background: #e8f4fd;
+    font-weight: 600;
     border-left: 4px solid #3498db;
 }
 
-.node-content.technology {
+.node-row {
     background: #f0f9ff;
+    border-left: 4px solid #2980b9;
+}
+
+.tech-row {
+    background: white;
     border-left: 4px solid #2ecc71;
 }
 
-.toggle-btn {
+.level-0 { padding-left: 10px; }
+.level-1 { padding-left: 30px; }
+.level-2 { padding-left: 50px; }
+.level-3 { padding-left: 70px; }
+.level-4 { padding-left: 90px; }
+.level-5 { padding-left: 110px; }
+
+.expand-btn {
     background: none;
     border: none;
-    font-size: 16px;
     cursor: pointer;
+    font-size: 14px;
     margin-right: 8px;
     width: 20px;
     text-align: center;
@@ -169,82 +184,59 @@ body {
 
 .node-icon {
     margin-right: 8px;
-    font-size: 16px;
+    font-size: 14px;
 }
 
-.node-name {
-    flex: 1;
-    font-weight: 500;
-}
-
-.node-actions {
-    display: flex;
-    gap: 5px;
-    margin-left: 10px;
-}
-
-.node-actions button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 3px;
-    transition: background 0.2s;
-}
-
-.node-actions button:hover {
-    background: rgba(0,0,0,0.1);
-}
-
-.children {
-    margin-left: 30px;
-    border-left: 2px solid #e9ecef;
-    padding-left: 10px;
-}
-
-.checklist-section {
-    margin-top: 10px;
-    margin-left: 40px;
+/* Чеклист в таблице */
+.checklist-preview {
+    margin-top: 8px;
+    padding: 8px;
     background: #f8f9fa;
-    border-radius: 5px;
-    padding: 10px;
+    border-radius: 4px;
+    border-left: 3px solid #3498db;
 }
 
-.checklist-item {
+.checklist-item-preview {
     display: flex;
     align-items: center;
-    padding: 6px 0;
-    border-bottom: 1px solid #e9ecef;
+    padding: 4px 0;
+    font-size: 0.9em;
 }
 
-.checklist-item:last-child {
-    border-bottom: none;
+.checklist-item-preview input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(0.9);
 }
 
-.checklist-item input[type="checkbox"] {
-    margin-right: 10px;
-}
-
-.checklist-item-text {
-    flex: 1;
-}
-
-.checklist-item.completed .checklist-item-text {
+.checklist-item-preview.completed {
     text-decoration: line-through;
     color: #6c757d;
 }
 
+.checklist-toggle {
+    background: none;
+    border: none;
+    color: #3498db;
+    cursor: pointer;
+    font-size: 0.8em;
+    margin-top: 5px;
+    padding: 2px 8px;
+    border-radius: 3px;
+}
+
+.checklist-toggle:hover {
+    background: #e9ecef;
+}
+
+/* Прогресс и статусы */
 .progress-info {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-left: 10px;
-    font-size: 0.9em;
-    color: #6c757d;
 }
 
 .progress-bar {
-    width: 100px;
+    width: 80px;
     height: 8px;
     background: #e9ecef;
     border-radius: 4px;
@@ -258,8 +250,8 @@ body {
 }
 
 .status-badge {
-    padding: 2px 8px;
-    border-radius: 10px;
+    padding: 4px 8px;
+    border-radius: 12px;
     font-size: 0.8em;
     font-weight: 500;
 }
@@ -267,18 +259,55 @@ body {
 .status-planned {
     background: #f8f9fa;
     color: #6c757d;
+    border: 1px solid #dee2e6;
 }
 
 .status-in-progress {
     background: #fff3cd;
     color: #856404;
+    border: 1px solid #ffeaa7;
 }
 
 .status-completed {
     background: #d4edda;
     color: #155724;
+    border: 1px solid #c3e6cb;
 }
 
+/* Кнопки действий */
+.actions {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    transition: background 0.2s;
+}
+
+.actions button:hover {
+    background: rgba(0,0,0,0.1);
+}
+
+.actions .delete {
+    color: #e74c3c;
+}
+
+.actions .edit {
+    color: #3498db;
+}
+
+.actions .checklist {
+    color: #27ae60;
+}
+
+/* Модальные окна */
 .modal {
     display: none;
     position: fixed;
@@ -297,6 +326,8 @@ body {
     border-radius: 10px;
     width: 90%;
     max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .modal h3 {
@@ -318,6 +349,49 @@ body {
     justify-content: flex-end;
 }
 
+/* Чеклист в модальном окне */
+.checklist-items {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 15px 0;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.checklist-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.checklist-item:last-child {
+    border-bottom: none;
+}
+
+.checklist-item input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.checklist-item-text {
+    flex: 1;
+    font-size: 0.95em;
+}
+
+.checklist-item.completed .checklist-item-text {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
+.checklist-stats {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+/* JSON секция */
 .json-section {
     background: #f8f9fa;
     padding: 20px;
@@ -344,6 +418,7 @@ body {
     display: none;
 }
 
+/* Уведомления */
 .notification {
     position: fixed;
     top: 20px;
@@ -364,6 +439,7 @@ body {
 .notification.error { background: #e74c3c; }
 .notification.warning { background: #f39c12; }
 
+/* Хлебные крошки */
 .breadcrumb {
     background: #ecf0f1;
     padding: 10px 20px;
@@ -390,4 +466,43 @@ body {
 
 .breadcrumb-item:hover {
     text-decoration: underline;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        margin: 10px;
+        border-radius: 10px;
+    }
+    
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .controls button {
+        width: 100%;
+        margin: 2px 0;
+    }
+    
+    .auth-inputs {
+        flex-direction: column;
+    }
+    
+    .auth-inputs input {
+        min-width: auto;
+    }
+    
+    .table-container {
+        padding: 10px;
+        overflow-x: auto;
+    }
+    
+    .tech-table {
+        font-size: 0.9em;
+    }
+    
+    .actions {
+        flex-direction: column;
+    }
 }
