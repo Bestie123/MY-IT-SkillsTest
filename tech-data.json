@@ -2,7 +2,37 @@
   "categories": [
     {
       "name": "Java Ecosystem",
-      "technologies": []
+      "technologies": [],
+      "subcategories": [
+        {
+          "name": "Java",
+          "technologies": [
+            {
+              "name": "Ghg",
+              "tasks": [
+                {
+                  "name": "Hhhh",
+                  "completed": false
+                },
+                {
+                  "name": "Gjgjvj",
+                  "completed": false
+                }
+              ]
+            },
+            {
+              "name": "Hvgcfh by g",
+              "tasks": []
+            }
+          ],
+          "subsubcategories": []
+        },
+        {
+          "name": "Hghb",
+          "technologies": [],
+          "subsubcategories": []
+        }
+      ]
     }
   ]
 }
