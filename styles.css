@@ -94,7 +94,7 @@ th {
 }
 
 .actions-column {
-    width: 200px;
+    width: 250px;
 }
 
 .status-planned { color: #6c757d; }
@@ -345,4 +345,38 @@ button.auto-save-disabled:hover {
     color: #6c757d;
     font-style: italic;
     text-align: center;
+}
+
+.parent-select-container {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.parent-path {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.row-actions button {
+    font-size: 0.8em;
+    padding: 4px 8px;
+}
+
+.tech-row {
+    background-color: #f8f9fa;
+}
+
+.tech-row:hover {
+    background-color: #e9ecef;
 }
