@@ -1,3 +1,4 @@
+
 const uiManager = {
     // === ОТОБРАЖЕНИЕ ТАБЛИЦЫ ===
     renderTable() {
@@ -9,47 +10,64 @@ const uiManager = {
             return;
         }
 
-        const renderNode = (node, level, path, index) => {
-            const fullPath = [...path, index];
-            
-            if (node.type === 'technology') {
-                this.renderTechnologyRow(node, level, path, index);
-            } else {
-                // Рендерим категорию или подкатегорию
-                const row = document.createElement('tr');
-                row.className = `node-level-${level % 6}`;
-                row.innerHTML = `
-                    <td class="indent-${level}">
-                        <strong>${node.name}</strong>
-                        <span class="path-display">${this.getPathDisplay(fullPath)}</span>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button onclick="navigation.viewNode(${JSON.stringify(fullPath)})">👁️ Просмотр</button>
-                        <button onclick="uiManager.showAddNodeModal(${JSON.stringify(fullPath)})">+ Подкатегория</button>
-                        <button onclick="uiManager.showAddTechModal(${JSON.stringify(fullPath)})">+ Технология</button>
-                        <button onclick="dataManager.editNode(${JSON.stringify(path)}, ${index})">✏️</button>
-                        <button class="delete" onclick="dataManager.deleteNode(${JSON.stringify(path)}, ${index})">🗑️</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-
-                // Рекурсивно рендерим дочерние элементы
-                if (node.children && node.children.length > 0) {
-                    node.children.forEach((child, childIndex) => {
-                        renderNode(child, level + 1, fullPath, childIndex);
-                    });
-                }
-            }
-        };
-
-        // Рендерим корневые категории
+        // Рендерим корневые категории как строки
         techData.categories.forEach((category, index) => {
-            renderNode(category, 0, [], index);
+            this.renderCategoryRow(category, 0, [], index);
         });
+    },
+
+    renderCategoryRow(category, level, path, index) {
+        const tbody = document.getElementById('tableBody');
+        const fullPath = [...path, index];
+        
+        // Создаем строку для категории
+        const row = document.createElement('tr');
+        row.className = `node-level-${level % 6}`;
+        
+        // Создаем ячейки для всех уровней вложенности
+        let categoryCells = '';
+        for (let i = 0; i < level; i++) {
+            categoryCells += '<td></td>';
+        }
+        
+        categoryCells += `
+            <td>
+                <strong>${category.name}</strong>
+                <span class="path-display">${this.getPathDisplay(fullPath)}</span>
+            </td>
+        `;
+        
+        // Заполняем оставшиеся ячейки пустыми
+        const remainingColumns = 5 - level; // 5 - максимальное количество столбцов категорий
+        for (let i = 0; i < remainingColumns; i++) {
+            categoryCells += '<td></td>';
+        }
+        
+        row.innerHTML = `
+            ${categoryCells}
+            <td>
+                <button onclick="navigation.viewNode(${JSON.stringify(fullPath)})">👁️ Просмотр</button>
+                <button onclick="uiManager.showAddNodeModal(${JSON.stringify(fullPath)})">+ Подкатегория</button>
+                <button onclick="uiManager.showAddTechModal(${JSON.stringify(fullPath)})">+ Технология</button>
+                <button onclick="dataManager.editNode(${JSON.stringify(path)}, ${index})">✏️</button>
+                <button class="delete" onclick="dataManager.deleteNode(${JSON.stringify(path)}, ${index})">🗑️</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+
+        // Рендерим технологии этой категории
+        if (category.technologies && category.technologies.length > 0) {
+            category.technologies.forEach((tech, techIndex) => {
+                this.renderTechnologyRow(tech, level + 1, fullPath, techIndex);
+            });
+        }
+
+        // Рекурсивно рендерим подкатегории как новые строки
+        if (category.children && category.children.length > 0) {
+            category.children.forEach((child, childIndex) => {
+                this.renderCategoryRow(child, level + 1, fullPath, childIndex);
+            });
+        }
     },
 
     renderTechnologyRow(tech, level, path, techIndex) {
@@ -72,10 +90,17 @@ const uiManager = {
             statusClass = 'status-in-progress';
         }
 
+        // Создаем ячейки для всех уровней вложенности
+        let categoryCells = '';
+        for (let i = 0; i < level; i++) {
+            categoryCells += '<td></td>';
+        }
+        
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td class="indent-${level}"></td>
+            ${categoryCells}
             <td><strong>${tech.name}</strong></td>
+            ${this.generateEmptyCells(4 - level)}
             <td class="${statusClass}">${statusText}</td>
             <td>
                 <div class="progress-bar">
@@ -101,9 +126,16 @@ const uiManager = {
     renderChecklistSection(tech, level, path, techIndex, completedTasks, totalTasks, progress) {
         const tbody = document.getElementById('tableBody');
         const checklistRow = document.createElement('tr');
+        
+        // Создаем ячейки для всех уровней вложенности
+        let categoryCells = '';
+        for (let i = 0; i <= level; i++) {
+            categoryCells += '<td></td>';
+        }
+        
         checklistRow.innerHTML = `
-            <td class="indent-${level}"></td>
-            <td colspan="5">
+            ${categoryCells}
+            <td colspan="${5 - level}">
                 <div class="checklist-section">
                     <div class="checklist-stats">
                         Прогресс: ${completedTasks}/${totalTasks} (${Math.round(progress)}%)
@@ -119,6 +151,14 @@ const uiManager = {
             </td>
         `;
         tbody.appendChild(checklistRow);
+    },
+
+    generateEmptyCells(count) {
+        let cells = '';
+        for (let i = 0; i < count; i++) {
+            cells += '<td></td>';
+        }
+        return cells;
     },
 
     getPathDisplay(path) {
