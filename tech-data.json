@@ -38,7 +38,8 @@
                     {
                       "name": "Огрггрр",
                       "type": "technology",
-                      "checklist": []
+                      "checklist": [],
+                      "expanded": true
                     }
                   ],
                   "expanded": true
@@ -46,7 +47,8 @@
                 {
                   "name": "По огрн",
                   "type": "technology",
-                  "checklist": []
+                  "checklist": [],
+                  "expanded": true
                 }
               ],
               "expanded": true
@@ -71,7 +73,8 @@
                   "text": "Роппо",
                   "completed": false
                 }
-              ]
+              ],
+              "expanded": true
             },
             {
               "name": "Рдрштш",
