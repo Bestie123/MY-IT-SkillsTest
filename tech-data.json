@@ -1,39 +1,39 @@
 {
   "categories": [
     {
-      "name": "Не гпн",
+      "name": "ÐÐµ Ð³Ð¿Ð½",
       "type": "category",
       "technologies": [],
       "children": [
         {
-          "name": "Олллл",
+          "name": "ÐÐ»Ð»Ð»Ð»",
           "type": "node",
           "technologies": [],
           "children": [
             {
-              "name": "Диллилх",
+              "name": "ÐÐ¸Ð»Ð»Ð¸Ð»Ñ",
               "type": "node",
               "technologies": [],
               "children": [
                 {
-                  "name": "Момом но п",
+                  "name": "ÐÐ¾Ð¼Ð¾Ð¼ Ð½Ð¾ Ð¿",
                   "type": "node",
                   "technologies": [],
                   "children": [
                     {
-                      "name": "Грпгиорм",
+                      "name": "ÐÑÐ¿Ð³Ð¸Ð¾ÑÐ¼",
                       "type": "node",
                       "technologies": [],
                       "children": [
                         {
-                          "name": " Лоиом",
+                          "name": " ÐÐ¾Ð¸Ð¾Ð¼",
                           "type": "node",
                           "technologies": [],
                           "children": [],
                           "expanded": true
                         },
                         {
-                          "name": "Иир",
+                          "name": "ÐÐ¸Ñ",
                           "type": "technology",
                           "checklist": [],
                           "expanded": true
@@ -42,13 +42,22 @@
                       "expanded": true
                     },
                     {
-                      "name": "Огрггрр",
+                      "name": "ÐÐ³ÑÐ³Ð³ÑÑ",
                       "type": "technology",
-                      "checklist": [],
+                      "checklist": [
+                        {
+                          "text": "const dataManager = {     // ... остальные методы без изменений ...      initializeExpanded(nodes) {         nodes.forEach(node => {             if (node.expanded === undefined) {                 node.expanded = true;             }             if (node.children && node.children.length > 0) {                 this.initializeExpanded(node.children);             }         });     },      // ... остальные методы без изменений ... };о л",
+                          "completed": false
+                        },
+                        {
+                          "text": "О о",
+                          "completed": false
+                        }
+                      ],
                       "expanded": true
                     },
                     {
-                      "name": "Кт тии",
+                      "name": "ÐÑ ÑÐ¸Ð¸",
                       "type": "technology",
                       "checklist": [],
                       "expanded": true
@@ -57,7 +66,7 @@
                   "expanded": true
                 },
                 {
-                  "name": "По огрн",
+                  "name": "ÐÐ¾ Ð¾Ð³ÑÐ½",
                   "type": "technology",
                   "checklist": [],
                   "expanded": true
@@ -66,26 +75,26 @@
               "expanded": true
             },
             {
-              "name": "От оиги",
+              "name": "ÐÑ Ð¾Ð¸Ð³Ð¸",
               "type": "technology",
               "checklist": [
                 {
-                  "text": "Им мнп",
+                  "text": "ÐÐ¼ Ð¼Ð½Ð¿",
                   "completed": false
                 },
                 {
-                  "text": "Роппо",
+                  "text": "Ð Ð¾Ð¿Ð¿Ð¾",
                   "completed": true
                 },
                 {
-                  "text": "Окоа",
+                  "text": "ÐÐºÐ¾Ð°",
                   "completed": true
                 }
               ],
               "expanded": true
             },
             {
-              "name": "Рдрштш",
+              "name": "Ð Ð´ÑÑÑÑ",
               "type": "node",
               "technologies": [],
               "children": [],
@@ -98,14 +107,14 @@
       "expanded": true
     },
     {
-      "name": "То лрлил",
+      "name": "Ð¢Ð¾ Ð»ÑÐ»Ð¸Ð»",
       "type": "category",
       "technologies": [],
       "children": [],
       "expanded": true
     },
     {
-      "name": "По ннн",
+      "name": "ÐÐ¾ Ð½Ð½Ð½",
       "type": "category",
       "children": [],
       "expanded": true
