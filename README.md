@@ -240,7 +240,6 @@ technologies-docs/
 - GitHub: [@Bestie123](https://github.com/Bestie123)
 - Email: misha1997-09@mail.ru
 - Вконтакте: https://vk.com/bestie1
-- 
 ---
 
 <div align="center">
