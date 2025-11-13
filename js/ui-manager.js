@@ -1,178 +1,179 @@
 const uiManager = {
-    // === ОТОБРАЖЕНИЕ ТАБЛИЦЫ В ФОРМАТЕ СТОЛБЦОВ ===
+    selectedParentPath: [],
+
+    // === ОТОБРАЖЕНИЕ ТАБЛИЦЫ ===
     renderTable() {
         const tbody = document.getElementById('tableBody');
         tbody.innerHTML = '';
 
         if (techData.categories.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">Нет данных. Добавьте первую категорию!</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Нет данных. Добавьте первую категорию!</td></tr>';
             return;
         }
 
-        // Сначала собираем все возможные пути для построения столбцов
-        const allPaths = this.collectAllPaths();
-        
-        // Создаем заголовки столбцов на основе путей
-        this.createColumnHeaders(allPaths);
-        
-        // Рендерим строки с технологиями
-        this.renderTechnologyRows(allPaths);
-    },
-
-    collectAllPaths() {
-        const paths = [];
-        
-        const traverse = (node, currentPath) => {
-            if (node.type === 'technology') {
-                paths.push([...currentPath]);
-            }
-            
-            if (node.children && node.children.length > 0) {
-                node.children.forEach((child, index) => {
-                    traverse(child, [...currentPath, {name: child.name, index}]);
-                });
-            }
-        };
-
-        techData.categories.forEach((category, index) => {
-            traverse(category, [{name: category.name, index}]);
+        // Рендерим категории и их содержимое
+        techData.categories.forEach((category, categoryIndex) => {
+            this.renderCategory(category, [categoryIndex], tbody);
         });
-        
-        return paths;
     },
 
-    createColumnHeaders(allPaths) {
-        const thead = document.querySelector('#techTable thead');
-        thead.innerHTML = '';
-        
-        // Находим максимальную глубину для определения количества столбцов
-        const maxDepth = Math.max(...allPaths.map(path => path.length));
-        
-        let headerHTML = '<tr>';
-        
-        // Столбцы для категорий и подкатегорий
-        for (let i = 0; i < maxDepth; i++) {
-            headerHTML += `<th>${i === 0 ? 'Категория' : `Подкатегория ${i}`}</th>`;
-        }
-        
-        // Остальные столбцы
-        headerHTML += `
-            <th class="technology-column">Технология</th>
-            <th class="status-column">Статус</th>
-            <th class="progress-column">Прогресс</th>
-            <th class="tasks-column">Задачи</th>
-            <th class="actions-column">Действия</th>
-        </tr>`;
-        
-        thead.innerHTML = headerHTML;
-    },
+    renderCategory(category, path, tbody) {
+        // Рендерим саму категорию
+        const categoryRow = document.createElement('tr');
+        categoryRow.className = 'category-row';
+        categoryRow.innerHTML = `
+            <td class="category-column">
+                <strong>${category.name}</strong>
+                <div class="parent-path">${this.getPathDisplay(path)}</div>
+            </td>
+            <td class="empty-cell">—</td>
+            <td class="empty-cell">—</td>
+            <td class="empty-cell">—</td>
+            <td class="empty-cell">—</td>
+            <td class="empty-cell">—</td>
+            <td class="row-actions">
+                <button onclick="uiManager.showAddNodeModal(${JSON.stringify(path)})">+ Подкатегория</button>
+                <button onclick="uiManager.showAddTechModal(${JSON.stringify(path)})">+ Технология</button>
+                <button onclick="dataManager.editNode(${JSON.stringify(path)})">✏️</button>
+                <button class="delete" onclick="dataManager.deleteNode(${JSON.stringify(path)})">🗑️</button>
+            </td>
+        `;
+        tbody.appendChild(categoryRow);
 
-    renderTechnologyRows(allPaths) {
-        const tbody = document.getElementById('tableBody');
-        
-        const renderTechRow = (tech, path) => {
-            const completedTasks = tech.checklist ? tech.checklist.filter(item => item.completed).length : 0;
-            const totalTasks = tech.checklist ? tech.checklist.length : 0;
-            const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-            
-            let statusText = '';
-            let statusClass = '';
-            
-            if (totalTasks === 0) {
-                statusText = '📝 В планах';
-                statusClass = 'status-planned';
-            } else if (completedTasks === totalTasks) {
-                statusText = '✅ Изучено';
-                statusClass = 'status-completed';
-            } else {
-                statusText = '🚧 В процессе';
-                statusClass = 'status-in-progress';
-            }
-
-            let rowHTML = '<tr>';
-            
-            // Заполняем столбцы категорий и подкатегорий
-            const maxDepth = Math.max(...allPaths.map(p => p.length));
-            for (let i = 0; i < maxDepth; i++) {
-                if (i < path.length) {
-                    const pathItem = path[i];
-                    const cellClass = i === 0 ? 'category-column' : 'subcategory-column';
-                    rowHTML += `<td class="${cellClass}">${pathItem.name}</td>`;
-                } else {
-                    rowHTML += '<td class="empty-cell">—</td>';
+        // Рендерим подкатегории и технологии
+        if (category.children && category.children.length > 0) {
+            category.children.forEach((child, childIndex) => {
+                const childPath = [...path, childIndex];
+                if (child.type === 'node') {
+                    this.renderSubcategory(child, childPath, tbody);
+                } else if (child.type === 'technology') {
+                    this.renderTechnology(child, childPath, tbody, category.name, '');
                 }
-            }
-            
-            // Столбец технологии
-            rowHTML += `<td class="technology-column"><strong>${tech.name}</strong></td>`;
-            
-            // Остальные столбцы
-            rowHTML += `
-                <td class="${statusClass}">${statusText}</td>
-                <td>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progress}%"></div>
-                    </div>
-                    ${Math.round(progress)}%
-                </td>
-                <td>${completedTasks}/${totalTasks}</td>
-                <td>
-                    <button onclick="checklistManager.manageChecklist(${JSON.stringify(this.getIndexPath(path))}, ${this.findTechIndex(path, tech)})" class="warning">📋 Чек-лист</button>
-                    <button onclick="dataManager.editTechnology(${JSON.stringify(this.getIndexPath(path))}, ${this.findTechIndex(path, tech)})">✏️</button>
-                    <button class="delete" onclick="dataManager.deleteTechnology(${JSON.stringify(this.getIndexPath(path))}, ${this.findTechIndex(path, tech)})">🗑️</button>
-                </td>
-            </tr>`;
-            
-            tbody.innerHTML += rowHTML;
-        };
-
-        // Обходим все технологии и рендерим строки
-        const traverseAndRender = (node, currentPath) => {
-            if (node.type === 'technology') {
-                renderTechRow(node, currentPath);
-            }
-            
-            if (node.children && node.children.length > 0) {
-                node.children.forEach((child, index) => {
-                    traverseAndRender(child, [...currentPath, {name: child.name, index, node: child}]);
-                });
-            }
-        };
-
-        techData.categories.forEach((category, index) => {
-            traverseAndRender(category, [{name: category.name, index, node: category}]);
-        });
-    },
-
-    getIndexPath(path) {
-        return path.map(item => item.index);
-    },
-
-    findTechIndex(path, tech) {
-        const lastPathItem = path[path.length - 1];
-        const parentNode = path.length > 1 ? path[path.length - 2].node : techData.categories[path[0].index];
-        
-        if (parentNode.children) {
-            return parentNode.children.findIndex(child => child === tech);
+            });
         }
-        return -1;
+    },
+
+    renderSubcategory(subcategory, path, tbody) {
+        // Рендерим подкатегорию
+        const subcategoryRow = document.createElement('tr');
+        subcategoryRow.className = 'subcategory-row';
+        subcategoryRow.innerHTML = `
+            <td class="category-column"></td>
+            <td class="subcategory-column">
+                <strong>${subcategory.name}</strong>
+                <div class="parent-path">${this.getPathDisplay(path)}</div>
+            </td>
+            <td class="empty-cell">—</td>
+            <td class="empty-cell">—</td>
+            <td class="empty-cell">—</td>
+            <td class="empty-cell">—</td>
+            <td class="row-actions">
+                <button onclick="uiManager.showAddNodeModal(${JSON.stringify(path)})">+ Подкатегория</button>
+                <button onclick="uiManager.showAddTechModal(${JSON.stringify(path)})">+ Технология</button>
+                <button onclick="dataManager.editNode(${JSON.stringify(path)})">✏️</button>
+                <button class="delete" onclick="dataManager.deleteNode(${JSON.stringify(path)})">🗑️</button>
+            </td>
+        `;
+        tbody.appendChild(subcategoryRow);
+
+        // Рендерим содержимое подкатегории
+        if (subcategory.children && subcategory.children.length > 0) {
+            subcategory.children.forEach((child, childIndex) => {
+                const childPath = [...path, childIndex];
+                if (child.type === 'node') {
+                    this.renderSubcategory(child, childPath, tbody);
+                } else if (child.type === 'technology') {
+                    // Находим названия родительских категорий для отображения
+                    const categoryName = this.getCategoryName(path);
+                    const subcategoryName = subcategory.name;
+                    this.renderTechnology(child, childPath, tbody, categoryName, subcategoryName);
+                }
+            });
+        }
+    },
+
+    renderTechnology(tech, path, tbody, categoryName, subcategoryName) {
+        const completedTasks = tech.checklist ? tech.checklist.filter(item => item.completed).length : 0;
+        const totalTasks = tech.checklist ? tech.checklist.length : 0;
+        const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+        
+        let statusText = '';
+        let statusClass = '';
+        
+        if (totalTasks === 0) {
+            statusText = '📝 В планах';
+            statusClass = 'status-planned';
+        } else if (completedTasks === totalTasks) {
+            statusText = '✅ Изучено';
+            statusClass = 'status-completed';
+        } else {
+            statusText = '🚧 В процессе';
+            statusClass = 'status-in-progress';
+        }
+
+        const techRow = document.createElement('tr');
+        techRow.className = 'tech-row';
+        techRow.innerHTML = `
+            <td class="category-column">${categoryName || '—'}</td>
+            <td class="subcategory-column">${subcategoryName || '—'}</td>
+            <td class="technology-column"><strong>${tech.name}</strong></td>
+            <td class="${statusClass}">${statusText}</td>
+            <td>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progress}%"></div>
+                </div>
+                ${Math.round(progress)}%
+            </td>
+            <td>${completedTasks}/${totalTasks}</td>
+            <td class="row-actions">
+                <button onclick="checklistManager.manageChecklist(${JSON.stringify(path)})" class="warning">📋 Чек-лист</button>
+                <button onclick="dataManager.editTechnology(${JSON.stringify(path)})">✏️</button>
+                <button class="delete" onclick="dataManager.deleteTechnology(${JSON.stringify(path)})">🗑️</button>
+            </td>
+        `;
+        tbody.appendChild(techRow);
+    },
+
+    getCategoryName(path) {
+        if (path.length === 0) return '';
+        const category = dataManager.getNodeByPath([path[0]]);
+        return category ? category.name : '';
+    },
+
+    getPathDisplay(path) {
+        if (path.length === 0) return '';
+        let currentNode = techData;
+        let pathNames = [];
+        
+        for (const index of path) {
+            if (currentNode.children && currentNode.children[index]) {
+                currentNode = currentNode.children[index];
+                pathNames.push(currentNode.name);
+            }
+        }
+        
+        return pathNames.join(' → ');
     },
 
     // === УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ===
-    showModal(modalId) {
-        document.getElementById(modalId).style.display = 'block';
+    showAddCategoryModal() {
+        this.showModal('categoryModal');
     },
 
-    showAddNodeModal(path = []) {
-        currentModalPath = path;
-        this.updateParentSelect('nodeModal', path);
+    showAddNodeModal(parentPath = []) {
+        this.selectedParentPath = parentPath;
+        this.renderParentSelect('nodeParentSelect', parentPath);
         this.showModal('nodeModal');
     },
 
-    showAddTechModal(path = []) {
-        currentModalPath = path;
-        this.updateParentSelect('techModal', path);
+    showAddTechModal(parentPath = []) {
+        this.selectedParentPath = parentPath;
+        this.renderParentSelect('techParentSelect', parentPath);
         this.showModal('techModal');
+    },
+
+    showModal(modalId) {
+        document.getElementById(modalId).style.display = 'block';
     },
 
     hideModals() {
@@ -185,19 +186,62 @@ const uiManager = {
         document.getElementById('jsonSection').classList.add('hidden');
     },
 
-    // === ОБНОВЛЕНИЕ SELECT В МОДАЛЬНЫХ ОКНАХ ===
-    updateParentSelect(modalId, currentPath) {
-        const container = document.getElementById(modalId === 'nodeModal' ? 'nodeParentSelect' : 'techParentSelect');
+    // === ВЫБОР РОДИТЕЛЯ ===
+    renderParentSelect(containerId, currentPath) {
+        const container = document.getElementById(containerId);
         container.innerHTML = '';
         
-        const title = document.createElement('div');
-        title.innerHTML = `<strong>Родительская категория:</strong> ${this.getPathDisplay(currentPath) || 'Корень'}`;
-        container.appendChild(title);
+        // Добавляем возможность выбора корня
+        const rootItem = document.createElement('div');
+        rootItem.className = `parent-select-item ${currentPath.length === 0 ? 'selected' : ''}`;
+        rootItem.innerHTML = `
+            <strong>Корень</strong>
+            <div class="parent-path">Путь: корневая категория</div>
+        `;
+        rootItem.onclick = () => {
+            this.selectParent([], containerId);
+        };
+        container.appendChild(rootItem);
+
+        // Рекурсивно добавляем все категории и подкатегории
+        this.addParentOptions(techData.categories, [], containerId, currentPath);
     },
 
-    getPathDisplay(path) {
-        if (path.length === 0) return '';
-        return path.map(item => item.name).join(' → ');
+    addParentOptions(nodes, currentPath, containerId, selectedPath) {
+        nodes.forEach((node, index) => {
+            if (node.type !== 'technology') {
+                const path = [...currentPath, index];
+                const isSelected = JSON.stringify(path) === JSON.stringify(selectedPath);
+                
+                const item = document.createElement('div');
+                item.className = `parent-select-item ${isSelected ? 'selected' : ''}`;
+                item.innerHTML = `
+                    <strong>${node.name}</strong>
+                    <div class="parent-path">Путь: ${this.getPathDisplay(path)}</div>
+                `;
+                item.onclick = () => {
+                    this.selectParent(path, containerId);
+                };
+                document.getElementById(containerId).appendChild(item);
+
+                // Рекурсивно добавляем дочерние элементы
+                if (node.children) {
+                    this.addParentOptions(node.children, path, containerId, selectedPath);
+                }
+            }
+        });
+    },
+
+    selectParent(path, containerId) {
+        this.selectedParentPath = path;
+        currentModalPath = path;
+        
+        // Обновляем выделение
+        document.querySelectorAll(`#${containerId} .parent-select-item`).forEach(item => {
+            item.classList.remove('selected');
+        });
+        
+        event.target.closest('.parent-select-item').classList.add('selected');
     },
 
     // === УТИЛИТЫ ===
