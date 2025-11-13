@@ -1,139 +1,161 @@
 const uiManager = {
-    // === ОТОБРАЖЕНИЕ ТАБЛИЦЫ ===
+    // === ОТОБРАЖЕНИЕ ТАБЛИЦЫ В ФОРМАТЕ СТОЛБЦОВ ===
     renderTable() {
         const tbody = document.getElementById('tableBody');
         tbody.innerHTML = '';
 
         if (techData.categories.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет данных. Добавьте первую категорию!</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">Нет данных. Добавьте первую категорию!</td></tr>';
             return;
         }
 
-        const renderNode = (node, level, path, index) => {
-            const fullPath = [...path, index];
-            
-            if (node.type === 'technology') {
-                this.renderTechnologyRow(node, level, path, index);
-            } else {
-                // Рендерим категорию или подкатегорию
-                const row = document.createElement('tr');
-                row.className = `node-level-${level % 6}`;
-                row.innerHTML = `
-                    <td class="indent-${level}">
-                        <strong>${node.name}</strong>
-                        <span class="path-display">${this.getPathDisplay(fullPath)}</span>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button onclick="navigation.viewNode(${JSON.stringify(fullPath)})">👁️ Просмотр</button>
-                        <button onclick="uiManager.showAddNodeModal(${JSON.stringify(fullPath)})">+ Подкатегория</button>
-                        <button onclick="uiManager.showAddTechModal(${JSON.stringify(fullPath)})">+ Технология</button>
-                        <button onclick="dataManager.editNode(${JSON.stringify(path)}, ${index})">✏️</button>
-                        <button class="delete" onclick="dataManager.deleteNode(${JSON.stringify(path)}, ${index})">🗑️</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
+        // Сначала собираем все возможные пути для построения столбцов
+        const allPaths = this.collectAllPaths();
+        
+        // Создаем заголовки столбцов на основе путей
+        this.createColumnHeaders(allPaths);
+        
+        // Рендерим строки с технологиями
+        this.renderTechnologyRows(allPaths);
+    },
 
-                // Рекурсивно рендерим дочерние элементы
-                if (node.children && node.children.length > 0) {
-                    node.children.forEach((child, childIndex) => {
-                        renderNode(child, level + 1, fullPath, childIndex);
-                    });
-                }
+    collectAllPaths() {
+        const paths = [];
+        
+        const traverse = (node, currentPath) => {
+            if (node.type === 'technology') {
+                paths.push([...currentPath]);
+            }
+            
+            if (node.children && node.children.length > 0) {
+                node.children.forEach((child, index) => {
+                    traverse(child, [...currentPath, {name: child.name, index}]);
+                });
             }
         };
 
-        // Рендерим корневые категории
         techData.categories.forEach((category, index) => {
-            renderNode(category, 0, [], index);
+            traverse(category, [{name: category.name, index}]);
+        });
+        
+        return paths;
+    },
+
+    createColumnHeaders(allPaths) {
+        const thead = document.querySelector('#techTable thead');
+        thead.innerHTML = '';
+        
+        // Находим максимальную глубину для определения количества столбцов
+        const maxDepth = Math.max(...allPaths.map(path => path.length));
+        
+        let headerHTML = '<tr>';
+        
+        // Столбцы для категорий и подкатегорий
+        for (let i = 0; i < maxDepth; i++) {
+            headerHTML += `<th>${i === 0 ? 'Категория' : `Подкатегория ${i}`}</th>`;
+        }
+        
+        // Остальные столбцы
+        headerHTML += `
+            <th class="technology-column">Технология</th>
+            <th class="status-column">Статус</th>
+            <th class="progress-column">Прогресс</th>
+            <th class="tasks-column">Задачи</th>
+            <th class="actions-column">Действия</th>
+        </tr>`;
+        
+        thead.innerHTML = headerHTML;
+    },
+
+    renderTechnologyRows(allPaths) {
+        const tbody = document.getElementById('tableBody');
+        
+        const renderTechRow = (tech, path) => {
+            const completedTasks = tech.checklist ? tech.checklist.filter(item => item.completed).length : 0;
+            const totalTasks = tech.checklist ? tech.checklist.length : 0;
+            const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+            
+            let statusText = '';
+            let statusClass = '';
+            
+            if (totalTasks === 0) {
+                statusText = '📝 В планах';
+                statusClass = 'status-planned';
+            } else if (completedTasks === totalTasks) {
+                statusText = '✅ Изучено';
+                statusClass = 'status-completed';
+            } else {
+                statusText = '🚧 В процессе';
+                statusClass = 'status-in-progress';
+            }
+
+            let rowHTML = '<tr>';
+            
+            // Заполняем столбцы категорий и подкатегорий
+            const maxDepth = Math.max(...allPaths.map(p => p.length));
+            for (let i = 0; i < maxDepth; i++) {
+                if (i < path.length) {
+                    const pathItem = path[i];
+                    const cellClass = i === 0 ? 'category-column' : 'subcategory-column';
+                    rowHTML += `<td class="${cellClass}">${pathItem.name}</td>`;
+                } else {
+                    rowHTML += '<td class="empty-cell">—</td>';
+                }
+            }
+            
+            // Столбец технологии
+            rowHTML += `<td class="technology-column"><strong>${tech.name}</strong></td>`;
+            
+            // Остальные столбцы
+            rowHTML += `
+                <td class="${statusClass}">${statusText}</td>
+                <td>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    ${Math.round(progress)}%
+                </td>
+                <td>${completedTasks}/${totalTasks}</td>
+                <td>
+                    <button onclick="checklistManager.manageChecklist(${JSON.stringify(this.getIndexPath(path))}, ${this.findTechIndex(path, tech)})" class="warning">📋 Чек-лист</button>
+                    <button onclick="dataManager.editTechnology(${JSON.stringify(this.getIndexPath(path))}, ${this.findTechIndex(path, tech)})">✏️</button>
+                    <button class="delete" onclick="dataManager.deleteTechnology(${JSON.stringify(this.getIndexPath(path))}, ${this.findTechIndex(path, tech)})">🗑️</button>
+                </td>
+            </tr>`;
+            
+            tbody.innerHTML += rowHTML;
+        };
+
+        // Обходим все технологии и рендерим строки
+        const traverseAndRender = (node, currentPath) => {
+            if (node.type === 'technology') {
+                renderTechRow(node, currentPath);
+            }
+            
+            if (node.children && node.children.length > 0) {
+                node.children.forEach((child, index) => {
+                    traverseAndRender(child, [...currentPath, {name: child.name, index, node: child}]);
+                });
+            }
+        };
+
+        techData.categories.forEach((category, index) => {
+            traverseAndRender(category, [{name: category.name, index, node: category}]);
         });
     },
 
-    renderTechnologyRow(tech, level, path, techIndex) {
-        const tbody = document.getElementById('tableBody');
-        const completedTasks = tech.checklist ? tech.checklist.filter(item => item.completed).length : 0;
-        const totalTasks = tech.checklist ? tech.checklist.length : 0;
-        const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-        
-        let statusText = '';
-        let statusClass = '';
-        
-        if (totalTasks === 0) {
-            statusText = '📝 В планах';
-            statusClass = 'status-planned';
-        } else if (completedTasks === totalTasks) {
-            statusText = '✅ Изучено';
-            statusClass = 'status-completed';
-        } else {
-            statusText = '🚧 В процессе';
-            statusClass = 'status-in-progress';
-        }
-
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td class="indent-${level}"></td>
-            <td><strong>${tech.name}</strong></td>
-            <td class="${statusClass}">${statusText}</td>
-            <td>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${progress}%"></div>
-                </div>
-                ${Math.round(progress)}%
-            </td>
-            <td>${completedTasks}/${totalTasks}</td>
-            <td>
-                <button onclick="checklistManager.manageChecklist(${JSON.stringify(path)}, ${techIndex})" class="warning">📋 Чек-лист</button>
-                <button onclick="dataManager.editTechnology(${JSON.stringify(path)}, ${techIndex})">✏️</button>
-                <button class="delete" onclick="dataManager.deleteTechnology(${JSON.stringify(path)}, ${techIndex})">🗑️</button>
-            </td>
-        `;
-        tbody.appendChild(row);
-
-        // Отображаем чек-лист под технологией, если он есть
-        if (tech.checklist && tech.checklist.length > 0) {
-            this.renderChecklistSection(tech, level, path, techIndex, completedTasks, totalTasks, progress);
-        }
+    getIndexPath(path) {
+        return path.map(item => item.index);
     },
 
-    renderChecklistSection(tech, level, path, techIndex, completedTasks, totalTasks, progress) {
-        const tbody = document.getElementById('tableBody');
-        const checklistRow = document.createElement('tr');
-        checklistRow.innerHTML = `
-            <td class="indent-${level}"></td>
-            <td colspan="5">
-                <div class="checklist-section">
-                    <div class="checklist-stats">
-                        Прогресс: ${completedTasks}/${totalTasks} (${Math.round(progress)}%)
-                    </div>
-                    ${tech.checklist.map((checkItem, idx) => `
-                        <div class="checklist-item ${checkItem.completed ? 'completed' : ''}">
-                            <input type="checkbox" ${checkItem.completed ? 'checked' : ''} 
-                                   onchange="checklistManager.toggleChecklistItem(${JSON.stringify(path)}, ${techIndex}, ${idx})">
-                            <span class="checklist-item-text">${checkItem.text}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            </td>
-        `;
-        tbody.appendChild(checklistRow);
-    },
-
-    getPathDisplay(path) {
-        if (path.length === 0) return '';
-        let currentNode = techData.categories;
-        let pathNames = [];
+    findTechIndex(path, tech) {
+        const lastPathItem = path[path.length - 1];
+        const parentNode = path.length > 1 ? path[path.length - 2].node : techData.categories[path[0].index];
         
-        for (const index of path) {
-            if (currentNode[index]) {
-                pathNames.push(currentNode[index].name);
-                currentNode = currentNode[index].children || [];
-            }
+        if (parentNode.children) {
+            return parentNode.children.findIndex(child => child === tech);
         }
-        
-        return pathNames.join(' → ');
+        return -1;
     },
 
     // === УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ===
@@ -171,6 +193,11 @@ const uiManager = {
         const title = document.createElement('div');
         title.innerHTML = `<strong>Родительская категория:</strong> ${this.getPathDisplay(currentPath) || 'Корень'}`;
         container.appendChild(title);
+    },
+
+    getPathDisplay(path) {
+        if (path.length === 0) return '';
+        return path.map(item => item.name).join(' → ');
     },
 
     // === УТИЛИТЫ ===
