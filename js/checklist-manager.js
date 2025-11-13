@@ -1,11 +1,13 @@
 const checklistManager = {
-    currentTechPath: [],
+    currentChecklistPath: [],
+    currentTechIndex: -1,
 
     // === УПРАВЛЕНИЕ ЧЕК-ЛИСТАМИ ===
-    manageChecklist(techPath) {
-        this.currentTechPath = techPath;
+    manageChecklist(path, techIndex) {
+        this.currentChecklistPath = path;
+        this.currentTechIndex = techIndex;
         
-        const tech = dataManager.getNodeByPath(techPath);
+        const tech = dataManager.getNodeAtIndex(path, techIndex);
         if (!tech) {
             uiManager.showNotification('Технология не найдена!', 'error');
             return;
@@ -22,7 +24,7 @@ const checklistManager = {
     },
     
     renderChecklist() {
-        const tech = dataManager.getNodeByPath(this.currentTechPath);
+        const tech = dataManager.getNodeAtIndex(this.currentChecklistPath, this.currentTechIndex);
         if (!tech) return;
         
         const checklistItems = document.getElementById('checklistItems');
@@ -64,7 +66,7 @@ const checklistManager = {
         const text = input.value.trim();
         
         if (text) {
-            const tech = dataManager.getNodeByPath(this.currentTechPath);
+            const tech = dataManager.getNodeAtIndex(this.currentChecklistPath, this.currentTechIndex);
             if (!tech) return;
             
             if (!tech.checklist) {
@@ -85,7 +87,7 @@ const checklistManager = {
     },
     
     removeChecklistItem(index) {
-        const tech = dataManager.getNodeByPath(this.currentTechPath);
+        const tech = dataManager.getNodeAtIndex(this.currentChecklistPath, this.currentTechIndex);
         if (!tech) return;
         
         if (tech.checklist && tech.checklist.length > index) {
@@ -98,7 +100,7 @@ const checklistManager = {
     },
     
     editChecklistItem(index) {
-        const tech = dataManager.getNodeByPath(this.currentTechPath);
+        const tech = dataManager.getNodeAtIndex(this.currentChecklistPath, this.currentTechIndex);
         if (!tech) return;
         
         if (tech.checklist && tech.checklist.length > index) {
@@ -114,7 +116,7 @@ const checklistManager = {
     },
     
     toggleChecklistItem(itemIndex) {
-        const tech = dataManager.getNodeByPath(this.currentTechPath);
+        const tech = dataManager.getNodeAtIndex(this.currentChecklistPath, this.currentTechIndex);
         if (!tech) return;
         
         if (tech.checklist && tech.checklist.length > itemIndex) {
