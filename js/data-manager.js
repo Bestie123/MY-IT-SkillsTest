@@ -35,7 +35,7 @@ const dataManager = {
         if (saved) {
             const parsedData = JSON.parse(saved);
             techData.categories = parsedData.categories || [];
-            uiManager.renderTable();
+            uiManager.renderTree();
         }
     },
 
@@ -46,10 +46,10 @@ const dataManager = {
             techData.categories.push({
                 name: name,
                 type: 'category',
-                technologies: [],
-                children: []
+                children: [],
+                expanded: true
             });
-            uiManager.renderTable();
+            uiManager.renderTree();
             this.saveToLocalStorage();
             uiManager.hideModals();
             document.getElementById('newCategoryName').value = '';
@@ -72,11 +72,11 @@ const dataManager = {
             parent.push({
                 name: name,
                 type: 'node',
-                technologies: [],
-                children: []
+                children: [],
+                expanded: true
             });
 
-            uiManager.renderTable();
+            uiManager.renderTree();
             this.saveToLocalStorage();
             uiManager.hideModals();
             document.getElementById('newNodeName').value = '';
@@ -104,7 +104,7 @@ const dataManager = {
 
             parent.push(tech);
 
-            uiManager.renderTable();
+            uiManager.renderTree();
             this.saveToLocalStorage();
             uiManager.hideModals();
             document.getElementById('newTechName').value = '';
@@ -122,7 +122,7 @@ const dataManager = {
         const newName = prompt('Введите новое название:', node.name);
         if (newName) {
             node.name = newName;
-            uiManager.renderTable();
+            uiManager.renderTree();
             this.saveToLocalStorage();
             uiManager.showNotification('Категория обновлена!', 'success');
             authManager.scheduleAutoSave();
@@ -136,7 +136,7 @@ const dataManager = {
         const newName = prompt('Введите новое название технологии:', node.name);
         if (newName) {
             node.name = newName;
-            uiManager.renderTable();
+            uiManager.renderTree();
             this.saveToLocalStorage();
             uiManager.showNotification('Технология обновлена!', 'success');
             authManager.scheduleAutoSave();
@@ -149,7 +149,7 @@ const dataManager = {
             const parent = this.getNodeByPath(path);
             if (parent) {
                 parent.splice(index, 1);
-                uiManager.renderTable();
+                uiManager.renderTree();
                 this.saveToLocalStorage();
                 navigation.resetView();
                 uiManager.showNotification('Категория удалена!', 'success');
@@ -163,7 +163,7 @@ const dataManager = {
             const parent = this.getNodeByPath(path);
             if (parent) {
                 parent.splice(index, 1);
-                uiManager.renderTable();
+                uiManager.renderTree();
                 this.saveToLocalStorage();
                 uiManager.showNotification('Технология удалена!', 'success');
                 authManager.scheduleAutoSave();
@@ -191,7 +191,7 @@ const dataManager = {
                 try {
                     const parsedData = JSON.parse(e.target.result);
                     techData.categories = parsedData.categories || [];
-                    uiManager.renderTable();
+                    uiManager.renderTree();
                     dataManager.saveToLocalStorage();
                     navigation.resetView();
                     uiManager.showNotification('Данные импортированы!', 'success');
@@ -210,7 +210,7 @@ const dataManager = {
         try {
             const parsedData = JSON.parse(jsonText);
             techData.categories = parsedData.categories || [];
-            uiManager.renderTable();
+            uiManager.renderTree();
             this.saveToLocalStorage();
             navigation.resetView();
             uiManager.showNotification('Данные импортированы из JSON!', 'success');
