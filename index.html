@@ -27,8 +27,8 @@
         <!-- Основные контролы -->
         <div class="controls">
             <button onclick="uiManager.showModal('categoryModal')">+ Добавить категорию</button>
-            <button onclick="uiManager.showModal('nodeModal')">+ Добавить подкатегорию</button>
-            <button onclick="uiManager.showModal('techModal')">+ Добавить технологию</button>
+            <button onclick="uiManager.showAddNodeModal()">+ Добавить подкатегорию</button>
+            <button onclick="uiManager.showAddTechModal()">+ Добавить технологию</button>
             <button onclick="authManager.loadFromGitHub()">🔄 Загрузить с GitHub</button>
             <button onclick="authManager.saveToGitHub()">💾 Сохранить на GitHub</button>
             <button onclick="authManager.toggleAutoSave()" id="autoSaveBtn">🚫 Автосохранение</button>
