@@ -3,6 +3,9 @@ const techData = {
     categories: []
 };
 
+// Текущий выбранный путь для модальных окон
+let currentModalPath = [];
+
 const dataManager = {
     // Вспомогательные функции для работы с путями
     getNodeByPath(path) {
@@ -15,12 +18,6 @@ const dataManager = {
             }
         }
         return currentNode;
-    },
-
-    getParentNodeByPath(path) {
-        if (path.length === 0) return techData.categories;
-        const parentPath = path.slice(0, -1);
-        return this.getNodeByPath(parentPath);
     },
 
     getNodeAtIndex(path, index) {
@@ -48,6 +45,7 @@ const dataManager = {
         if (name) {
             techData.categories.push({
                 name: name,
+                type: 'category',
                 technologies: [],
                 children: []
             });
@@ -62,11 +60,10 @@ const dataManager = {
     },
 
     addNode() {
-        const path = JSON.parse(document.getElementById('nodeParentSelect').dataset.path || '[]');
         const name = document.getElementById('newNodeName').value;
         
-        if (name) {
-            const parent = this.getNodeByPath(path);
+        if (name && currentModalPath.length >= 0) {
+            const parent = this.getNodeByPath(currentModalPath);
             if (!parent) {
                 uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
                 return;
@@ -74,6 +71,7 @@ const dataManager = {
 
             parent.push({
                 name: name,
+                type: 'node',
                 technologies: [],
                 children: []
             });
@@ -89,11 +87,10 @@ const dataManager = {
     },
 
     addTechnology() {
-        const path = JSON.parse(document.getElementById('techParentSelect').dataset.path || '[]');
         const name = document.getElementById('newTechName').value;
         
-        if (name) {
-            const parent = this.getNodeByPath(path);
+        if (name && currentModalPath.length >= 0) {
+            const parent = this.getNodeByPath(currentModalPath);
             if (!parent) {
                 uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
                 return;
@@ -101,6 +98,7 @@ const dataManager = {
 
             const tech = {
                 name: name,
+                type: 'technology',
                 checklist: []
             };
 
@@ -132,12 +130,12 @@ const dataManager = {
     },
 
     editTechnology(path, index) {
-        const parent = this.getNodeByPath(path);
-        if (!parent || !parent[index]) return;
+        const node = this.getNodeAtIndex(path, index);
+        if (!node) return;
 
-        const newName = prompt('Введите новое название технологии:', parent[index].name);
+        const newName = prompt('Введите новое название технологии:', node.name);
         if (newName) {
-            parent[index].name = newName;
+            node.name = newName;
             uiManager.renderTable();
             this.saveToLocalStorage();
             uiManager.showNotification('Технология обновлена!', 'success');
