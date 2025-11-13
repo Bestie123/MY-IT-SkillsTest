@@ -1,4 +1,4 @@
-// Глобальная структура данных
+// Глобальная структура данных с рекурсивной вложенностью
 const techData = {
     categories: []
 };
@@ -7,15 +7,10 @@ const techData = {
 let currentModalPath = [];
 
 const dataManager = {
-    // === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
+    // Вспомогательные функции для работы с путями
     getNodeByPath(path) {
-        if (path.length === 0) {
-            return techData.categories;
-        }
-        
         let currentNode = techData.categories;
-        for (let i = 0; i < path.length; i++) {
-            const index = path[i];
+        for (const index of path) {
             if (currentNode[index] && currentNode[index].children) {
                 currentNode = currentNode[index].children;
             } else {
@@ -44,29 +39,30 @@ const dataManager = {
         }
     },
 
-    // === ДОБАВЛЕНИЕ ДАННЫХ ===
+    // === УПРАВЛЕНИЕ ДАННЫМИ ===
     addCategory() {
-        const name = document.getElementById('newCategoryName').value.trim();
+        const name = document.getElementById('newCategoryName').value;
         if (name) {
             techData.categories.push({
                 name: name,
                 type: 'category',
+                technologies: [],
                 children: []
             });
-            
             uiManager.renderTable();
             this.saveToLocalStorage();
             uiManager.hideModals();
             document.getElementById('newCategoryName').value = '';
             uiManager.showNotification('Категория добавлена!', 'success');
+            
             authManager.scheduleAutoSave();
         }
     },
 
     addNode() {
-        const name = document.getElementById('newNodeName').value.trim();
+        const name = document.getElementById('newNodeName').value;
         
-        if (name) {
+        if (name && currentModalPath.length >= 0) {
             const parent = this.getNodeByPath(currentModalPath);
             if (!parent) {
                 uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
@@ -76,6 +72,7 @@ const dataManager = {
             parent.push({
                 name: name,
                 type: 'node',
+                technologies: [],
                 children: []
             });
 
@@ -84,50 +81,40 @@ const dataManager = {
             uiManager.hideModals();
             document.getElementById('newNodeName').value = '';
             uiManager.showNotification('Подкатегория добавлена!', 'success');
+            
             authManager.scheduleAutoSave();
         }
     },
 
     addTechnology() {
-        const name = document.getElementById('newTechName').value.trim();
+        const name = document.getElementById('newTechName').value;
         
-        if (name) {
+        if (name && currentModalPath.length >= 0) {
             const parent = this.getNodeByPath(currentModalPath);
             if (!parent) {
                 uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
                 return;
             }
 
-            parent.push({
+            const tech = {
                 name: name,
                 type: 'technology',
                 checklist: []
-            });
+            };
+
+            parent.push(tech);
 
             uiManager.renderTable();
             this.saveToLocalStorage();
             uiManager.hideModals();
             document.getElementById('newTechName').value = '';
             uiManager.showNotification('Технология добавлена!', 'success');
+            
             authManager.scheduleAutoSave();
         }
     },
 
-    // === РЕДАКТИРОВАНИЕ ===
-    editCategory(index) {
-        const category = techData.categories[index];
-        if (!category) return;
-
-        const newName = prompt('Введите новое название категории:', category.name);
-        if (newName) {
-            category.name = newName;
-            uiManager.renderTable();
-            this.saveToLocalStorage();
-            uiManager.showNotification('Категория обновлена!', 'success');
-            authManager.scheduleAutoSave();
-        }
-    },
-
+    // Функции редактирования
     editNode(path, index) {
         const node = this.getNodeAtIndex(path, index);
         if (!node) return;
@@ -137,7 +124,7 @@ const dataManager = {
             node.name = newName;
             uiManager.renderTable();
             this.saveToLocalStorage();
-            uiManager.showNotification('Подкатегория обновлена!', 'success');
+            uiManager.showNotification('Категория обновлена!', 'success');
             authManager.scheduleAutoSave();
         }
     },
@@ -156,25 +143,16 @@ const dataManager = {
         }
     },
 
-    // === УДАЛЕНИЕ ===
-    deleteCategory(index) {
-        if (confirm('Удалить эту категорию и все её содержимое?')) {
-            techData.categories.splice(index, 1);
-            uiManager.renderTable();
-            this.saveToLocalStorage();
-            uiManager.showNotification('Категория удалена!', 'success');
-            authManager.scheduleAutoSave();
-        }
-    },
-
+    // Функции удаления
     deleteNode(path, index) {
-        if (confirm('Удалить эту подкатегорию и все её содержимое?')) {
+        if (confirm('Удалить эту категорию и все её содержимое?')) {
             const parent = this.getNodeByPath(path);
             if (parent) {
                 parent.splice(index, 1);
                 uiManager.renderTable();
                 this.saveToLocalStorage();
-                uiManager.showNotification('Подкатегория удалена!', 'success');
+                navigation.resetView();
+                uiManager.showNotification('Категория удалена!', 'success');
                 authManager.scheduleAutoSave();
             }
         }
@@ -215,6 +193,7 @@ const dataManager = {
                     techData.categories = parsedData.categories || [];
                     uiManager.renderTable();
                     dataManager.saveToLocalStorage();
+                    navigation.resetView();
                     uiManager.showNotification('Данные импортированы!', 'success');
                     authManager.scheduleAutoSave();
                 } catch (error) {
@@ -233,6 +212,7 @@ const dataManager = {
             techData.categories = parsedData.categories || [];
             uiManager.renderTable();
             this.saveToLocalStorage();
+            navigation.resetView();
             uiManager.showNotification('Данные импортированы из JSON!', 'success');
             authManager.scheduleAutoSave();
         } catch (error) {

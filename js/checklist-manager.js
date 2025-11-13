@@ -1,18 +1,17 @@
 const checklistManager = {
-    currentChecklistPath: [],
-    currentTechIndex: -1,
+    currentChecklist: {
+        path: [],
+        techIndex: -1
+    },
 
     // === УПРАВЛЕНИЕ ЧЕК-ЛИСТАМИ ===
     manageChecklist(path, techIndex) {
-        this.currentChecklistPath = path;
-        this.currentTechIndex = techIndex;
+        this.currentChecklist = {
+            path,
+            techIndex
+        };
         
-        const tech = dataManager.getNodeAtIndex(path, techIndex);
-        if (!tech) {
-            uiManager.showNotification('Технология не найдена!', 'error');
-            return;
-        }
-        
+        const tech = this.getTechnology();
         document.getElementById('checklistTitle').textContent = `Чек-лист: ${tech.name}`;
         
         if (!tech.checklist) {
@@ -24,9 +23,7 @@ const checklistManager = {
     },
     
     renderChecklist() {
-        const tech = dataManager.getNodeAtIndex(this.currentChecklistPath, this.currentTechIndex);
-        if (!tech) return;
-        
+        const tech = this.getTechnology();
         const checklistItems = document.getElementById('checklistItems');
         const checklistStats = document.getElementById('checklistStats');
         
@@ -38,7 +35,7 @@ const checklistManager = {
                 itemElement.className = `checklist-item ${item.completed ? 'completed' : ''}`;
                 itemElement.innerHTML = `
                     <input type="checkbox" ${item.completed ? 'checked' : ''} 
-                           onchange="checklistManager.toggleChecklistItem(${index})">
+                           onchange="checklistManager.toggleChecklistItem(${JSON.stringify(this.currentChecklist.path)}, ${this.currentChecklist.techIndex}, ${index})">
                     <span class="checklist-item-text">${item.text}</span>
                     <button onclick="checklistManager.removeChecklistItem(${index})" class="delete" style="margin-left: 10px;">🗑️</button>
                     <button onclick="checklistManager.editChecklistItem(${index})" style="margin-left: 5px;">✏️</button>
@@ -66,8 +63,7 @@ const checklistManager = {
         const text = input.value.trim();
         
         if (text) {
-            const tech = dataManager.getNodeAtIndex(this.currentChecklistPath, this.currentTechIndex);
-            if (!tech) return;
+            const tech = this.getTechnology();
             
             if (!tech.checklist) {
                 tech.checklist = [];
@@ -81,27 +77,23 @@ const checklistManager = {
             input.value = '';
             this.renderChecklist();
             dataManager.saveToLocalStorage();
-            uiManager.renderTable();
             authManager.scheduleAutoSave();
         }
     },
     
     removeChecklistItem(index) {
-        const tech = dataManager.getNodeAtIndex(this.currentChecklistPath, this.currentTechIndex);
-        if (!tech) return;
+        const tech = this.getTechnology();
         
         if (tech.checklist && tech.checklist.length > index) {
             tech.checklist.splice(index, 1);
             this.renderChecklist();
             dataManager.saveToLocalStorage();
-            uiManager.renderTable();
             authManager.scheduleAutoSave();
         }
     },
     
     editChecklistItem(index) {
-        const tech = dataManager.getNodeAtIndex(this.currentChecklistPath, this.currentTechIndex);
-        if (!tech) return;
+        const tech = this.getTechnology();
         
         if (tech.checklist && tech.checklist.length > index) {
             const newText = prompt('Редактировать пункт:', tech.checklist[index].text);
@@ -109,15 +101,14 @@ const checklistManager = {
                 tech.checklist[index].text = newText.trim();
                 this.renderChecklist();
                 dataManager.saveToLocalStorage();
-                uiManager.renderTable();
                 authManager.scheduleAutoSave();
             }
         }
     },
     
-    toggleChecklistItem(itemIndex) {
-        const tech = dataManager.getNodeAtIndex(this.currentChecklistPath, this.currentTechIndex);
-        if (!tech) return;
+    toggleChecklistItem(path, techIndex, itemIndex) {
+        this.currentChecklist = { path, techIndex };
+        const tech = this.getTechnology();
         
         if (tech.checklist && tech.checklist.length > itemIndex) {
             tech.checklist[itemIndex].completed = !tech.checklist[itemIndex].completed;
@@ -134,5 +125,10 @@ const checklistManager = {
         dataManager.saveToLocalStorage();
         uiManager.showNotification('Чек-лист сохранен!', 'success');
         authManager.scheduleAutoSave();
+    },
+    
+    getTechnology() {
+        const parent = dataManager.getNodeByPath(this.currentChecklist.path);
+        return parent ? parent[this.currentChecklist.techIndex] : null;
     }
 };

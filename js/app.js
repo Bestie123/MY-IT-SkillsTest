@@ -1,17 +1,16 @@
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', function() {
-    // Загружаем настройки аутентификации
     authManager.loadAuth();
-    
-    // Загружаем данные из localStorage
     dataManager.loadFromLocalStorage();
+    navigation.updateBreadcrumb();
     
-    // Включаем автосохранение если настроен GitHub
+    // Включить автосохранение по умолчанию, если настроен GitHub
     const token = localStorage.getItem('githubToken');
     const owner = localStorage.getItem('repoOwner');
     const repo = localStorage.getItem('repoName');
     
     if (token && owner && repo) {
+        // Автосохранение будет включено после проверки подключения
         console.log('GitHub настроен, автосохранение доступно');
     }
 });
