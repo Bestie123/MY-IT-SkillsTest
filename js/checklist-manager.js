@@ -6,6 +6,7 @@ const checklistManager = {
 
     // === УПРАВЛЕНИЕ ЧЕК-ЛИСТАМИ ===
     manageChecklist(path, techIndex) {
+        console.log('Managing checklist for path:', path, 'techIndex:', techIndex);
         this.currentChecklist = { path, techIndex };
         const tech = this.getTechnology();
         
@@ -26,10 +27,18 @@ const checklistManager = {
     
     renderChecklist() {
         const tech = this.getTechnology();
-        if (!tech) return;
+        if (!tech) {
+            console.error('Technology not found for checklist');
+            return;
+        }
 
         const checklistItems = document.getElementById('checklistItems');
         const checklistStats = document.getElementById('checklistStats');
+        
+        if (!checklistItems || !checklistStats) {
+            console.error('Checklist elements not found');
+            return;
+        }
         
         checklistItems.innerHTML = '';
         
@@ -40,7 +49,7 @@ const checklistManager = {
                 itemElement.innerHTML = `
                     <input type="checkbox" ${item.completed ? 'checked' : ''} 
                            onchange="checklistManager.toggleChecklistItem(${index})">
-                    <span class="checklist-item-text">${item.text}</span>
+                    <span class="checklist-item-text">${item.text || 'Пустой пункт'}</span>
                     <div class="checklist-item-actions">
                         <button class="action-btn" onclick="checklistManager.editChecklistItem(${index})" title="Редактировать">✏️</button>
                         <button class="action-btn" onclick="checklistManager.removeChecklistItem(${index})" title="Удалить">🗑️</button>
@@ -66,6 +75,11 @@ const checklistManager = {
     
     addChecklistItem() {
         const input = document.getElementById('newChecklistItem');
+        if (!input) {
+            console.error('Checklist input not found');
+            return;
+        }
+
         const text = input.value.trim();
         
         if (!text) {
@@ -74,7 +88,10 @@ const checklistManager = {
         }
 
         const tech = this.getTechnology();
-        if (!tech) return;
+        if (!tech) {
+            uiManager.showNotification('Технология не найдена', 'error');
+            return;
+        }
 
         if (!tech.checklist) {
             tech.checklist = [];
@@ -89,48 +106,78 @@ const checklistManager = {
         this.renderChecklist();
         dataManager.saveToLocalStorage();
         uiManager.renderStructure();
-        authManager.scheduleAutoSave();
+        
+        if (authManager.autoSaveEnabled) {
+            authManager.scheduleAutoSave();
+        }
     },
     
     removeChecklistItem(index) {
         const tech = this.getTechnology();
-        if (!tech || !tech.checklist) return;
+        if (!tech || !tech.checklist) {
+            uiManager.showNotification('Пункт не найден', 'error');
+            return;
+        }
+
+        if (index >= tech.checklist.length) {
+            uiManager.showNotification('Неверный индекс пункта', 'error');
+            return;
+        }
 
         if (confirm('Удалить этот пункт?')) {
             tech.checklist.splice(index, 1);
             this.renderChecklist();
             dataManager.saveToLocalStorage();
             uiManager.renderStructure();
-            authManager.scheduleAutoSave();
+            
+            if (authManager.autoSaveEnabled) {
+                authManager.scheduleAutoSave();
+            }
         }
     },
     
     editChecklistItem(index) {
         const tech = this.getTechnology();
-        if (!tech || !tech.checklist || !tech.checklist[index]) return;
+        if (!tech || !tech.checklist || index >= tech.checklist.length) {
+            uiManager.showNotification('Пункт не найден', 'error');
+            return;
+        }
 
         const newText = prompt('Редактировать пункт:', tech.checklist[index].text);
         if (newText !== null && newText.trim() !== '') {
             tech.checklist[index].text = newText.trim();
             this.renderChecklist();
             dataManager.saveToLocalStorage();
-            authManager.scheduleAutoSave();
+            
+            if (authManager.autoSaveEnabled) {
+                authManager.scheduleAutoSave();
+            }
         }
     },
     
     toggleChecklistItem(index) {
         const tech = this.getTechnology();
-        if (!tech || !tech.checklist || !tech.checklist[index]) return;
+        if (!tech || !tech.checklist || index >= tech.checklist.length) {
+            console.error('Checklist item not found at index:', index);
+            return;
+        }
 
         tech.checklist[index].completed = !tech.checklist[index].completed;
         this.renderChecklist();
         dataManager.saveToLocalStorage();
         uiManager.renderStructure();
-        authManager.scheduleAutoSave();
+        
+        if (authManager.autoSaveEnabled) {
+            authManager.scheduleAutoSave();
+        }
     },
     
     getTechnology() {
         const parent = dataManager.getNodeByPath(this.currentChecklist.path);
-        return parent ? parent[this.currentChecklist.techIndex] : null;
+        if (!parent || !parent[this.currentChecklist.techIndex]) {
+            console.error('Technology not found at path:', this.currentChecklist.path, 'index:', this.currentChecklist.techIndex);
+            return null;
+        }
+        return parent[this.currentChecklist.techIndex];
     }
 };
