@@ -67,6 +67,11 @@
       "type": "category",
       "technologies": [],
       "children": []
+    },
+    {
+      "name": "По ннн",
+      "type": "category",
+      "children": []
     }
   ]
 }
