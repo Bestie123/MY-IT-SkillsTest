@@ -1,179 +1,149 @@
-
 const uiManager = {
-    // === ОТОБРАЖЕНИЕ ТАБЛИЦЫ ===
-    renderTable() {
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '';
+    // === ОТОБРАЖЕНИЕ ДЕРЕВА ===
+    renderTree() {
+        const container = document.getElementById('treeContent');
+        container.innerHTML = '';
 
         if (techData.categories.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Нет данных. Добавьте первую категорию!</td></tr>';
+            container.innerHTML = '<div style="text-align: center; padding: 40px; color: #6c757d;">Нет данных. Добавьте первую категорию!</div>';
             return;
         }
 
-        // Рендерим корневые категории как строки
+        const tree = document.createElement('ul');
+        tree.className = 'tree';
         techData.categories.forEach((category, index) => {
-            this.renderCategoryRow(category, 0, [], index);
+            tree.appendChild(this.createTreeNode(category, 0, [], index));
         });
+        container.appendChild(tree);
     },
 
-    renderCategoryRow(category, level, path, index) {
-        const tbody = document.getElementById('tableBody');
-        const fullPath = [...path, index];
-        
-        // Создаем строку для категории
-        const row = document.createElement('tr');
-        row.className = `node-level-${level % 6}`;
-        
-        // Создаем ячейки для всех уровней вложенности
-        let categoryCells = '';
-        for (let i = 0; i < level; i++) {
-            categoryCells += '<td></td>';
-        }
-        
-        categoryCells += `
-            <td>
-                <strong>${category.name}</strong>
-                <span class="path-display">${this.getPathDisplay(fullPath)}</span>
-            </td>
-        `;
-        
-        // Заполняем оставшиеся ячейки пустыми
-        const remainingColumns = 5 - level; // 5 - максимальное количество столбцов категорий
-        for (let i = 0; i < remainingColumns; i++) {
-            categoryCells += '<td></td>';
-        }
-        
-        row.innerHTML = `
-            ${categoryCells}
-            <td>
-                <button onclick="navigation.viewNode(${JSON.stringify(fullPath)})">👁️ Просмотр</button>
-                <button onclick="uiManager.showAddNodeModal(${JSON.stringify(fullPath)})">+ Подкатегория</button>
-                <button onclick="uiManager.showAddTechModal(${JSON.stringify(fullPath)})">+ Технология</button>
-                <button onclick="dataManager.editNode(${JSON.stringify(path)}, ${index})">✏️</button>
-                <button class="delete" onclick="dataManager.deleteNode(${JSON.stringify(path)}, ${index})">🗑️</button>
-            </td>
-        `;
-        tbody.appendChild(row);
+    createTreeNode(node, level, path, index) {
+        const li = document.createElement('li');
+        li.className = 'tree-node';
 
-        // Рендерим технологии этой категории
-        if (category.technologies && category.technologies.length > 0) {
-            category.technologies.forEach((tech, techIndex) => {
-                this.renderTechnologyRow(tech, level + 1, fullPath, techIndex);
-            });
-        }
+        const nodeContent = document.createElement('div');
+        nodeContent.className = `node-content ${node.type}`;
+        nodeContent.style.paddingLeft = (level * 20) + 'px';
 
-        // Рекурсивно рендерим подкатегории как новые строки
-        if (category.children && category.children.length > 0) {
-            category.children.forEach((child, childIndex) => {
-                this.renderCategoryRow(child, level + 1, fullPath, childIndex);
-            });
-        }
-    },
-
-    renderTechnologyRow(tech, level, path, techIndex) {
-        const tbody = document.getElementById('tableBody');
-        const completedTasks = tech.checklist ? tech.checklist.filter(item => item.completed).length : 0;
-        const totalTasks = tech.checklist ? tech.checklist.length : 0;
-        const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-        
-        let statusText = '';
-        let statusClass = '';
-        
-        if (totalTasks === 0) {
-            statusText = '📝 В планах';
-            statusClass = 'status-planned';
-        } else if (completedTasks === totalTasks) {
-            statusText = '✅ Изучено';
-            statusClass = 'status-completed';
+        // Кнопка раскрытия/сворачивания для категорий
+        if (node.type === 'category' || node.type === 'node') {
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'toggle-btn';
+            toggleBtn.innerHTML = node.expanded ? '−' : '+';
+            toggleBtn.onclick = (e) => {
+                e.stopPropagation();
+                node.expanded = !node.expanded;
+                this.renderTree();
+            };
+            nodeContent.appendChild(toggleBtn);
         } else {
-            statusText = '🚧 В процессе';
-            statusClass = 'status-in-progress';
+            const spacer = document.createElement('span');
+            spacer.className = 'toggle-btn';
+            spacer.innerHTML = '•';
+            nodeContent.appendChild(spacer);
         }
 
-        // Создаем ячейки для всех уровней вложенности
-        let categoryCells = '';
-        for (let i = 0; i < level; i++) {
-            categoryCells += '<td></td>';
-        }
-        
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            ${categoryCells}
-            <td><strong>${tech.name}</strong></td>
-            ${this.generateEmptyCells(4 - level)}
-            <td class="${statusClass}">${statusText}</td>
-            <td>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${progress}%"></div>
-                </div>
-                ${Math.round(progress)}%
-            </td>
-            <td>${completedTasks}/${totalTasks}</td>
-            <td>
-                <button onclick="checklistManager.manageChecklist(${JSON.stringify(path)}, ${techIndex})" class="warning">📋 Чек-лист</button>
-                <button onclick="dataManager.editTechnology(${JSON.stringify(path)}, ${techIndex})">✏️</button>
-                <button class="delete" onclick="dataManager.deleteTechnology(${JSON.stringify(path)}, ${techIndex})">🗑️</button>
-            </td>
-        `;
-        tbody.appendChild(row);
+        // Иконка и название
+        const icon = document.createElement('span');
+        icon.className = 'node-icon';
+        icon.innerHTML = node.type === 'technology' ? '⚙️' : (node.type === 'category' ? '📁' : '📂');
+        nodeContent.appendChild(icon);
 
-        // Отображаем чек-лист под технологией, если он есть
-        if (tech.checklist && tech.checklist.length > 0) {
-            this.renderChecklistSection(tech, level, path, techIndex, completedTasks, totalTasks, progress);
-        }
-    },
+        const name = document.createElement('span');
+        name.className = 'node-name';
+        name.textContent = node.name;
+        nodeContent.appendChild(name);
 
-    renderChecklistSection(tech, level, path, techIndex, completedTasks, totalTasks, progress) {
-        const tbody = document.getElementById('tableBody');
-        const checklistRow = document.createElement('tr');
-        
-        // Создаем ячейки для всех уровней вложенности
-        let categoryCells = '';
-        for (let i = 0; i <= level; i++) {
-            categoryCells += '<td></td>';
-        }
-        
-        checklistRow.innerHTML = `
-            ${categoryCells}
-            <td colspan="${5 - level}">
-                <div class="checklist-section">
-                    <div class="checklist-stats">
-                        Прогресс: ${completedTasks}/${totalTasks} (${Math.round(progress)}%)
+        // Прогресс для технологий
+        if (node.type === 'technology') {
+            const completed = node.checklist ? node.checklist.filter(item => item.completed).length : 0;
+            const total = node.checklist ? node.checklist.length : 0;
+            const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+            const progressInfo = document.createElement('div');
+            progressInfo.className = 'progress-info';
+
+            if (total > 0) {
+                progressInfo.innerHTML = `
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
                     </div>
-                    ${tech.checklist.map((checkItem, idx) => `
-                        <div class="checklist-item ${checkItem.completed ? 'completed' : ''}">
-                            <input type="checkbox" ${checkItem.completed ? 'checked' : ''} 
-                                   onchange="checklistManager.toggleChecklistItem(${JSON.stringify(path)}, ${techIndex}, ${idx})">
-                            <span class="checklist-item-text">${checkItem.text}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            </td>
-        `;
-        tbody.appendChild(checklistRow);
-    },
-
-    generateEmptyCells(count) {
-        let cells = '';
-        for (let i = 0; i < count; i++) {
-            cells += '<td></td>';
-        }
-        return cells;
-    },
-
-    getPathDisplay(path) {
-        if (path.length === 0) return '';
-        let currentNode = techData.categories;
-        let pathNames = [];
-        
-        for (const index of path) {
-            if (currentNode[index]) {
-                pathNames.push(currentNode[index].name);
-                currentNode = currentNode[index].children || [];
+                    <span>${completed}/${total}</span>
+                    <span class="status-badge ${progress === 100 ? 'status-completed' : progress > 0 ? 'status-in-progress' : 'status-planned'}">
+                        ${progress === 100 ? '✅' : progress > 0 ? '🚧' : '📝'}
+                    </span>
+                `;
+            } else {
+                progressInfo.innerHTML = '<span class="status-badge status-planned">📝 В планах</span>';
             }
+
+            nodeContent.appendChild(progressInfo);
         }
-        
-        return pathNames.join(' → ');
+
+        // Кнопки действий
+        const actions = document.createElement('div');
+        actions.className = 'node-actions';
+
+        if (node.type === 'category' || node.type === 'node') {
+            const addNodeBtn = document.createElement('button');
+            addNodeBtn.innerHTML = '📂';
+            addNodeBtn.title = 'Добавить подкатегорию';
+            addNodeBtn.onclick = (e) => {
+                e.stopPropagation();
+                currentModalPath = [...path, index];
+                this.showModal('nodeModal');
+            };
+            actions.appendChild(addNodeBtn);
+
+            const addTechBtn = document.createElement('button');
+            addTechBtn.innerHTML = '⚙️';
+            addTechBtn.title = 'Добавить технологию';
+            addTechBtn.onclick = (e) => {
+                e.stopPropagation();
+                currentModalPath = [...path, index];
+                this.showModal('techModal');
+            };
+            actions.appendChild(addTechBtn);
+        }
+
+        if (node.type === 'technology') {
+            const checklistBtn = document.createElement('button');
+            checklistBtn.innerHTML = '📋';
+            checklistBtn.title = 'Управление чек-листом';
+            checklistBtn.onclick = (e) => {
+                e.stopPropagation();
+                checklistManager.manageChecklist(path, index);
+            };
+            actions.appendChild(checklistBtn);
+        }
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.innerHTML = '🗑️';
+        deleteBtn.title = 'Удалить';
+        deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            if (node.type === 'technology') {
+                dataManager.deleteTechnology(path, index);
+            } else {
+                dataManager.deleteNode(path, index);
+            }
+        };
+        actions.appendChild(deleteBtn);
+
+        nodeContent.appendChild(actions);
+        li.appendChild(nodeContent);
+
+        // Рекурсивно рендерим детей
+        if ((node.type === 'category' || node.type === 'node') && node.expanded && node.children && node.children.length > 0) {
+            const childrenContainer = document.createElement('div');
+            childrenContainer.className = 'children';
+            node.children.forEach((child, childIndex) => {
+                childrenContainer.appendChild(this.createTreeNode(child, level + 1, [...path, index], childIndex));
+            });
+            li.appendChild(childrenContainer);
+        }
+
+        return li;
     },
 
     // === УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ===
@@ -211,6 +181,21 @@ const uiManager = {
         const title = document.createElement('div');
         title.innerHTML = `<strong>Родительская категория:</strong> ${this.getPathDisplay(currentPath) || 'Корень'}`;
         container.appendChild(title);
+    },
+
+    getPathDisplay(path) {
+        if (path.length === 0) return '';
+        let currentNode = techData.categories;
+        let pathNames = [];
+        
+        for (const index of path) {
+            if (currentNode[index]) {
+                pathNames.push(currentNode[index].name);
+                currentNode = currentNode[index].children || [];
+            }
+        }
+        
+        return pathNames.join(' → ');
     },
 
     // === УТИЛИТЫ ===
