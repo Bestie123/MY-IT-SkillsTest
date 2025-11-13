@@ -20,34 +20,41 @@ const authManager = {
             
             const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
                 headers: {
-                    'Authorization': `token ${token}`,
+                    'Authorization': `Bearer ${token}`,
                     'Accept': 'application/vnd.github.v3+json',
-                    'User-Agent': 'TechDocs-App'
+                    'X-GitHub-Api-Version': '2022-11-28'
                 }
             });
 
-            const responseData = await response.json();
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `HTTP ${response.status}`);
+            }
 
-            if (response.status === 200) {
-                const permissions = responseData.permissions;
-                if (permissions && permissions.push) {
-                    this.showAuthStatus('✅ Подключение успешно! Репозиторий доступен для записи.', 'success');
-                    this.enableAutoSave();
-                } else {
-                    this.showAuthStatus('⚠️ Репозиторий доступен, но нет прав на запись.', 'warning');
-                }
-            } else if (response.status === 404) {
-                this.showAuthStatus('❌ Репозиторий не найден. Проверьте имя и владельца.', 'error');
-            } else if (response.status === 401) {
-                this.showAuthStatus('❌ Ошибка аутентификации. Проверьте токен.', 'error');
-            } else if (response.status === 403) {
-                this.showAuthStatus('🚫 Доступ запрещен. Убедитесь, что токен имеет права repo.', 'error');
+            const responseData = await response.json();
+            const permissions = responseData.permissions;
+
+            if (permissions && permissions.push) {
+                this.showAuthStatus('✅ Подключение успешно! Репозиторий доступен для записи.', 'success');
+                this.enableAutoSave();
             } else {
-                this.showAuthStatus(`❌ Ошибка: ${response.status} - ${responseData.message || response.statusText}`, 'error');
+                this.showAuthStatus('⚠️ Репозиторий доступен, но нет прав на запись.', 'warning');
             }
         } catch (error) {
             console.error('Auth test error:', error);
-            this.showAuthStatus('❌ Ошибка сети: ' + error.message, 'error');
+            let errorMessage = '❌ Ошибка подключения: ';
+            
+            if (error.message.includes('401')) {
+                errorMessage += 'Неверный токен доступа';
+            } else if (error.message.includes('404')) {
+                errorMessage += 'Репозиторий не найден';
+            } else if (error.message.includes('403')) {
+                errorMessage += 'Доступ запрещен';
+            } else {
+                errorMessage += error.message;
+            }
+            
+            this.showAuthStatus(errorMessage, 'error');
         }
     },
 
@@ -128,122 +135,12 @@ const authManager = {
     updateAutoSaveButton() {
         const button = document.getElementById('autoSaveBtn');
         if (this.autoSaveEnabled) {
-            button.innerHTML = '✅ Автосохранение';
-            button.className = 'success';
+            button.innerHTML = '<span class="icon">✅</span> Автосохранение';
+            button.classList.add('success');
         } else {
-            button.innerHTML = '🚫 Автосохранение';
-            button.className = '';
+            button.innerHTML = '<span class="icon">⭕</span> Автосохранение';
+            button.classList.remove('success');
         }
-    },
-    
-    async autoSaveToGitHub() {
-        const token = localStorage.getItem('githubToken');
-        const owner = localStorage.getItem('repoOwner');
-        const repo = localStorage.getItem('repoName');
-        
-        if (!token || !owner || !repo || !this.autoSaveEnabled) {
-            return;
-        }
-
-        const now = Date.now();
-        if (this.lastSaveTime && (now - this.lastSaveTime) < 30000) {
-            return;
-        }
-
-        try {
-            console.log('🔄 Автосохранение на GitHub...');
-            
-            let sha = null;
-            
-            try {
-                const getResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'User-Agent': 'TechDocs-App'
-                    }
-                });
-                
-                if (getResponse.status === 200) {
-                    const data = await getResponse.json();
-                    sha = data.sha;
-                }
-            } catch (e) {
-                console.error('Ошибка при проверке файла для автосохранения:', e);
-                return;
-            }
-
-            const content = JSON.stringify(techData, null, 2);
-            const contentBase64 = btoa(unescape(encodeURIComponent(content)));
-            const message = `Auto-save: ${new Date().toLocaleString()}`;
-            
-            const requestBody = {
-                message: message,
-                content: contentBase64
-            };
-
-            if (sha) {
-                requestBody.sha = sha;
-            }
-
-            const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json',
-                    'User-Agent': 'TechDocs-App'
-                },
-                body: JSON.stringify(requestBody)
-            });
-
-            if (response.status === 200 || response.status === 201) {
-                this.lastSaveTime = Date.now();
-                console.log('✅ Автосохранение выполнено успешно');
-                
-                if (!document.hidden) {
-                    this.showAutoSaveNotification();
-                }
-            } else {
-                console.warn('⚠️ Автосохранение не удалось:', response.status);
-            }
-        } catch (error) {
-            console.error('❌ Ошибка автосохранения:', error);
-        }
-    },
-    
-    showAutoSaveNotification() {
-        const notification = document.createElement('div');
-        notification.innerHTML = '💾 Автосохранено';
-        notification.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #28a745;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            z-index: 1002;
-            opacity: 0.9;
-        `;
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.remove();
-        }, 2000);
-    },
-    
-    scheduleAutoSave() {
-        if (!this.autoSaveEnabled) return;
-        
-        if (this.autoSaveTimeout) {
-            clearTimeout(this.autoSaveTimeout);
-        }
-        
-        this.autoSaveTimeout = setTimeout(() => {
-            this.autoSaveToGitHub();
-        }, 10000);
     },
 
     // === РАБОТА С GITHUB API ===
@@ -262,33 +159,56 @@ const authManager = {
             
             const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
                 headers: {
-                    'Authorization': `token ${token}`,
+                    'Authorization': `Bearer ${token}`,
                     'Accept': 'application/vnd.github.v3+json',
-                    'User-Agent': 'TechDocs-App'
+                    'X-GitHub-Api-Version': '2022-11-28'
                 }
             });
 
             if (response.status === 200) {
                 const data = await response.json();
-                const content = decodeURIComponent(escape(atob(data.content)));
-                const parsedData = JSON.parse(content);
                 
+                // Декодируем содержимое файла
+                let content;
+                if (data.encoding === 'base64') {
+                    content = atob(data.content);
+                } else {
+                    content = decodeURIComponent(escape(atob(data.content)));
+                }
+                
+                const parsedData = JSON.parse(content);
                 techData.categories = parsedData.categories || [];
-                uiManager.renderTree();
+                
+                // Инициализируем expanded свойства
+                dataManager.initializeExpanded(techData.categories);
+                
                 dataManager.saveToLocalStorage();
+                uiManager.renderStructure();
                 uiManager.showNotification('✅ Данные загружены с GitHub!', 'success');
             } else if (response.status === 404) {
-                uiManager.showNotification('📝 Файл не найден. Создан новый пустой файл.', 'warning');
+                uiManager.showNotification('📝 Файл не найден. Создан новый.', 'warning');
                 techData.categories = [];
-                uiManager.renderTree();
                 dataManager.saveToLocalStorage();
+                uiManager.renderStructure();
             } else {
-                const errorData = await response.json();
-                throw new Error(`GitHub API error: ${response.status} - ${errorData.message || response.statusText}`);
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `HTTP ${response.status}`);
             }
         } catch (error) {
             console.error('GitHub load error:', error);
-            uiManager.showNotification('❌ Ошибка загрузки: ' + error.message, 'error');
+            let errorMessage = 'Ошибка загрузки: ';
+            
+            if (error.message.includes('401')) {
+                errorMessage += 'Неверный токен доступа';
+            } else if (error.message.includes('404')) {
+                errorMessage += 'Файл не найден в репозитории';
+            } else if (error.message.includes('403')) {
+                errorMessage += 'Доступ запрещен или превышен лимит запросов';
+            } else {
+                errorMessage += error.message;
+            }
+            
+            uiManager.showNotification(errorMessage, 'error');
         }
     },
 
@@ -305,28 +225,23 @@ const authManager = {
         try {
             uiManager.showNotification('Сохранение на GitHub...', 'warning');
             
-            if (!techData || techData.categories.length === 0) {
-                uiManager.showNotification('Нет данных для сохранения!', 'error');
-                return;
-            }
-
+            // Получаем текущий SHA файла (если существует)
             let sha = null;
-            
             try {
                 const getResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
                     headers: {
-                        'Authorization': `token ${token}`,
+                        'Authorization': `Bearer ${token}`,
                         'Accept': 'application/vnd.github.v3+json',
-                        'User-Agent': 'TechDocs-App'
+                        'X-GitHub-Api-Version': '2022-11-28'
                     }
                 });
                 
-                if (getResponse.status === 200) {
+                if (getResponse.ok) {
                     const data = await getResponse.json();
                     sha = data.sha;
                 }
             } catch (e) {
-                console.error('Ошибка при проверке файла:', e);
+                // Файл может не существовать, это нормально
             }
 
             const content = JSON.stringify(techData, null, 2);
@@ -345,36 +260,115 @@ const authManager = {
             const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `token ${token}`,
+                    'Authorization': `Bearer ${token}`,
                     'Accept': 'application/vnd.github.v3+json',
                     'Content-Type': 'application/json',
-                    'User-Agent': 'TechDocs-App'
+                    'X-GitHub-Api-Version': '2022-11-28'
                 },
                 body: JSON.stringify(requestBody)
             });
 
-            const responseData = await response.json();
-
-            if (response.status === 200 || response.status === 201) {
-                uiManager.showNotification('✅ Данные успешно сохранены на GitHub!', 'success');
-            } else {
-                let errorMessage = `Ошибка сохранения: ${response.status}`;
-                if (responseData && responseData.message) {
-                    errorMessage += ` - ${responseData.message}`;
-                    
-                    if (responseData.message.includes('bad credentials')) {
-                        errorMessage += '\nПроверьте правильность токена';
-                    } else if (responseData.message.includes('not found')) {
-                        errorMessage += '\nПроверьте имя репозитория и владельца';
-                    } else if (responseData.message.includes('sha')) {
-                        errorMessage += '\nПопробуйте загрузить данные сначала, затем сохранить';
-                    }
-                }
-                throw new Error(errorMessage);
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `HTTP ${response.status}`);
             }
+
+            uiManager.showNotification('✅ Данные успешно сохранены на GitHub!', 'success');
         } catch (error) {
             console.error('GitHub save error:', error);
-            uiManager.showNotification('❌ Ошибка сохранения: ' + error.message, 'error');
+            let errorMessage = 'Ошибка сохранения: ';
+            
+            if (error.message.includes('409')) {
+                errorMessage += 'Конфликт версий. Обновите данные и попробуйте снова';
+            } else if (error.message.includes('403')) {
+                errorMessage += 'Нет прав на запись в репозиторий';
+            } else {
+                errorMessage += error.message;
+            }
+            
+            uiManager.showNotification(errorMessage, 'error');
         }
+    },
+
+    async autoSaveToGitHub() {
+        if (!this.autoSaveEnabled) return;
+
+        const token = localStorage.getItem('githubToken');
+        const owner = localStorage.getItem('repoOwner');
+        const repo = localStorage.getItem('repoName');
+        
+        if (!token || !owner || !repo) {
+            return;
+        }
+
+        // Проверяем, что прошло достаточно времени с последнего сохранения
+        const now = Date.now();
+        if (this.lastSaveTime && (now - this.lastSaveTime) < 30000) {
+            return;
+        }
+
+        try {
+            // Получаем текущий SHA файла
+            let sha = null;
+            try {
+                const getResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'X-GitHub-Api-Version': '2022-11-28'
+                    }
+                });
+                
+                if (getResponse.ok) {
+                    const data = await getResponse.json();
+                    sha = data.sha;
+                }
+            } catch (e) {
+                return; // Пропускаем автосохранение при ошибке
+            }
+
+            const content = JSON.stringify(techData, null, 2);
+            const contentBase64 = btoa(unescape(encodeURIComponent(content)));
+            const message = `Auto-save: ${new Date().toLocaleString()}`;
+            
+            const requestBody = {
+                message: message,
+                content: contentBase64
+            };
+
+            if (sha) {
+                requestBody.sha = sha;
+            }
+
+            const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json',
+                    'X-GitHub-Api-Version': '2022-11-28'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (response.ok) {
+                this.lastSaveTime = Date.now();
+                console.log('✅ Автосохранение выполнено');
+            }
+        } catch (error) {
+            console.error('❌ Ошибка автосохранения:', error);
+        }
+    },
+    
+    scheduleAutoSave() {
+        if (!this.autoSaveEnabled) return;
+        
+        if (this.autoSaveTimeout) {
+            clearTimeout(this.autoSaveTimeout);
+        }
+        
+        this.autoSaveTimeout = setTimeout(() => {
+            this.autoSaveToGitHub();
+        }, 10000);
     }
 };
