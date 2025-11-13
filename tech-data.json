@@ -6,8 +6,18 @@
       "subcategories": [
         {
           "name": "Java Core",
-          "technologies": [],
-          "subsubcategories": []
+          "technologies": [
+            {
+              "name": "Многопоточность и Concurrent Collections",
+              "checklist": []
+            }
+          ],
+          "subsubcategories": [
+            {
+              "name": "Ggghhh",
+              "technologies": []
+            }
+          ]
         }
       ]
     }
