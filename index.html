@@ -36,15 +36,25 @@
             <div class="breadcrumb-item" onclick="navigation.resetView()">Все технологии</div>
         </div>
 
-        <div class="main-content">
-            <div class="tree-container">
-                <div id="treeContent">
-                    <!-- Дерево будет отрисовано здесь -->
-                </div>
-            </div>
+        <!-- Обновленная таблица -->
+        <div class="table-container">
+            <table class="tech-table">
+                <thead>
+                    <tr>
+                        <th width="35%">Название</th>
+                        <th width="15%">Тип</th>
+                        <th width="20%">Прогресс</th>
+                        <th width="15%">Статус</th>
+                        <th width="15%">Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Данные будут здесь -->
+                </tbody>
+            </table>
         </div>
 
-        <!-- Модальные окна -->
+        <!-- Модальные окна (остаются без изменений) -->
         <div id="categoryModal" class="modal">
             <div class="modal-content">
                 <h3>📁 Добавить категорию</h3>
@@ -83,8 +93,8 @@
         <div id="checklistModal" class="modal">
             <div class="modal-content">
                 <h3 id="checklistTitle">📋 Чек-лист</h3>
-                <div id="checklistStats" class="progress-info"></div>
-                <div id="checklistItems" style="margin: 15px 0;"></div>
+                <div id="checklistStats" class="checklist-stats"></div>
+                <div id="checklistItems" class="checklist-items"></div>
                 <input type="text" id="newChecklistItem" placeholder="Новый пункт чек-листа">
                 <div class="modal-actions">
                     <button onclick="checklistManager.addChecklistItem()" class="success">+ Добавить</button>
