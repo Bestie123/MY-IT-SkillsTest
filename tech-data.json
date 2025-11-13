@@ -40,6 +40,11 @@
                       "type": "technology",
                       "checklist": [],
                       "expanded": true
+                    },
+                    {
+                      "name": "Кт тии",
+                      "type": "technology",
+                      "checklist": []
                     }
                   ],
                   "expanded": true
