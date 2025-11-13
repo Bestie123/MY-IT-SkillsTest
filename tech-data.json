@@ -35,7 +35,8 @@
                         {
                           "name": "Иир",
                           "type": "technology",
-                          "checklist": []
+                          "checklist": [],
+                          "expanded": true
                         }
                       ],
                       "expanded": true
@@ -49,7 +50,8 @@
                     {
                       "name": "Кт тии",
                       "type": "technology",
-                      "checklist": []
+                      "checklist": [],
+                      "expanded": true
                     }
                   ],
                   "expanded": true
@@ -109,6 +111,30 @@
     {
       "name": "По ннн",
       "type": "category",
+      "children": [],
+      "expanded": true
+    },
+    {
+      "name": "Vrbrb",
+      "type": "category",
+      "children": [],
+      "expanded": true
+    },
+    {
+      "name": "Vrbrb",
+      "type": "category",
+      "children": [],
+      "expanded": true
+    },
+    {
+      "name": "Vvv",
+      "type": "node",
+      "children": [],
+      "expanded": true
+    },
+    {
+      "name": "Vvv",
+      "type": "node",
       "children": [],
       "expanded": true
     }
