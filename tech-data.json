@@ -61,6 +61,18 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Spring MVC",
+              "type": "technology",
+              "checklist": [],
+              "completed": true
+            },
+            {
+              "name": "Spring Data JPA",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         }
