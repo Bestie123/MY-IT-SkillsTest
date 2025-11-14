@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technologies Documentation</title>
+    <!-- Стили остаются такими же как в предыдущей версии -->
+    <style>
+        /* Все стили из предыдущего кода остаются без изменений */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        /* ... остальные стили ... */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📁 Technologies Documentation</h1>
+        
+        <!-- Секция аутентификации -->
+        <div class="auth-section" id="authSection">
+            <h3>🔐 Настройка доступа к GitHub</h3>
+            <div>
+                <input type="password" id="githubToken" placeholder="GitHub Personal Access Token" style="width: 300px;">
+                <input type="text" id="repoOwner" placeholder="Владелец репозитория" style="width: 150px;">
+                <input type="text" id="repoName" placeholder="Имя репозитория" style="width: 150px;">
+                <button onclick="authManager.saveAuth()">💾 Сохранить настройки</button>
+                <button onclick="authManager.testAuth()" class="success">🔍 Проверить подключение</button>
+            </div>
+            <div id="authStatus" class="auth-status"></div>
+            <p><small>Токен хранится только в вашем браузере. Создайте токен в GitHub с правами repo</small></p>
+        </div>
+
+        <!-- Основные контролы -->
+        <div class="controls">
+            <div>
+                <button onclick="uiManager.showModal('categoryModal')">+ Добавить категорию</button>
+                <button onclick="uiManager.showAddNodeModal()">+ Добавить подкатегорию</button>
+                <button onclick="uiManager.showAddTechModal()">+ Добавить технологию</button>
+                <button onclick="authManager.loadFromGitHub()">🔄 Загрузить с GitHub</button>
+                <button onclick="authManager.saveToGitHub()">💾 Сохранить на GitHub</button>
+                <button onclick="authManager.toggleAutoSave()" id="autoSaveBtn">🚫 Автосохранение</button>
+                <button onclick="dataManager.exportToJSON()">📥 Экспорт в JSON</button>
+                <button onclick="dataManager.importFromJSON()">📤 Импорт из JSON</button>
+                <button onclick="dataManager.loadTechData()" class="success">🔄 Загрузить tech-data.json</button>
+            </div>
+        </div>
+
+        <!-- Остальная часть HTML остается без изменений -->
+        <!-- ... -->
+    </div>
+
+    <script>
+        // Глобальная структура данных
+        const techData = {
+            categories: []
+        };
+
+        let currentModalPath = [];
+
+        // Менеджер аккордеона (без изменений)
+        const accordionManager = {
+            // ... весь код accordionManager остается без изменений ...
+        };
+
+        // Инициализация приложения с загрузкой tech-data.json
+        document.addEventListener('DOMContentLoaded', function() {
+            authManager.loadAuth();
+            
+            // Сначала пробуем загрузить из localStorage
+            const savedData = localStorage.getItem('techData');
+            if (savedData) {
+                try {
+                    const parsedData = JSON.parse(savedData);
+                    if (parsedData.categories && parsedData.categories.length > 0) {
+                        techData.categories = parsedData.categories;
+                        accordionManager.init();
+                        console.log('Данные загружены из localStorage');
+                        return;
+                    }
+                } catch (e) {
+                    console.error('Ошибка загрузки из localStorage:', e);
+                }
+            }
+            
+            // Если в localStorage нет данных, загружаем из tech-data.json
+            dataManager.loadTechData(true);
+            
+            // Включить автосохранение если настроен GitHub
+            const token = localStorage.getItem('githubToken');
+            const owner = localStorage.getItem('repoOwner');
+            const repo = localStorage.getItem('repoName');
+            
+            if (token && owner && repo) {
+                console.log('GitHub настроен, автосохранение доступно');
+            }
+        });
+
+        const dataManager = {
+            // Вспомогательные функции для работы с путями (без изменений)
+            getNodeByPath(path) {
+                let currentNode = techData.categories;
+                for (const index of path) {
+                    if (currentNode[index]) {
+                        currentNode = currentNode[index].children || [];
+                    } else {
+                        return null;
+                    }
+                }
+                return currentNode;
+            },
+
+            getNodeAtIndex(path, index) {
+                const parent = this.getNodeByPath(path);
+                return parent ? parent[index] : null;
+            },
+
+            // === ЗАГРУЗКА ИЗ TECH-DATA.JSON ===
+            loadTechData(autoLoad = false) {
+                if (!autoLoad && techData.categories.length > 0) {
+                    if (!confirm('Текущие данные будут потеряны. Загрузить данные из tech-data.json?')) {
+                        return;
+                    }
+                }
+
+                fetch('tech-data.json')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(externalData => {
+                        techData.categories = externalData.categories || [];
+                        this.renderCurrentView();
+                        this.saveToLocalStorage();
+                        uiManager.showNotification('Данные загружены из tech-data.json!', 'success');
+                        
+                        if (autoLoad) {
+                            console.log('Данные автоматически загружены из tech-data.json');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка загрузки tech-data.json:', error);
+                        if (!autoLoad) {
+                            uiManager.showNotification('Ошибка загрузки tech-data.json: ' + error.message, 'error');
+                        } else {
+                            console.log('Файл tech-data.json не найден, продолжаем с пустыми данными');
+                            accordionManager.init();
+                        }
+                    });
+            },
+
+            // === ЛОКАЛЬНОЕ ХРАНИЛИЩЕ ===
+            saveToLocalStorage() {
+                localStorage.setItem('techData', JSON.stringify(techData));
+            },
+
+            loadFromLocalStorage() {
+                const saved = localStorage.getItem('techData');
+                if (saved) {
+                    try {
+                        const parsedData = JSON.parse(saved);
+                        techData.categories = parsedData.categories || [];
+                        this.renderCurrentView();
+                    } catch (e) {
+                        console.error('Error parsing saved data:', e);
+                    }
+                }
+            },
+
+            // Перерисовка текущего вида
+            renderCurrentView() {
+                accordionManager.renderAccordion();
+            },
+
+            // === УПРАВЛЕНИЕ ДАННЫМИ (все функции остаются без изменений) ===
+            addCategory() {
+                // ... без изменений ...
+            },
+
+            addNode() {
+                // ... без изменений ...
+            },
+
+            addTechnology() {
+                // ... без изменений ...
+            },
+
+            editNode(pathStr, index) {
+                // ... без изменений ...
+            },
+
+            editTechnology(pathStr, index) {
+                // ... без изменений ...
+            },
+
+            deleteNode(pathStr, index) {
+                // ... без изменений ...
+            },
+
+            deleteTechnology(pathStr, index) {
+                // ... без изменений ...
+            },
+
+            // === РАБОТА С JSON (без изменений) ===
+            exportToJSON() {
+                // ... без изменений ...
+            },
+
+            importFromJSON() {
+                // ... без изменений ...
+            },
+
+            importFromJSONText() {
+                // ... без изменений ...
+            },
+
+            copyToClipboard() {
+                // ... без изменений ...
+            }
+        };
+
+        // UI Manager (без изменений)
+        const uiManager = {
+            // ... весь код uiManager без изменений ...
+        };
+
+        // Checklist Manager (без изменений)
+        const checklistManager = {
+            // ... весь код checklistManager без изменений ...
+        };
+
+        // Auth Manager (без изменений)
+        const authManager = {
+            // ... весь код authManager без изменений ...
+        };
+
+        // Закрытие модальных окон при клике вне их
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                uiManager.hideModals();
+            }
+        };
+    </script>
+</body>
+</html>
