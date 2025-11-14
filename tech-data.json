@@ -201,7 +201,14 @@
     {
       "name": "Infrastructure & DevOps",
       "type": "category",
-      "children": []
+      "children": [
+        {
+          "name": "Docker",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
+        }
+      ]
     }
   ]
 }
