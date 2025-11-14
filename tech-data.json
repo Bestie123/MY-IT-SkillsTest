@@ -139,6 +139,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Транзакции (ACID)",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         },
