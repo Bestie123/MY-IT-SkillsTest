@@ -278,6 +278,11 @@
           "children": []
         }
       ]
+    },
+    {
+      "name": "QA & инструменты разработки",
+      "type": "category",
+      "children": []
     }
   ]
 }
