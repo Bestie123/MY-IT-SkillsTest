@@ -470,6 +470,15 @@
             display: flex;
             gap: 5px;
         }
+
+        .technology-checkbox {
+            margin-left: 10px;
+        }
+
+        .technology-checkbox input[type="checkbox"] {
+            width: auto;
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
@@ -640,19 +649,37 @@
                     const item = document.createElement('div');
                     item.className = 'accordion-item';
                     
-                    const completedTasks = node.checklist ? node.checklist.filter(item => item.completed).length : 0;
-                    const totalTasks = node.checklist ? node.checklist.length : 0;
-                    const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+                    // Расчет прогресса для узла
+                    const nodeProgress = this.calculateNodeProgress(node);
+                    const progress = nodeProgress.progress;
+                    const hasChecklistItems = nodeProgress.hasChecklistItems;
                     
                     let statusText = '';
                     let statusClass = '';
                     
                     if (node.type === 'technology') {
-                        if (totalTasks === 0) {
-                            statusText = '📝 В планах';
+                        if (!hasChecklistItems) {
+                            statusText = node.completed ? '✅ Изучено' : '📝 В планах';
+                            statusClass = node.completed ? 'status-completed' : 'status-planned';
+                        } else {
+                            if (progress === 0) {
+                                statusText = '📝 В планах';
+                                statusClass = 'status-planned';
+                            } else if (progress === 100) {
+                                statusText = '✅ Изучено';
+                                statusClass = 'status-completed';
+                            } else {
+                                statusText = '🚧 В процессе';
+                                statusClass = 'status-in-progress';
+                            }
+                        }
+                    } else {
+                        // Для категорий показываем прогресс дочерних элементов
+                        if (progress === 0) {
+                            statusText = '📝 Не начато';
                             statusClass = 'status-planned';
-                        } else if (completedTasks === totalTasks) {
-                            statusText = '✅ Изучено';
+                        } else if (progress === 100) {
+                            statusText = '✅ Завершено';
                             statusClass = 'status-completed';
                         } else {
                             statusText = '🚧 В процессе';
@@ -667,7 +694,8 @@
                     // Обработчик клика для раскрытия/скрытия
                     header.onclick = (e) => {
                         // Предотвращаем срабатывание при клике на кнопки действий
-                        if (!e.target.closest('.accordion-actions') && !e.target.closest('.accordion-toggle')) {
+                        if (!e.target.closest('.accordion-actions') && !e.target.closest('.accordion-toggle') && 
+                            !e.target.closest('.technology-checkbox')) {
                             this.toggleItem(pathKey);
                         }
                     };
@@ -693,31 +721,50 @@
                     const stats = document.createElement('div');
                     stats.className = 'accordion-stats';
                     
-                    if (node.type === 'technology') {
-                        const status = document.createElement('span');
-                        status.className = statusClass;
-                        status.textContent = statusText;
-                        stats.appendChild(status);
-                        
-                        const progressContainer = document.createElement('div');
-                        progressContainer.className = 'accordion-progress';
-                        
-                        const progressBar = document.createElement('div');
-                        progressBar.className = 'progress-bar';
-                        progressBar.style.width = '100px';
-                        const progressFill = document.createElement('div');
-                        progressFill.className = 'progress-fill';
-                        progressFill.style.width = `${progress}%`;
-                        progressBar.appendChild(progressFill);
-                        progressContainer.appendChild(progressBar);
-                        
-                        const progressText = document.createElement('span');
-                        progressText.textContent = `${Math.round(progress)}%`;
-                        progressText.style.fontSize = '0.9em';
-                        progressText.style.color = '#6c757d';
-                        progressContainer.appendChild(progressText);
-                        
-                        stats.appendChild(progressContainer);
+                    const status = document.createElement('span');
+                    status.className = statusClass;
+                    status.textContent = statusText;
+                    stats.appendChild(status);
+                    
+                    const progressContainer = document.createElement('div');
+                    progressContainer.className = 'accordion-progress';
+                    
+                    const progressBar = document.createElement('div');
+                    progressBar.className = 'progress-bar';
+                    progressBar.style.width = '100px';
+                    const progressFill = document.createElement('div');
+                    progressFill.className = 'progress-fill';
+                    progressFill.style.width = `${progress}%`;
+                    progressBar.appendChild(progressFill);
+                    progressContainer.appendChild(progressBar);
+                    
+                    const progressText = document.createElement('span');
+                    progressText.textContent = `${Math.round(progress)}%`;
+                    progressText.style.fontSize = '0.9em';
+                    progressText.style.color = '#6c757d';
+                    progressContainer.appendChild(progressText);
+                    
+                    stats.appendChild(progressContainer);
+                    
+                    // Чекбокс для технологии без чек-листа
+                    if (node.type === 'technology' && (!node.checklist || node.checklist.length === 0)) {
+                        const checkboxContainer = document.createElement('div');
+                        checkboxContainer.className = 'technology-checkbox';
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.checked = node.completed || false;
+                        checkbox.onchange = (e) => {
+                            node.completed = e.target.checked;
+                            dataManager.saveToLocalStorage();
+                            authManager.scheduleAutoSave();
+                            this.renderAccordion();
+                        };
+                        checkboxContainer.appendChild(checkbox);
+                        const label = document.createElement('span');
+                        label.textContent = 'Изучено';
+                        label.style.fontSize = '0.9em';
+                        checkboxContainer.appendChild(label);
+                        stats.appendChild(checkboxContainer);
                     }
                     
                     header.appendChild(stats);
@@ -773,8 +820,8 @@
                         item.appendChild(content);
                     }
                     
-                    // Добавляем встроенный чек-лист для технологий
-                    if (node.type === 'technology') {
+                    // Добавляем встроенный чек-лист для технологий с пунктами
+                    if (node.type === 'technology' && node.checklist && node.checklist.length > 0) {
                         const inlineChecklist = this.createInlineChecklist(node, path, index);
                         item.appendChild(inlineChecklist);
                     }
@@ -854,13 +901,6 @@
                         `;
                         content.appendChild(itemElement);
                     });
-                } else {
-                    const emptyMessage = document.createElement('div');
-                    emptyMessage.style.textAlign = 'center';
-                    emptyMessage.style.color = '#6c757d';
-                    emptyMessage.style.padding = '10px';
-                    emptyMessage.textContent = 'Чек-лист пуст. Добавьте первый пункт!';
-                    content.appendChild(emptyMessage);
                 }
                 
                 // Кнопки действий
@@ -879,6 +919,45 @@
             toggleChecklist(checklistKey) {
                 this.checklistExpandedState[checklistKey] = !this.checklistExpandedState[checklistKey];
                 this.renderAccordion();
+            },
+            
+            // Расчет прогресса для узла (рекурсивно для категорий)
+            calculateNodeProgress(node) {
+                if (node.type === 'technology') {
+                    // Для технологии
+                    if (node.checklist && node.checklist.length > 0) {
+                        // Если есть чек-лист, считаем по нему
+                        const completed = node.checklist.filter(item => item.completed).length;
+                        const total = node.checklist.length;
+                        const progress = total > 0 ? (completed / total) * 100 : 0;
+                        return { progress, hasChecklistItems: true };
+                    } else {
+                        // Если нет чек-листа, используем поле completed
+                        const progress = node.completed ? 100 : 0;
+                        return { progress, hasChecklistItems: false };
+                    }
+                } else {
+                    // Для категории - рекурсивно считаем прогресс всех детей
+                    if (!node.children || node.children.length === 0) {
+                        return { progress: 0, hasChecklistItems: false };
+                    }
+                    
+                    let totalProgress = 0;
+                    let childCount = 0;
+                    let hasChecklistItems = false;
+                    
+                    node.children.forEach(child => {
+                        const childProgress = this.calculateNodeProgress(child);
+                        totalProgress += childProgress.progress;
+                        childCount++;
+                        if (childProgress.hasChecklistItems) {
+                            hasChecklistItems = true;
+                        }
+                    });
+                    
+                    const progress = childCount > 0 ? totalProgress / childCount : 0;
+                    return { progress, hasChecklistItems };
+                }
             }
         };
 
@@ -1002,7 +1081,8 @@
                     const tech = {
                         name: name,
                         type: 'technology',
-                        checklist: []
+                        checklist: [],
+                        completed: false
                     };
 
                     parent.push(tech);
