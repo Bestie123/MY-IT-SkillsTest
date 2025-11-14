@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Technologies Documentation - Multi View</title>
+    <title>Technologies Documentation - Accordion View</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -56,34 +56,6 @@
             flex-wrap: wrap;
             gap: 10px;
             align-items: center;
-        }
-
-        .view-controls {
-            margin-left: auto;
-            display: flex;
-            gap: 10px;
-        }
-
-        .view-btn {
-            background: #6c757d;
-            color: white;
-        }
-
-        .view-btn.active {
-            background: #007bff;
-        }
-
-        .tree-container, .accordion-container {
-            margin-top: 20px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            min-height: 500px;
-            overflow: auto;
-        }
-
-        .hidden {
-            display: none;
         }
 
         button {
@@ -168,6 +140,19 @@
         .success { background: #28a745; }
         .error { background: #dc3545; }
         .warning { background: #ffc107; color: black; }
+
+        .accordion-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            min-height: 500px;
+            overflow: auto;
+        }
+
+        .hidden {
+            display: none;
+        }
 
         .checklist-section {
             margin-top: 10px;
@@ -285,141 +270,7 @@
             border-color: #0056b3;
         }
 
-        /* Исправленные Tree Styles */
-        .tree {
-            position: relative;
-            padding: 20px;
-        }
-
-        .tree ul {
-            padding-left: 0;
-            margin: 0;
-            position: relative;
-        }
-
-        .tree li {
-            list-style-type: none;
-            margin: 0;
-            padding: 10px 5px 0 5px;
-            position: relative;
-        }
-
-        .tree li::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -10px;
-            width: 1px;
-            height: 100%;
-            border-left: 2px solid #3498db;
-        }
-
-        .tree li::after {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: -10px;
-            width: 15px;
-            height: 1px;
-            border-top: 2px solid #3498db;
-        }
-
-        .tree li:last-child::before {
-            height: 20px;
-        }
-
-        .tree li:first-child::before {
-            top: 20px;
-        }
-
-        .tree > ul > li::before {
-            border-left: none;
-        }
-
-        .tree > ul > li::after {
-            display: none;
-        }
-
-        .tree .tree-node {
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-            background: white;
-            display: inline-block;
-            position: relative;
-            transition: all 0.5s;
-            min-width: 200px;
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-left: 15px;
-        }
-
-        .tree .tree-node:hover {
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transform: translateY(-2px);
-        }
-
-        .tree .tree-node.category {
-            background: #e3f2fd;
-            border-color: #2196f3;
-        }
-
-        .tree .tree-node.technology {
-            background: #e8f5e9;
-            border-color: #4caf50;
-        }
-
-        .tree .tree-node .node-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .tree .tree-node .node-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .tree .tree-node .node-actions {
-            display: flex;
-            gap: 2px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .tree .tree-node .node-actions button {
-            padding: 2px 6px;
-            font-size: 0.8em;
-            margin: 1px;
-        }
-
-        .tree .progress-bar {
-            width: 100%;
-            height: 10px;
-            background-color: #e9ecef;
-            border-radius: 5px;
-            overflow: hidden;
-            margin: 5px 0;
-        }
-
-        .tree .progress-fill {
-            height: 100%;
-            background-color: #20c997;
-            transition: width 0.3s ease;
-        }
-
-        .tree .status-planned { color: #6c757d; }
-        .tree .status-in-progress { color: #fd7e14; }
-        .tree .status-completed { color: #198754; }
-
-        .tree .checklist-indicator {
-            font-size: 0.8em;
-            color: #6c757d;
-            margin-top: 2px;
-        }
-
-        /* Исправленные Accordion Styles */
+        /* Аккордеон стили */
         .accordion {
             width: 100%;
         }
@@ -514,11 +365,36 @@
             align-items: center;
             justify-content: center;
         }
+
+        .progress-bar {
+            width: 100px;
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #20c997;
+            transition: width 0.3s ease;
+        }
+
+        .status-planned { color: #6c757d; }
+        .status-in-progress { color: #fd7e14; }
+        .status-completed { color: #198754; }
+
+        .checklist-indicator {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 2px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🌳 Technologies Documentation - Multi View</h1>
+        <h1>📁 Technologies Documentation - Accordion View</h1>
         
         <!-- Секция аутентификации -->
         <div class="auth-section" id="authSection">
@@ -546,19 +422,10 @@
                 <button onclick="dataManager.exportToJSON()">📥 Экспорт в JSON</button>
                 <button onclick="dataManager.importFromJSON()">📤 Импорт из JSON</button>
             </div>
-            
-            <div class="view-controls">
-                <button id="treeViewBtn" class="view-btn active" onclick="viewManager.setView('tree')">🌳 Древовидный вид</button>
-                <button id="accordionViewBtn" class="view-btn" onclick="viewManager.setView('accordion')">📁 Аккордеон вид</button>
-            </div>
         </div>
 
-        <!-- Контейнеры для разных видов -->
-        <div id="treeContainer" class="tree-container">
-            <div id="tree" class="tree"></div>
-        </div>
-
-        <div id="accordionContainer" class="accordion-container hidden">
+        <!-- Контейнер для аккордеона -->
+        <div id="accordionContainer" class="accordion-container">
             <div id="accordion" class="accordion"></div>
         </div>
 
@@ -651,188 +518,11 @@
         // Текущий выбранный путь для модальных окон
         let currentModalPath = [];
 
-        // Менеджер видов отображения
-        const viewManager = {
-            currentView: 'tree',
-            
-            init() {
-                // Загружаем сохраненный вид из localStorage
-                const savedView = localStorage.getItem('techViewMode');
-                if (savedView) {
-                    this.setView(savedView, false);
-                }
-                
-                // Инициализируем менеджеры отображения
-                treeManager.init();
-                accordionManager.init();
-            },
-            
-            setView(viewType, save = true) {
-                this.currentView = viewType;
-                
-                // Обновляем кнопки
-                document.getElementById('treeViewBtn').classList.toggle('active', viewType === 'tree');
-                document.getElementById('accordionViewBtn').classList.toggle('active', viewType === 'accordion');
-                
-                // Показываем/скрываем контейнеры
-                document.getElementById('treeContainer').classList.toggle('hidden', viewType !== 'tree');
-                document.getElementById('accordionContainer').classList.toggle('hidden', viewType !== 'accordion');
-                
-                // Перерисовываем выбранный вид
-                if (viewType === 'tree') {
-                    treeManager.renderTree();
-                } else {
-                    accordionManager.renderAccordion();
-                }
-                
-                // Сохраняем выбор
-                if (save) {
-                    localStorage.setItem('techViewMode', viewType);
-                }
-            }
-        };
-
-        // Инициализация приложения
-        document.addEventListener('DOMContentLoaded', function() {
-            authManager.loadAuth();
-            dataManager.loadFromLocalStorage();
-            viewManager.init();
-            
-            // Включить автосохранение по умолчанию, если настроен GitHub
-            const token = localStorage.getItem('githubToken');
-            const owner = localStorage.getItem('repoOwner');
-            const repo = localStorage.getItem('repoName');
-            
-            if (token && owner && repo) {
-                console.log('GitHub настроен, автосохранение доступно');
-            }
-        });
-
-        const treeManager = {
-            init() {
-                this.treeContainer = document.getElementById('tree');
-                this.renderTree();
-            },
-
-            renderTree() {
-                if (!this.treeContainer) {
-                    console.error('Tree container not found');
-                    return;
-                }
-                
-                this.treeContainer.innerHTML = '';
-                
-                if (techData.categories.length === 0) {
-                    this.treeContainer.innerHTML = '<p style="text-align: center; color: #6c757d;">Нет данных. Добавьте первую категорию!</p>';
-                    return;
-                }
-
-                const tree = document.createElement('ul');
-                this.buildTree(techData.categories, tree, []);
-                this.treeContainer.appendChild(tree);
-            },
-
-            buildTree(nodes, parentElement, path) {
-                nodes.forEach((node, index) => {
-                    const li = document.createElement('li');
-                    const currentPath = [...path, index];
-                    
-                    const nodeElement = document.createElement('div');
-                    nodeElement.className = `tree-node ${node.type === 'technology' ? 'technology' : 'category'}`;
-                    
-                    const completedTasks = node.checklist ? node.checklist.filter(item => item.completed).length : 0;
-                    const totalTasks = node.checklist ? node.checklist.length : 0;
-                    const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-                    
-                    let statusText = '';
-                    let statusClass = '';
-                    
-                    if (node.type === 'technology') {
-                        if (totalTasks === 0) {
-                            statusText = '📝 В планах';
-                            statusClass = 'status-planned';
-                        } else if (completedTasks === totalTasks) {
-                            statusText = '✅ Изучено';
-                            statusClass = 'status-completed';
-                        } else {
-                            statusText = '🚧 В процессе';
-                            statusClass = 'status-in-progress';
-                        }
-                    }
-
-                    const nodeContent = document.createElement('div');
-                    nodeContent.className = 'node-content';
-                    
-                    const nameElement = document.createElement('div');
-                    nameElement.className = 'node-name';
-                    nameElement.textContent = node.name;
-                    nodeContent.appendChild(nameElement);
-
-                    if (node.type === 'technology') {
-                        const statusElement = document.createElement('div');
-                        statusElement.className = statusClass;
-                        statusElement.textContent = statusText;
-                        nodeContent.appendChild(statusElement);
-
-                        const progressBar = document.createElement('div');
-                        progressBar.className = 'progress-bar';
-                        const progressFill = document.createElement('div');
-                        progressFill.className = 'progress-fill';
-                        progressFill.style.width = `${progress}%`;
-                        progressBar.appendChild(progressFill);
-                        nodeContent.appendChild(progressBar);
-
-                        const progressText = document.createElement('div');
-                        progressText.textContent = `${Math.round(progress)}% (${completedTasks}/${totalTasks})`;
-                        progressText.style.fontSize = '0.8em';
-                        progressText.style.color = '#6c757d';
-                        nodeContent.appendChild(progressText);
-
-                        if (node.checklist && node.checklist.length > 0) {
-                            const checklistIndicator = document.createElement('div');
-                            checklistIndicator.className = 'checklist-indicator';
-                            checklistIndicator.textContent = `📋 ${node.checklist.length} задач`;
-                            nodeContent.appendChild(checklistIndicator);
-                        }
-                    }
-
-                    const actionsElement = document.createElement('div');
-                    actionsElement.className = 'node-actions';
-                    
-                    if (node.type === 'technology') {
-                        actionsElement.innerHTML = `
-                            <button onclick="checklistManager.manageChecklist(${JSON.stringify(path)}, ${index})" class="warning">📋</button>
-                            <button onclick="dataManager.editTechnology(${JSON.stringify(path)}, ${index})">✏️</button>
-                            <button class="delete" onclick="dataManager.deleteTechnology(${JSON.stringify(path)}, ${index})">🗑️</button>
-                        `;
-                    } else {
-                        actionsElement.innerHTML = `
-                            <button onclick="uiManager.showAddNodeModal(${JSON.stringify(currentPath)})">+ 📁</button>
-                            <button onclick="uiManager.showAddTechModal(${JSON.stringify(currentPath)})">+ ⚙️</button>
-                            <button onclick="dataManager.editNode(${JSON.stringify(path)}, ${index})">✏️</button>
-                            <button class="delete" onclick="dataManager.deleteNode(${JSON.stringify(path)}, ${index})">🗑️</button>
-                        `;
-                    }
-                    
-                    nodeContent.appendChild(actionsElement);
-                    nodeElement.appendChild(nodeContent);
-                    li.appendChild(nodeElement);
-
-                    if (node.children && node.children.length > 0) {
-                        const childUl = document.createElement('ul');
-                        this.buildTree(node.children, childUl, currentPath);
-                        li.appendChild(childUl);
-                    }
-
-                    parentElement.appendChild(li);
-                });
-            }
-        };
-
+        // Менеджер аккордеона
         const accordionManager = {
             init() {
                 this.accordionContainer = document.getElementById('accordion');
-                this.expandedState = JSON.parse(localStorage.getItem('accordionExpandedState')) || {}; // Загружаем состояние из localStorage
+                this.expandedState = JSON.parse(localStorage.getItem('accordionExpandedState')) || {};
                 this.renderAccordion();
             },
 
@@ -862,7 +552,7 @@
                     
                     // Если состояние не задано, по умолчанию раскрываем только корневые элементы
                     if (this.expandedState[pathKey] === undefined) {
-                        this.expandedState[pathKey] = path.length === 0; // Корневые элементы раскрыты по умолчанию
+                        this.expandedState[pathKey] = path.length === 0;
                     }
                     
                     const item = document.createElement('div');
@@ -1011,6 +701,22 @@
             }
         };
 
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', function() {
+            authManager.loadAuth();
+            dataManager.loadFromLocalStorage();
+            accordionManager.init();
+            
+            // Включить автосохранение по умолчанию, если настроен GitHub
+            const token = localStorage.getItem('githubToken');
+            const owner = localStorage.getItem('repoOwner');
+            const repo = localStorage.getItem('repoName');
+            
+            if (token && owner && repo) {
+                console.log('GitHub настроен, автосохранение доступно');
+            }
+        });
+
         const dataManager = {
             // Вспомогательные функции для работы с путями
             getNodeByPath(path) {
@@ -1050,11 +756,7 @@
 
             // Перерисовка текущего вида
             renderCurrentView() {
-                if (viewManager.currentView === 'tree') {
-                    treeManager.renderTree();
-                } else {
-                    accordionManager.renderAccordion();
-                }
+                accordionManager.renderAccordion();
             },
 
             // === УПРАВЛЕНИЕ ДАННЫМИ ===
