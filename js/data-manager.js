@@ -35,7 +35,7 @@ const dataManager = {
         if (saved) {
             const parsedData = JSON.parse(saved);
             techData.categories = parsedData.categories || [];
-            uiManager.renderTable();
+            treeManager.renderTree();
         }
     },
 
@@ -48,7 +48,7 @@ const dataManager = {
                 type: 'category',
                 children: []
             });
-            uiManager.renderTable();
+            treeManager.renderTree();
             this.saveToLocalStorage();
             uiManager.hideModals();
             document.getElementById('newCategoryName').value = '';
@@ -74,7 +74,7 @@ const dataManager = {
                 children: []
             });
 
-            uiManager.renderTable();
+            treeManager.renderTree();
             this.saveToLocalStorage();
             uiManager.hideModals();
             document.getElementById('newNodeName').value = '';
@@ -102,7 +102,7 @@ const dataManager = {
 
             parent.push(tech);
 
-            uiManager.renderTable();
+            treeManager.renderTree();
             this.saveToLocalStorage();
             uiManager.hideModals();
             document.getElementById('newTechName').value = '';
@@ -120,7 +120,7 @@ const dataManager = {
         const newName = prompt('Введите новое название:', node.name);
         if (newName) {
             node.name = newName;
-            uiManager.renderTable();
+            treeManager.renderTree();
             this.saveToLocalStorage();
             uiManager.showNotification('Категория обновлена!', 'success');
             authManager.scheduleAutoSave();
@@ -134,7 +134,7 @@ const dataManager = {
         const newName = prompt('Введите новое название технологии:', node.name);
         if (newName) {
             node.name = newName;
-            uiManager.renderTable();
+            treeManager.renderTree();
             this.saveToLocalStorage();
             uiManager.showNotification('Технология обновлена!', 'success');
             authManager.scheduleAutoSave();
@@ -147,9 +147,8 @@ const dataManager = {
             const parent = this.getNodeByPath(path);
             if (parent) {
                 parent.splice(index, 1);
-                uiManager.renderTable();
+                treeManager.renderTree();
                 this.saveToLocalStorage();
-                navigation.resetView();
                 uiManager.showNotification('Категория удалена!', 'success');
                 authManager.scheduleAutoSave();
             }
@@ -161,7 +160,7 @@ const dataManager = {
             const parent = this.getNodeByPath(path);
             if (parent) {
                 parent.splice(index, 1);
-                uiManager.renderTable();
+                treeManager.renderTree();
                 this.saveToLocalStorage();
                 uiManager.showNotification('Технология удалена!', 'success');
                 authManager.scheduleAutoSave();
@@ -189,9 +188,8 @@ const dataManager = {
                 try {
                     const parsedData = JSON.parse(e.target.result);
                     techData.categories = parsedData.categories || [];
-                    uiManager.renderTable();
+                    treeManager.renderTree();
                     dataManager.saveToLocalStorage();
-                    navigation.resetView();
                     uiManager.showNotification('Данные импортированы!', 'success');
                     authManager.scheduleAutoSave();
                 } catch (error) {
@@ -208,9 +206,8 @@ const dataManager = {
         try {
             const parsedData = JSON.parse(jsonText);
             techData.categories = parsedData.categories || [];
-            uiManager.renderTable();
+            treeManager.renderTree();
             this.saveToLocalStorage();
-            navigation.resetView();
             uiManager.showNotification('Данные импортированы из JSON!', 'success');
             authManager.scheduleAutoSave();
         } catch (error) {
