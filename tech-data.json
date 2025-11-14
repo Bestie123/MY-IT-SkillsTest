@@ -45,6 +45,11 @@
           "children": []
         }
       ]
+    },
+    {
+      "name": "123",
+      "type": "category",
+      "children": []
     }
   ]
 }
