@@ -553,222 +553,21 @@
         // Текущий выбранный путь для модальных окон
         let currentModalPath = [];
 
-        const dataManager = {
-            // Вспомогательные функции для работы с путями
-            getNodeByPath(path) {
-                let currentNode = techData.categories;
-                for (const index of path) {
-                    if (currentNode[index]) {
-                        currentNode = currentNode[index].children || [];
-                    } else {
-                        return null;
-                    }
-                }
-                return currentNode;
-            },
-
-            getNodeAtIndex(path, index) {
-                const parent = this.getNodeByPath(path);
-                return parent ? parent[index] : null;
-            },
-
-            // === ЛОКАЛЬНОЕ ХРАНИЛИЩЕ ===
-            saveToLocalStorage() {
-                localStorage.setItem('techData', JSON.stringify(techData));
-            },
-
-            loadFromLocalStorage() {
-                const saved = localStorage.getItem('techData');
-                if (saved) {
-                    const parsedData = JSON.parse(saved);
-                    techData.categories = parsedData.categories || [];
-                    treeManager.renderTree();
-                }
-            },
-
-            // === УПРАВЛЕНИЕ ДАННЫМИ ===
-            addCategory() {
-                const name = document.getElementById('newCategoryName').value;
-                if (name) {
-                    techData.categories.push({
-                        name: name,
-                        type: 'category',
-                        children: []
-                    });
-                    treeManager.renderTree();
-                    this.saveToLocalStorage();
-                    uiManager.hideModals();
-                    document.getElementById('newCategoryName').value = '';
-                    uiManager.showNotification('Категория добавлена!', 'success');
-                    
-                    authManager.scheduleAutoSave();
-                }
-            },
-
-            addNode() {
-                const name = document.getElementById('newNodeName').value;
-                
-                if (name && currentModalPath.length >= 0) {
-                    const parent = this.getNodeByPath(currentModalPath);
-                    if (!parent) {
-                        uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
-                        return;
-                    }
-
-                    parent.push({
-                        name: name,
-                        type: 'node',
-                        children: []
-                    });
-
-                    treeManager.renderTree();
-                    this.saveToLocalStorage();
-                    uiManager.hideModals();
-                    document.getElementById('newNodeName').value = '';
-                    uiManager.showNotification('Подкатегория добавлена!', 'success');
-                    
-                    authManager.scheduleAutoSave();
-                }
-            },
-
-            addTechnology() {
-                const name = document.getElementById('newTechName').value;
-                
-                if (name && currentModalPath.length >= 0) {
-                    const parent = this.getNodeByPath(currentModalPath);
-                    if (!parent) {
-                        uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
-                        return;
-                    }
-
-                    const tech = {
-                        name: name,
-                        type: 'technology',
-                        checklist: []
-                    };
-
-                    parent.push(tech);
-
-                    treeManager.renderTree();
-                    this.saveToLocalStorage();
-                    uiManager.hideModals();
-                    document.getElementById('newTechName').value = '';
-                    uiManager.showNotification('Технология добавлена!', 'success');
-                    
-                    authManager.scheduleAutoSave();
-                }
-            },
-
-            // Функции редактирования
-            editNode(path, index) {
-                const node = this.getNodeAtIndex(path, index);
-                if (!node) return;
-
-                const newName = prompt('Введите новое название:', node.name);
-                if (newName) {
-                    node.name = newName;
-                    treeManager.renderTree();
-                    this.saveToLocalStorage();
-                    uiManager.showNotification('Категория обновлена!', 'success');
-                    authManager.scheduleAutoSave();
-                }
-            },
-
-            editTechnology(path, index) {
-                const node = this.getNodeAtIndex(path, index);
-                if (!node) return;
-
-                const newName = prompt('Введите новое название технологии:', node.name);
-                if (newName) {
-                    node.name = newName;
-                    treeManager.renderTree();
-                    this.saveToLocalStorage();
-                    uiManager.showNotification('Технология обновлена!', 'success');
-                    authManager.scheduleAutoSave();
-                }
-            },
-
-            // Функции удаления
-            deleteNode(path, index) {
-                if (confirm('Удалить эту категорию и все её содержимое?')) {
-                    const parent = this.getNodeByPath(path);
-                    if (parent) {
-                        parent.splice(index, 1);
-                        treeManager.renderTree();
-                        this.saveToLocalStorage();
-                        uiManager.showNotification('Категория удалена!', 'success');
-                        authManager.scheduleAutoSave();
-                    }
-                }
-            },
-
-            deleteTechnology(path, index) {
-                if (confirm('Удалить эту технологию и все её задачи?')) {
-                    const parent = this.getNodeByPath(path);
-                    if (parent) {
-                        parent.splice(index, 1);
-                        treeManager.renderTree();
-                        this.saveToLocalStorage();
-                        uiManager.showNotification('Технология удалена!', 'success');
-                        authManager.scheduleAutoSave();
-                    }
-                }
-            },
-
-            // === РАБОТА С JSON ===
-            exportToJSON() {
-                const jsonOutput = document.getElementById('jsonOutput');
-                const jsonSection = document.getElementById('jsonSection');
-                
-                jsonOutput.value = JSON.stringify(techData, null, 2);
-                jsonSection.classList.remove('hidden');
-            },
-
-            importFromJSON() {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = '.json';
-                input.onchange = function(e) {
-                    const file = e.target.files[0];
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        try {
-                            const parsedData = JSON.parse(e.target.result);
-                            techData.categories = parsedData.categories || [];
-                            treeManager.renderTree();
-                            dataManager.saveToLocalStorage();
-                            uiManager.showNotification('Данные импортированы!', 'success');
-                            authManager.scheduleAutoSave();
-                        } catch (error) {
-                            uiManager.showNotification('Ошибка при чтении JSON файла', 'error');
-                        }
-                    };
-                    reader.readAsText(file);
-                };
-                input.click();
-            },
-
-            importFromJSONText() {
-                const jsonText = document.getElementById('jsonOutput').value;
-                try {
-                    const parsedData = JSON.parse(jsonText);
-                    techData.categories = parsedData.categories || [];
-                    treeManager.renderTree();
-                    this.saveToLocalStorage();
-                    uiManager.showNotification('Данные импортированы из JSON!', 'success');
-                    authManager.scheduleAutoSave();
-                } catch (error) {
-                    uiManager.showNotification('Ошибка при разборе JSON', 'error');
-                }
-            },
-
-            copyToClipboard() {
-                const jsonOutput = document.getElementById('jsonOutput');
-                jsonOutput.select();
-                document.execCommand('copy');
-                uiManager.showNotification('JSON скопирован в буфер обмена!', 'success');
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', function() {
+            authManager.loadAuth();
+            dataManager.loadFromLocalStorage();
+            treeManager.init();
+            
+            // Включить автосохранение по умолчанию, если настроен GitHub
+            const token = localStorage.getItem('githubToken');
+            const owner = localStorage.getItem('repoOwner');
+            const repo = localStorage.getItem('repoName');
+            
+            if (token && owner && repo) {
+                console.log('GitHub настроен, автосохранение доступно');
             }
-        };
+        });
 
         const treeManager = {
             init() {
@@ -777,6 +576,11 @@
             },
 
             renderTree() {
+                if (!this.treeContainer) {
+                    console.error('Tree container not found');
+                    return;
+                }
+                
                 this.treeContainer.innerHTML = '';
                 
                 if (techData.categories.length === 0) {
@@ -886,6 +690,233 @@
             }
         };
 
+        const dataManager = {
+            // Вспомогательные функции для работы с путями
+            getNodeByPath(path) {
+                let currentNode = techData.categories;
+                for (const index of path) {
+                    if (currentNode[index]) {
+                        currentNode = currentNode[index].children || [];
+                    } else {
+                        return null;
+                    }
+                }
+                return currentNode;
+            },
+
+            getNodeAtIndex(path, index) {
+                const parent = this.getNodeByPath(path);
+                return parent ? parent[index] : null;
+            },
+
+            // === ЛОКАЛЬНОЕ ХРАНИЛИЩЕ ===
+            saveToLocalStorage() {
+                localStorage.setItem('techData', JSON.stringify(techData));
+            },
+
+            loadFromLocalStorage() {
+                const saved = localStorage.getItem('techData');
+                if (saved) {
+                    try {
+                        const parsedData = JSON.parse(saved);
+                        techData.categories = parsedData.categories || [];
+                        treeManager.renderTree();
+                    } catch (e) {
+                        console.error('Error parsing saved data:', e);
+                    }
+                }
+            },
+
+            // === УПРАВЛЕНИЕ ДАННЫМИ ===
+            addCategory() {
+                const name = document.getElementById('newCategoryName').value.trim();
+                if (name) {
+                    techData.categories.push({
+                        name: name,
+                        type: 'category',
+                        children: []
+                    });
+                    treeManager.renderTree();
+                    this.saveToLocalStorage();
+                    uiManager.hideModals();
+                    document.getElementById('newCategoryName').value = '';
+                    uiManager.showNotification('Категория добавлена!', 'success');
+                    
+                    authManager.scheduleAutoSave();
+                } else {
+                    uiManager.showNotification('Введите название категории!', 'error');
+                }
+            },
+
+            addNode() {
+                const name = document.getElementById('newNodeName').value.trim();
+                
+                if (name && currentModalPath.length >= 0) {
+                    const parent = this.getNodeByPath(currentModalPath);
+                    if (!parent) {
+                        uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
+                        return;
+                    }
+
+                    parent.push({
+                        name: name,
+                        type: 'node',
+                        children: []
+                    });
+
+                    treeManager.renderTree();
+                    this.saveToLocalStorage();
+                    uiManager.hideModals();
+                    document.getElementById('newNodeName').value = '';
+                    uiManager.showNotification('Подкатегория добавлена!', 'success');
+                    
+                    authManager.scheduleAutoSave();
+                } else {
+                    uiManager.showNotification('Введите название подкатегории!', 'error');
+                }
+            },
+
+            addTechnology() {
+                const name = document.getElementById('newTechName').value.trim();
+                
+                if (name && currentModalPath.length >= 0) {
+                    const parent = this.getNodeByPath(currentModalPath);
+                    if (!parent) {
+                        uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
+                        return;
+                    }
+
+                    const tech = {
+                        name: name,
+                        type: 'technology',
+                        checklist: []
+                    };
+
+                    parent.push(tech);
+
+                    treeManager.renderTree();
+                    this.saveToLocalStorage();
+                    uiManager.hideModals();
+                    document.getElementById('newTechName').value = '';
+                    uiManager.showNotification('Технология добавлена!', 'success');
+                    
+                    authManager.scheduleAutoSave();
+                } else {
+                    uiManager.showNotification('Введите название технологии!', 'error');
+                }
+            },
+
+            // Функции редактирования
+            editNode(path, index) {
+                const node = this.getNodeAtIndex(path, index);
+                if (!node) return;
+
+                const newName = prompt('Введите новое название:', node.name);
+                if (newName && newName.trim()) {
+                    node.name = newName.trim();
+                    treeManager.renderTree();
+                    this.saveToLocalStorage();
+                    uiManager.showNotification('Категория обновлена!', 'success');
+                    authManager.scheduleAutoSave();
+                }
+            },
+
+            editTechnology(path, index) {
+                const node = this.getNodeAtIndex(path, index);
+                if (!node) return;
+
+                const newName = prompt('Введите новое название технологии:', node.name);
+                if (newName && newName.trim()) {
+                    node.name = newName.trim();
+                    treeManager.renderTree();
+                    this.saveToLocalStorage();
+                    uiManager.showNotification('Технология обновлена!', 'success');
+                    authManager.scheduleAutoSave();
+                }
+            },
+
+            // Функции удаления
+            deleteNode(path, index) {
+                if (confirm('Удалить эту категорию и все её содержимое?')) {
+                    const parent = this.getNodeByPath(path);
+                    if (parent) {
+                        parent.splice(index, 1);
+                        treeManager.renderTree();
+                        this.saveToLocalStorage();
+                        uiManager.showNotification('Категория удалена!', 'success');
+                        authManager.scheduleAutoSave();
+                    }
+                }
+            },
+
+            deleteTechnology(path, index) {
+                if (confirm('Удалить эту технологию и все её задачи?')) {
+                    const parent = this.getNodeByPath(path);
+                    if (parent) {
+                        parent.splice(index, 1);
+                        treeManager.renderTree();
+                        this.saveToLocalStorage();
+                        uiManager.showNotification('Технология удалена!', 'success');
+                        authManager.scheduleAutoSave();
+                    }
+                }
+            },
+
+            // === РАБОТА С JSON ===
+            exportToJSON() {
+                const jsonOutput = document.getElementById('jsonOutput');
+                const jsonSection = document.getElementById('jsonSection');
+                
+                jsonOutput.value = JSON.stringify(techData, null, 2);
+                jsonSection.classList.remove('hidden');
+            },
+
+            importFromJSON() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = function(e) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const parsedData = JSON.parse(e.target.result);
+                            techData.categories = parsedData.categories || [];
+                            treeManager.renderTree();
+                            dataManager.saveToLocalStorage();
+                            uiManager.showNotification('Данные импортированы!', 'success');
+                            authManager.scheduleAutoSave();
+                        } catch (error) {
+                            uiManager.showNotification('Ошибка при чтении JSON файла', 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                input.click();
+            },
+
+            importFromJSONText() {
+                const jsonText = document.getElementById('jsonOutput').value;
+                try {
+                    const parsedData = JSON.parse(jsonText);
+                    techData.categories = parsedData.categories || [];
+                    treeManager.renderTree();
+                    this.saveToLocalStorage();
+                    uiManager.showNotification('Данные импортированы из JSON!', 'success');
+                    authManager.scheduleAutoSave();
+                } catch (error) {
+                    uiManager.showNotification('Ошибка при разборе JSON', 'error');
+                }
+            },
+
+            copyToClipboard() {
+                const jsonOutput = document.getElementById('jsonOutput');
+                jsonOutput.select();
+                document.execCommand('copy');
+                uiManager.showNotification('JSON скопирован в буфер обмена!', 'success');
+            }
+        };
+
         // UI Manager для модальных окон
         const uiManager = {
             showModal(modalId) {
@@ -916,6 +947,8 @@
 
             updateParentSelect(modalId, currentPath) {
                 const container = document.getElementById(modalId === 'nodeModal' ? 'nodeParentSelect' : 'techParentSelect');
+                if (!container) return;
+                
                 container.innerHTML = '';
                 
                 const title = document.createElement('div');
@@ -967,6 +1000,8 @@
                 };
                 
                 const tech = this.getTechnology();
+                if (!tech) return;
+                
                 document.getElementById('checklistTitle').textContent = `Чек-лист: ${tech.name}`;
                 
                 if (!tech.checklist) {
@@ -979,8 +1014,12 @@
             
             renderChecklist() {
                 const tech = this.getTechnology();
+                if (!tech) return;
+                
                 const checklistItems = document.getElementById('checklistItems');
                 const checklistStats = document.getElementById('checklistStats');
+                
+                if (!checklistItems || !checklistStats) return;
                 
                 checklistItems.innerHTML = '';
                 
@@ -1015,10 +1054,13 @@
             
             addChecklistItem() {
                 const input = document.getElementById('newChecklistItem');
+                if (!input) return;
+                
                 const text = input.value.trim();
                 
                 if (text) {
                     const tech = this.getTechnology();
+                    if (!tech) return;
                     
                     if (!tech.checklist) {
                         tech.checklist = [];
@@ -1039,6 +1081,7 @@
             
             removeChecklistItem(index) {
                 const tech = this.getTechnology();
+                if (!tech) return;
                 
                 if (tech.checklist && tech.checklist.length > index) {
                     tech.checklist.splice(index, 1);
@@ -1051,6 +1094,7 @@
             
             editChecklistItem(index) {
                 const tech = this.getTechnology();
+                if (!tech) return;
                 
                 if (tech.checklist && tech.checklist.length > index) {
                     const newText = prompt('Редактировать пункт:', tech.checklist[index].text);
@@ -1067,6 +1111,7 @@
             toggleChecklistItem(path, techIndex, itemIndex) {
                 this.currentChecklist = { path, techIndex };
                 const tech = this.getTechnology();
+                if (!tech) return;
                 
                 if (tech.checklist && tech.checklist.length > itemIndex) {
                     tech.checklist[itemIndex].completed = !tech.checklist[itemIndex].completed;
@@ -1176,6 +1221,8 @@
 
             showAuthStatus(message, type) {
                 const authStatus = document.getElementById('authStatus');
+                if (!authStatus) return;
+                
                 authStatus.textContent = message;
                 authStatus.className = 'auth-status';
                 authStatus.classList.add(type === 'success' ? 'auth-success' : 
@@ -1220,6 +1267,8 @@
             
             updateAutoSaveButton() {
                 const button = document.getElementById('autoSaveBtn');
+                if (!button) return;
+                
                 if (this.autoSaveEnabled) {
                     button.innerHTML = '✅ Автосохранение';
                     button.className = 'auto-save-enabled';
@@ -1471,24 +1520,6 @@
                 }
             }
         };
-
-        // Инициализация приложения
-        document.addEventListener('DOMContentLoaded', function() {
-            authManager.loadAuth();
-            dataManager.loadFromLocalStorage();
-            
-            // Включить автосохранение по умолчанию, если настроен GitHub
-            const token = localStorage.getItem('githubToken');
-            const owner = localStorage.getItem('repoOwner');
-            const repo = localStorage.getItem('repoName');
-            
-            if (token && owner && repo) {
-                console.log('GitHub настроен, автосохранение доступно');
-            }
-            
-            // Инициализация дерева
-            treeManager.init();
-        });
 
         // Закрытие модальных окон при клике вне их
         window.onclick = function(event) {
