@@ -165,6 +165,11 @@
               "completed": false
             }
           ]
+        },
+        {
+          "name": "Message Brokers",
+          "type": "node",
+          "children": []
         }
       ]
     }
