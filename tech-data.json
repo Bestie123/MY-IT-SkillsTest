@@ -193,6 +193,18 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Веб-сокеты (WebSockets) для real-time коммуникации.",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            },
+            {
+              "name": "Кэширование (например, Caffeine или Ehcache).",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         },
