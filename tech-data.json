@@ -117,6 +117,18 @@
               "completed": false
             }
           ]
+        },
+        {
+          "name": "Тестирование",
+          "type": "node",
+          "children": [
+            {
+              "name": "JUnit 5/4",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            }
+          ]
         }
       ]
     }
