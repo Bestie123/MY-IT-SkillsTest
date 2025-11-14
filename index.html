@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Technologies Documentation</title>
+    <title>Technologies Documentation - Tree View</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="tree.css">
 </head>
 <body>
     <div class="container">
-        <h1>📚 Technologies Documentation</h1>
+        <h1>🌳 Technologies Documentation - Tree View</h1>
         
         <!-- Секция аутентификации -->
         <div class="auth-section" id="authSection">
@@ -36,31 +37,10 @@
             <button onclick="dataManager.importFromJSON()">📤 Импорт из JSON</button>
         </div>
 
-        <!-- Хлебные крошки для навигации -->
-        <div class="breadcrumb" id="breadcrumb">
-            <div class="breadcrumb-item"><a href="#" onclick="navigation.resetView()">Все технологии</a></div>
+        <!-- Контейнер для дерева -->
+        <div class="tree-container">
+            <div id="tree" class="tree"></div>
         </div>
-
-        <!-- Таблица с технологиями -->
-        <table id="techTable">
-            <thead>
-                <tr>
-                    <th>Категория 1</th>
-                    <th>Категория 2</th>
-                    <th>Категория 3</th>
-                    <th>Категория 4</th>
-                    <th>Категория 5</th>
-                    <th>Технология</th>
-                    <th>Статус</th>
-                    <th>Прогресс</th>
-                    <th>Задачи</th>
-                    <th>Действия</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <!-- Данные будут здесь -->
-            </tbody>
-        </table>
 
         <!-- Модальные окна -->
         <div id="categoryModal" class="modal">
@@ -144,8 +124,7 @@
 
     <script src="js/data-manager.js"></script>
     <script src="js/auth-manager.js"></script>
-    <script src="js/navigation-manager.js"></script>
-    <script src="js/ui-manager.js"></script>
+    <script src="js/tree-manager.js"></script>
     <script src="js/checklist-manager.js"></script>
     <script src="js/app.js"></script>
 </body>
