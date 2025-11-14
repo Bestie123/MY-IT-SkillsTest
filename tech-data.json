@@ -19,6 +19,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Паттерны проектирования (Singleton, Factory, Builder)",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         }
