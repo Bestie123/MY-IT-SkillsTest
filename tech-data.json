@@ -369,6 +369,18 @@
               "completed": false
             }
           ]
+        },
+        {
+          "name": "Базовая администрация Linux",
+          "type": "node",
+          "children": [
+            {
+              "name": "Основные команды, работа с процессами, правами, сетевыми утилитами.",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            }
+          ]
         }
       ]
     },
