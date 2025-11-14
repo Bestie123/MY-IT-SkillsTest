@@ -103,6 +103,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Redis",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         }
