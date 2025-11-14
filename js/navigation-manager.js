@@ -6,25 +6,22 @@ const navigation = {
 
     updateBreadcrumb() {
         const breadcrumb = document.getElementById('breadcrumb');
-        if (!breadcrumb) {
-            console.error('Breadcrumb element not found');
-            return;
-        }
-
-        breadcrumb.innerHTML = '<span class="breadcrumb-item" onclick="navigation.resetView()">Все технологии</span>';
+        breadcrumb.innerHTML = '<div class="breadcrumb-item"><a href="#" onclick="navigation.resetView()">Все технологии</a></div>';
         
         if (this.currentView.path.length > 0) {
             let currentPath = [];
             let currentNode = techData.categories;
             
             for (const index of this.currentView.path) {
-                if (currentNode && currentNode[index]) {
+                if (currentNode[index]) {
                     currentPath.push(index);
                     const pathCopy = [...currentPath];
                     breadcrumb.innerHTML += `
-                        <span class="breadcrumb-item" onclick="navigation.viewNode(${JSON.stringify(pathCopy)})">
-                            ${currentNode[index].name}
-                        </span>
+                        <div class="breadcrumb-item">
+                            <a href="#" onclick="navigation.viewNode(${JSON.stringify(pathCopy)})">
+                                ${currentNode[index].name}
+                            </a>
+                        </div>
                     `;
                     currentNode = currentNode[index].children || [];
                 }
@@ -35,12 +32,12 @@ const navigation = {
     resetView() {
         this.currentView = { type: 'all', path: [] };
         this.updateBreadcrumb();
-        uiManager.renderStructure();
+        uiManager.renderTable();
     },
 
     viewNode(path) {
         this.currentView = { type: 'node', path: path };
         this.updateBreadcrumb();
-        uiManager.renderStructure();
+        uiManager.renderTable();
     }
 };
