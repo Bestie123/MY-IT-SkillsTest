@@ -137,7 +137,19 @@
     {
       "name": "11111",
       "type": "category",
-      "children": []
+      "children": [
+        {
+          "name": "22",
+          "type": "node",
+          "children": [
+            {
+              "name": "3333",
+              "type": "node",
+              "children": []
+            }
+          ]
+        }
+      ]
     }
   ]
 }
