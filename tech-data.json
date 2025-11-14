@@ -45,6 +45,24 @@
               "completed": false
             }
           ]
+        },
+        {
+          "name": "Spring Frsmework",
+          "type": "node",
+          "children": [
+            {
+              "name": "Spring Boot",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            },
+            {
+              "name": "Spring Core & Context (DI/IoC)",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            }
+          ]
         }
       ]
     }
