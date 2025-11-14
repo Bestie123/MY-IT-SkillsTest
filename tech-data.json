@@ -219,6 +219,12 @@
           "type": "technology",
           "checklist": [],
           "completed": false
+        },
+        {
+          "name": "CI/CD",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
         }
       ]
     }
