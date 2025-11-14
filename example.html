@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Technologies Documentation - Demo</title>
     <style>
-        /* Стили остаются без изменений */
         body {
             font-family: Arial, sans-serif;
             max-width: 1400px;
@@ -452,7 +451,9 @@
 
         <!-- Контейнер для аккордеона -->
         <div id="accordionContainer" class="accordion-container">
-            <div id="accordion" class="accordion"></div>
+            <div id="accordion" class="accordion">
+                <p style="text-align: center; color: #6c757d;">Загрузка данных...</p>
+            </div>
         </div>
 
         <!-- Модальные окна -->
@@ -1051,7 +1052,7 @@
                             console.log('Данные автоматически загружены из tech-data.json');
                         }
                     })
-                    .catch(error) {
+                    .catch(error => {
                         console.error('Ошибка загрузки tech-data.json:', error);
                         if (!autoLoad) {
                             uiManager.showNotification('Ошибка загрузки tech-data.json: ' + error.message, 'error');
