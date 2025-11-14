@@ -357,6 +357,11 @@
               "completed": false
             }
           ]
+        },
+        {
+          "name": "Инфраструктура как код (IaC)",
+          "type": "node",
+          "children": []
         }
       ]
     },
