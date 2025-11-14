@@ -325,6 +325,18 @@
         {
           "name": "Веб-серверы / Reverse Proxy",
           "type": "node",
+          "children": [
+            {
+              "name": "Nginx",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            }
+          ]
+        },
+        {
+          "name": "Облачные платформы",
+          "type": "node",
           "children": []
         }
       ]
