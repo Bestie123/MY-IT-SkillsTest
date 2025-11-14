@@ -282,7 +282,26 @@
     {
       "name": "QA & инструменты разработки",
       "type": "category",
-      "children": []
+      "children": [
+        {
+          "name": "Postman",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
+        },
+        {
+          "name": "Insomnia",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
+        },
+        {
+          "name": "Swagger",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
+        }
+      ]
     }
   ]
 }
