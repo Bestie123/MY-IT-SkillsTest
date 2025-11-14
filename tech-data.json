@@ -49,6 +49,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Сериализация (JSON, XML, Jackson/Gson)",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         },
