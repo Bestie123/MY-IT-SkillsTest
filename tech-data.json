@@ -163,6 +163,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "SQL",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         },
