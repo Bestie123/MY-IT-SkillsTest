@@ -272,7 +272,7 @@
           "name": "Docker",
           "type": "technology",
           "checklist": [],
-          "completed": true
+          "completed": false
         },
         {
           "name": "DockerCompose",
