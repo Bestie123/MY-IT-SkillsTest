@@ -306,6 +306,12 @@
           "type": "technology",
           "checklist": [],
           "completed": false
+        },
+        {
+          "name": "PostgreSQL",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
         }
       ]
     }
