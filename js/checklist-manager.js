@@ -78,6 +78,7 @@ const checklistManager = {
             this.renderChecklist();
             dataManager.saveToLocalStorage();
             authManager.scheduleAutoSave();
+            treeManager.renderTree();
         }
     },
     
@@ -89,6 +90,7 @@ const checklistManager = {
             this.renderChecklist();
             dataManager.saveToLocalStorage();
             authManager.scheduleAutoSave();
+            treeManager.renderTree();
         }
     },
     
@@ -102,6 +104,7 @@ const checklistManager = {
                 this.renderChecklist();
                 dataManager.saveToLocalStorage();
                 authManager.scheduleAutoSave();
+                treeManager.renderTree();
             }
         }
     },
@@ -113,18 +116,18 @@ const checklistManager = {
         if (tech.checklist && tech.checklist.length > itemIndex) {
             tech.checklist[itemIndex].completed = !tech.checklist[itemIndex].completed;
             this.renderChecklist();
-            uiManager.renderTable();
             dataManager.saveToLocalStorage();
             authManager.scheduleAutoSave();
+            treeManager.renderTree();
         }
     },
     
     saveChecklist() {
         uiManager.hideModals();
-        uiManager.renderTable();
         dataManager.saveToLocalStorage();
         uiManager.showNotification('Чек-лист сохранен!', 'success');
         authManager.scheduleAutoSave();
+        treeManager.renderTree();
     },
     
     getTechnology() {
