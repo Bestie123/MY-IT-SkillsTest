@@ -237,6 +237,11 @@
               "completed": false
             }
           ]
+        },
+        {
+          "name": "Мониторинг",
+          "type": "node",
+          "children": []
         }
       ]
     }
