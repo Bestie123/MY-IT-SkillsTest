@@ -169,6 +169,18 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "MySQL",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            },
+            {
+              "name": "SQLite",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         },
@@ -387,27 +399,6 @@
               "completed": false
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "Базы данных",
-      "type": "category",
-      "children": [
-        {
-          "name": "SQL",
-          "type": "node",
-          "children": []
-        },
-        {
-          "name": "MySQL",
-          "type": "node",
-          "children": []
-        },
-        {
-          "name": "SQLite",
-          "type": "node",
-          "children": []
         }
       ]
     },
