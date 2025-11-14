@@ -728,16 +728,16 @@
                     
                     if (node.type === 'technology') {
                         actions.innerHTML = `
-                            <button onclick="checklistManager.manageChecklist(${JSON.stringify(path)}, ${index})" class="warning" title="Управление чек-листом">📋</button>
-                            <button onclick="dataManager.editTechnology(${JSON.stringify(path)}, ${index})" title="Редактировать">✏️</button>
-                            <button class="delete" onclick="dataManager.deleteTechnology(${JSON.stringify(path)}, ${index})" title="Удалить">🗑️</button>
+                            <button onclick="checklistManager.manageChecklist('${JSON.stringify(path)}', ${index})" class="warning" title="Управление чек-листом">📋</button>
+                            <button onclick="dataManager.editTechnology('${JSON.stringify(path)}', ${index})" title="Редактировать">✏️</button>
+                            <button class="delete" onclick="dataManager.deleteTechnology('${JSON.stringify(path)}', ${index})" title="Удалить">🗑️</button>
                         `;
                     } else {
                         actions.innerHTML = `
-                            <button onclick="uiManager.showAddNodeModal(${JSON.stringify(currentPath)})" title="Добавить подкатегорию">+ 📁</button>
-                            <button onclick="uiManager.showAddTechModal(${JSON.stringify(currentPath)})" title="Добавить технологию">+ ⚙️</button>
-                            <button onclick="dataManager.editNode(${JSON.stringify(path)}, ${index})" title="Редактировать">✏️</button>
-                            <button class="delete" onclick="dataManager.deleteNode(${JSON.stringify(path)}, ${index})" title="Удалить">🗑️</button>
+                            <button onclick="uiManager.showAddNodeModal('${JSON.stringify(currentPath)}')" title="Добавить подкатегорию">+ 📁</button>
+                            <button onclick="uiManager.showAddTechModal('${JSON.stringify(currentPath)}')" title="Добавить технологию">+ ⚙️</button>
+                            <button onclick="dataManager.editNode('${JSON.stringify(path)}', ${index})" title="Редактировать">✏️</button>
+                            <button class="delete" onclick="dataManager.deleteNode('${JSON.stringify(path)}', ${index})" title="Удалить">🗑️</button>
                         `;
                     }
                     
@@ -774,8 +774,8 @@
                     }
                     
                     // Добавляем встроенный чек-лист для технологий
-                    if (node.type === 'technology' && node.checklist && node.checklist.length > 0) {
-                        const inlineChecklist = this.createInlineChecklist(node, currentPath, index);
+                    if (node.type === 'technology') {
+                        const inlineChecklist = this.createInlineChecklist(node, path, index);
                         item.appendChild(inlineChecklist);
                     }
                     
@@ -800,9 +800,13 @@
                 
                 const title = document.createElement('div');
                 title.className = 'inline-checklist-title';
+                
+                const completedCount = tech.checklist ? tech.checklist.filter(item => item.completed).length : 0;
+                const totalCount = tech.checklist ? tech.checklist.length : 0;
+                
                 title.innerHTML = `
                     <span>📋 Чек-лист</span>
-                    <span style="font-size: 0.8em; color: #6c757d;">(${tech.checklist.filter(item => item.completed).length}/${tech.checklist.length})</span>
+                    <span style="font-size: 0.8em; color: #6c757d;">(${completedCount}/${totalCount})</span>
                 `;
                 
                 const toggle = document.createElement('button');
@@ -824,14 +828,12 @@
                 }
                 
                 // Статистика
-                const completed = tech.checklist.filter(item => item.completed).length;
-                const total = tech.checklist.length;
-                const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+                const progress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
                 
                 const stats = document.createElement('div');
                 stats.className = 'inline-checklist-stats';
                 stats.innerHTML = `
-                    Прогресс: ${completed}/${total} (${progress}%)
+                    Прогресс: ${completedCount}/${totalCount} (${progress}%)
                     <div class="progress-bar" style="width: 100%; margin-top: 5px;">
                         <div class="progress-fill" style="width: ${progress}%"></div>
                     </div>
@@ -839,25 +841,34 @@
                 content.appendChild(stats);
                 
                 // Элементы чек-листа
-                tech.checklist.forEach((item, itemIndex) => {
-                    const itemElement = document.createElement('div');
-                    itemElement.className = `inline-checklist-item ${item.completed ? 'completed' : ''}`;
-                    itemElement.innerHTML = `
-                        <input type="checkbox" ${item.completed ? 'checked' : ''} 
-                               onchange="checklistManager.toggleChecklistItem(${JSON.stringify(path)}, ${index}, ${itemIndex})">
-                        <span class="inline-checklist-item-text">${item.text}</span>
-                        <button onclick="checklistManager.editChecklistItemInAccordion(${JSON.stringify(path)}, ${index}, ${itemIndex})" style="margin-left: 5px; padding: 2px 6px; font-size: 0.8em;">✏️</button>
-                        <button onclick="checklistManager.removeChecklistItemInAccordion(${JSON.stringify(path)}, ${index}, ${itemIndex})" class="delete" style="margin-left: 2px; padding: 2px 6px; font-size: 0.8em;">🗑️</button>
-                    `;
-                    content.appendChild(itemElement);
-                });
+                if (tech.checklist && tech.checklist.length > 0) {
+                    tech.checklist.forEach((item, itemIndex) => {
+                        const itemElement = document.createElement('div');
+                        itemElement.className = `inline-checklist-item ${item.completed ? 'completed' : ''}`;
+                        itemElement.innerHTML = `
+                            <input type="checkbox" ${item.completed ? 'checked' : ''} 
+                                   onchange="checklistManager.toggleChecklistItem('${JSON.stringify(path)}', ${index}, ${itemIndex})">
+                            <span class="inline-checklist-item-text">${item.text}</span>
+                            <button onclick="checklistManager.editChecklistItemInAccordion('${JSON.stringify(path)}', ${index}, ${itemIndex})" style="margin-left: 5px; padding: 2px 6px; font-size: 0.8em;">✏️</button>
+                            <button onclick="checklistManager.removeChecklistItemInAccordion('${JSON.stringify(path)}', ${index}, ${itemIndex})" class="delete" style="margin-left: 2px; padding: 2px 6px; font-size: 0.8em;">🗑️</button>
+                        `;
+                        content.appendChild(itemElement);
+                    });
+                } else {
+                    const emptyMessage = document.createElement('div');
+                    emptyMessage.style.textAlign = 'center';
+                    emptyMessage.style.color = '#6c757d';
+                    emptyMessage.style.padding = '10px';
+                    emptyMessage.textContent = 'Чек-лист пуст. Добавьте первый пункт!';
+                    content.appendChild(emptyMessage);
+                }
                 
                 // Кнопки действий
                 const actions = document.createElement('div');
                 actions.className = 'inline-checklist-actions';
                 actions.innerHTML = `
-                    <button onclick="checklistManager.manageChecklist(${JSON.stringify(path)}, ${index})" class="warning" style="font-size: 0.8em; padding: 4px 8px;">📋 Расширенное управление</button>
-                    <button onclick="checklistManager.addChecklistItemInAccordion(${JSON.stringify(path)}, ${index})" style="font-size: 0.8em; padding: 4px 8px;">+ Добавить пункт</button>
+                    <button onclick="checklistManager.manageChecklist('${JSON.stringify(path)}', ${index})" class="warning" style="font-size: 0.8em; padding: 4px 8px;">📋 Расширенное управление</button>
+                    <button onclick="checklistManager.addChecklistItemInAccordion('${JSON.stringify(path)}', ${index})" style="font-size: 0.8em; padding: 4px 8px;">+ Добавить пункт</button>
                 `;
                 content.appendChild(actions);
                 
@@ -1009,7 +1020,8 @@
             },
 
             // Функции редактирования
-            editNode(path, index) {
+            editNode(pathStr, index) {
+                const path = JSON.parse(pathStr);
                 const node = this.getNodeAtIndex(path, index);
                 if (!node) return;
 
@@ -1023,7 +1035,8 @@
                 }
             },
 
-            editTechnology(path, index) {
+            editTechnology(pathStr, index) {
+                const path = JSON.parse(pathStr);
                 const node = this.getNodeAtIndex(path, index);
                 if (!node) return;
 
@@ -1038,7 +1051,8 @@
             },
 
             // Функции удаления
-            deleteNode(path, index) {
+            deleteNode(pathStr, index) {
+                const path = JSON.parse(pathStr);
                 if (confirm('Удалить эту категорию и все её содержимое?')) {
                     const parent = this.getNodeByPath(path);
                     if (parent) {
@@ -1051,7 +1065,8 @@
                 }
             },
 
-            deleteTechnology(path, index) {
+            deleteTechnology(pathStr, index) {
+                const path = JSON.parse(pathStr);
                 if (confirm('Удалить эту технологию и все её задачи?')) {
                     const parent = this.getNodeByPath(path);
                     if (parent) {
@@ -1125,13 +1140,15 @@
                 document.getElementById(modalId).style.display = 'block';
             },
 
-            showAddNodeModal(path = []) {
+            showAddNodeModal(pathStr = '[]') {
+                const path = JSON.parse(pathStr);
                 currentModalPath = path;
                 this.updateParentSelect('nodeModal', path);
                 this.showModal('nodeModal');
             },
 
-            showAddTechModal(path = []) {
+            showAddTechModal(pathStr = '[]') {
+                const path = JSON.parse(pathStr);
                 currentModalPath = path;
                 this.updateParentSelect('techModal', path);
                 this.showModal('techModal');
@@ -1195,7 +1212,8 @@
             },
 
             // === УПРАВЛЕНИЕ ЧЕК-ЛИСТАМИ ===
-            manageChecklist(path, techIndex) {
+            manageChecklist(pathStr, techIndex) {
+                const path = JSON.parse(pathStr);
                 this.currentChecklist = {
                     path,
                     techIndex
@@ -1231,7 +1249,7 @@
                         itemElement.className = `checklist-item ${item.completed ? 'completed' : ''}`;
                         itemElement.innerHTML = `
                             <input type="checkbox" ${item.completed ? 'checked' : ''} 
-                                   onchange="checklistManager.toggleChecklistItem(${JSON.stringify(this.currentChecklist.path)}, ${this.currentChecklist.techIndex}, ${index})">
+                                   onchange="checklistManager.toggleChecklistItem('${JSON.stringify(this.currentChecklist.path)}', ${this.currentChecklist.techIndex}, ${index})">
                             <span class="checklist-item-text">${item.text}</span>
                             <button onclick="checklistManager.removeChecklistItem(${index})" class="delete" style="margin-left: 10px;">🗑️</button>
                             <button onclick="checklistManager.editChecklistItem(${index})" style="margin-left: 5px;">✏️</button>
@@ -1281,7 +1299,8 @@
                 }
             },
 
-            addChecklistItemInAccordion(path, techIndex) {
+            addChecklistItemInAccordion(pathStr, techIndex) {
+                const path = JSON.parse(pathStr);
                 this.currentChecklist = { path, techIndex };
                 const text = prompt('Введите новый пункт чек-листа:');
                 if (text && text.trim()) {
@@ -1316,7 +1335,8 @@
                 }
             },
 
-            removeChecklistItemInAccordion(path, techIndex, itemIndex) {
+            removeChecklistItemInAccordion(pathStr, techIndex, itemIndex) {
+                const path = JSON.parse(pathStr);
                 this.currentChecklist = { path, techIndex };
                 if (confirm('Удалить этот пункт чек-листа?')) {
                     const tech = this.getTechnology();
@@ -1347,7 +1367,8 @@
                 }
             },
 
-            editChecklistItemInAccordion(path, techIndex, itemIndex) {
+            editChecklistItemInAccordion(pathStr, techIndex, itemIndex) {
+                const path = JSON.parse(pathStr);
                 this.currentChecklist = { path, techIndex };
                 const tech = this.getTechnology();
                 if (!tech) return;
@@ -1363,14 +1384,14 @@
                 }
             },
             
-            toggleChecklistItem(path, techIndex, itemIndex) {
+            toggleChecklistItem(pathStr, techIndex, itemIndex) {
+                const path = JSON.parse(pathStr);
                 this.currentChecklist = { path, techIndex };
                 const tech = this.getTechnology();
                 if (!tech) return;
                 
                 if (tech.checklist && tech.checklist.length > itemIndex) {
                     tech.checklist[itemIndex].completed = !tech.checklist[itemIndex].completed;
-                    this.renderChecklist();
                     dataManager.saveToLocalStorage();
                     authManager.scheduleAutoSave();
                     dataManager.renderCurrentView();
