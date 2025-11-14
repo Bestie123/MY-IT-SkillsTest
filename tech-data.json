@@ -241,7 +241,14 @@
         {
           "name": "Мониторинг",
           "type": "node",
-          "children": []
+          "children": [
+            {
+              "name": "Prometheus + Grafana (основы)",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            }
+          ]
         }
       ]
     }
