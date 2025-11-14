@@ -247,6 +247,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "ELK Stack (Elasticsearch, Logstash, Kibana) - основы",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         }
