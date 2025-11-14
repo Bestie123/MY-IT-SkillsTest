@@ -197,6 +197,11 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Infrastructure & DevOps",
+      "type": "category",
+      "children": []
     }
   ]
 }
