@@ -37,6 +37,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Функциональный интерфейс",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         }
