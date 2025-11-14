@@ -229,6 +229,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "GitLab CI",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         }
