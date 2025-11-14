@@ -102,7 +102,25 @@
               "name": "Ð Ð´ÑÑÑÑ",
               "type": "node",
               "technologies": [],
-              "children": [],
+              "children": [
+                {
+                  "name": "Нннн",
+                  "type": "node",
+                  "children": [
+                    {
+                      "name": "Щщщщ",
+                      "type": "node",
+                      "children": [
+                        {
+                          "name": "999",
+                          "type": "technology",
+                          "checklist": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
               "expanded": true
             }
           ],
