@@ -151,6 +151,18 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "CRUD",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            },
+            {
+              "name": "Микросервисная архитектура",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         }
