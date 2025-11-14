@@ -222,9 +222,8 @@
         },
         {
           "name": "CI/CD",
-          "type": "technology",
-          "checklist": [],
-          "completed": false
+          "type": "node",
+          "children": []
         }
       ]
     }
