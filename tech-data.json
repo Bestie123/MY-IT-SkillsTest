@@ -183,6 +183,11 @@
               "completed": false
             }
           ]
+        },
+        {
+          "name": "Инструменты сборки",
+          "type": "node",
+          "children": []
         }
       ]
     }
