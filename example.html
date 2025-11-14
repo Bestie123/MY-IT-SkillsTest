@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Technologies Documentation - Demo</title>
     <style>
+        /* Стили остаются без изменений */
         body {
             font-family: Arial, sans-serif;
             max-width: 1400px;
@@ -208,40 +209,6 @@
         .checklist-title {
             font-weight: bold;
             font-size: 1.1em;
-        }
-
-        button.auto-save-enabled {
-            background: #28a745;
-        }
-
-        button.auto-save-enabled:hover {
-            background: #218838;
-        }
-
-        button.auto-save-disabled {
-            background: #6c757d;
-        }
-
-        button.auto-save-disabled:hover {
-            background: #5a6268;
-        }
-
-        .auto-save-status {
-            display: inline-block;
-            margin-left: 10px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8em;
-        }
-
-        .auto-save-on {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .auto-save-off {
-            background: #f8d7da;
-            color: #721c24;
         }
 
         .path-display {
@@ -497,6 +464,7 @@
             <h3>✨ Демонстрационная версия</h3>
             <p>Это демонстрационная версия приложения для документирования технологий. Данные автоматически загружаются из файла <code>tech-data.json</code> в текущем репозитории.</p>
             <p><strong>Функции:</strong> просмотр иерархии технологий, управление чек-листами, отслеживание прогресса изучения.</p>
+            <p><strong>Внимание:</strong> В этой версии отключено автосохранение в localStorage. Все изменения сохраняются только до перезагрузки страницы.</p>
         </div>
 
         <!-- Основные контролы -->
@@ -595,6 +563,11 @@
     </div>
 
     <script>
+        // Уникальный ключ для localStorage этой демо-версии
+        const DEMO_STORAGE_KEY = 'techData_demo_version';
+        const DEMO_ACCORDION_STATE_KEY = 'accordionExpandedState_demo';
+        const DEMO_CHECKLIST_STATE_KEY = 'checklistExpandedState_demo';
+
         // Глобальная структура данных с рекурсивной вложенностью
         const techData = {
             categories: []
@@ -707,8 +680,8 @@
         const accordionManager = {
             init() {
                 this.accordionContainer = document.getElementById('accordion');
-                this.expandedState = JSON.parse(localStorage.getItem('accordionExpandedState')) || {};
-                this.checklistExpandedState = JSON.parse(localStorage.getItem('checklistExpandedState')) || {};
+                this.expandedState = JSON.parse(localStorage.getItem(DEMO_ACCORDION_STATE_KEY)) || {};
+                this.checklistExpandedState = JSON.parse(localStorage.getItem(DEMO_CHECKLIST_STATE_KEY)) || {};
                 this.renderAccordion();
             },
 
@@ -727,9 +700,9 @@
 
                 this.buildAccordion(techData.categories, this.accordionContainer, []);
                 
-                // Сохраняем состояние раскрытия
-                localStorage.setItem('accordionExpandedState', JSON.stringify(this.expandedState));
-                localStorage.setItem('checklistExpandedState', JSON.stringify(this.checklistExpandedState));
+                // Сохраняем состояние раскрытия (только для UI состояния, не для данных)
+                localStorage.setItem(DEMO_ACCORDION_STATE_KEY, JSON.stringify(this.expandedState));
+                localStorage.setItem(DEMO_CHECKLIST_STATE_KEY, JSON.stringify(this.checklistExpandedState));
             },
 
             buildAccordion(nodes, parentElement, path) {
@@ -851,7 +824,6 @@
                         checkbox.checked = node.completed || false;
                         checkbox.onchange = (e) => {
                             node.completed = e.target.checked;
-                            dataManager.saveToLocalStorage();
                             this.renderAccordion();
                         };
                         checkboxContainer.appendChild(checkbox);
@@ -1058,23 +1030,8 @@
 
         // Инициализация приложения
         document.addEventListener('DOMContentLoaded', function() {
-            // Сначала пробуем загрузить из localStorage
-            const savedData = localStorage.getItem('techData');
-            if (savedData) {
-                try {
-                    const parsedData = JSON.parse(savedData);
-                    if (parsedData.categories && parsedData.categories.length > 0) {
-                        techData.categories = parsedData.categories;
-                        accordionManager.init();
-                        console.log('Данные загружены из localStorage');
-                        return;
-                    }
-                } catch (e) {
-                    console.error('Ошибка загрузки из localStorage:', e);
-                }
-            }
-            
-            // Если в localStorage нет данных, автоматически загружаем из tech-data.json
+            // В демо-версии не загружаем данные из localStorage
+            // Всегда загружаем из tech-data.json или используем демо-данные
             dataManager.loadTechData(true);
         });
 
@@ -1115,7 +1072,6 @@
                     .then(externalData => {
                         techData.categories = externalData.categories || [];
                         this.renderCurrentView();
-                        this.saveToLocalStorage();
                         uiManager.showNotification('Данные загружены из tech-data.json!', 'success');
                         
                         if (autoLoad) {
@@ -1137,7 +1093,6 @@
             loadDemoData() {
                 techData.categories = demoData.categories;
                 this.renderCurrentView();
-                this.saveToLocalStorage();
                 uiManager.showNotification('Загружены демонстрационные данные!', 'success');
             },
 
@@ -1145,24 +1100,6 @@
             resetToDemo() {
                 if (confirm('Сбросить все данные и загрузить демонстрационные?')) {
                     this.loadDemoData();
-                }
-            },
-
-            // === ЛОКАЛЬНОЕ ХРАНИЛИЩЕ ===
-            saveToLocalStorage() {
-                localStorage.setItem('techData', JSON.stringify(techData));
-            },
-
-            loadFromLocalStorage() {
-                const saved = localStorage.getItem('techData');
-                if (saved) {
-                    try {
-                        const parsedData = JSON.parse(saved);
-                        techData.categories = parsedData.categories || [];
-                        this.renderCurrentView();
-                    } catch (e) {
-                        console.error('Error parsing saved data:', e);
-                    }
                 }
             },
 
@@ -1181,7 +1118,6 @@
                         children: []
                     });
                     this.renderCurrentView();
-                    this.saveToLocalStorage();
                     uiManager.hideModals();
                     document.getElementById('newCategoryName').value = '';
                     uiManager.showNotification('Категория добавлена!', 'success');
@@ -1207,7 +1143,6 @@
                     });
 
                     this.renderCurrentView();
-                    this.saveToLocalStorage();
                     uiManager.hideModals();
                     document.getElementById('newNodeName').value = '';
                     uiManager.showNotification('Подкатегория добавлена!', 'success');
@@ -1236,7 +1171,6 @@
                     parent.push(tech);
 
                     this.renderCurrentView();
-                    this.saveToLocalStorage();
                     uiManager.hideModals();
                     document.getElementById('newTechName').value = '';
                     uiManager.showNotification('Технология добавлена!', 'success');
@@ -1255,7 +1189,6 @@
                 if (newName && newName.trim()) {
                     node.name = newName.trim();
                     this.renderCurrentView();
-                    this.saveToLocalStorage();
                     uiManager.showNotification('Категория обновлена!', 'success');
                 }
             },
@@ -1269,7 +1202,6 @@
                 if (newName && newName.trim()) {
                     node.name = newName.trim();
                     this.renderCurrentView();
-                    this.saveToLocalStorage();
                     uiManager.showNotification('Технология обновлена!', 'success');
                 }
             },
@@ -1282,7 +1214,6 @@
                     if (parent) {
                         parent.splice(index, 1);
                         this.renderCurrentView();
-                        this.saveToLocalStorage();
                         uiManager.showNotification('Категория удалена!', 'success');
                     }
                 }
@@ -1295,7 +1226,6 @@
                     if (parent) {
                         parent.splice(index, 1);
                         this.renderCurrentView();
-                        this.saveToLocalStorage();
                         uiManager.showNotification('Технология удалена!', 'success');
                     }
                 }
@@ -1322,7 +1252,6 @@
                             const parsedData = JSON.parse(e.target.result);
                             techData.categories = parsedData.categories || [];
                             dataManager.renderCurrentView();
-                            dataManager.saveToLocalStorage();
                             uiManager.showNotification('Данные импортированы!', 'success');
                         } catch (error) {
                             uiManager.showNotification('Ошибка при чтении JSON файла', 'error');
@@ -1339,7 +1268,6 @@
                     const parsedData = JSON.parse(jsonText);
                     techData.categories = parsedData.categories || [];
                     this.renderCurrentView();
-                    this.saveToLocalStorage();
                     uiManager.showNotification('Данные импортированы из JSON!', 'success');
                 } catch (error) {
                     uiManager.showNotification('Ошибка при разборе JSON', 'error');
@@ -1513,7 +1441,6 @@
                     
                     input.value = '';
                     this.renderChecklist();
-                    dataManager.saveToLocalStorage();
                     dataManager.renderCurrentView();
                 }
             },
@@ -1535,7 +1462,6 @@
                         completed: false
                     });
                     
-                    dataManager.saveToLocalStorage();
                     dataManager.renderCurrentView();
                 }
             },
@@ -1547,7 +1473,6 @@
                 if (tech.checklist && tech.checklist.length > index) {
                     tech.checklist.splice(index, 1);
                     this.renderChecklist();
-                    dataManager.saveToLocalStorage();
                     dataManager.renderCurrentView();
                 }
             },
@@ -1561,7 +1486,6 @@
                     
                     if (tech.checklist && tech.checklist.length > itemIndex) {
                         tech.checklist.splice(itemIndex, 1);
-                        dataManager.saveToLocalStorage();
                         dataManager.renderCurrentView();
                     }
                 }
@@ -1576,7 +1500,6 @@
                     if (newText !== null) {
                         tech.checklist[index].text = newText.trim();
                         this.renderChecklist();
-                        dataManager.saveToLocalStorage();
                         dataManager.renderCurrentView();
                     }
                 }
@@ -1592,7 +1515,6 @@
                     const newText = prompt('Редактировать пункт:', tech.checklist[itemIndex].text);
                     if (newText !== null) {
                         tech.checklist[itemIndex].text = newText.trim();
-                        dataManager.saveToLocalStorage();
                         dataManager.renderCurrentView();
                     }
                 }
@@ -1606,14 +1528,12 @@
                 
                 if (tech.checklist && tech.checklist.length > itemIndex) {
                     tech.checklist[itemIndex].completed = !tech.checklist[itemIndex].completed;
-                    dataManager.saveToLocalStorage();
                     dataManager.renderCurrentView();
                 }
             },
             
             saveChecklist() {
                 uiManager.hideModals();
-                dataManager.saveToLocalStorage();
                 uiManager.showNotification('Чек-лист сохранен!', 'success');
                 dataManager.renderCurrentView();
             },
