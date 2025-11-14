@@ -285,7 +285,7 @@
             border-color: #0056b3;
         }
 
-        /* Tree Styles */
+        /* Исправленные Tree Styles */
         .tree {
             position: relative;
             padding: 20px;
@@ -293,63 +293,51 @@
 
         .tree ul {
             padding-left: 0;
+            margin: 0;
             position: relative;
-            transition: all 0.5s;
-            -webkit-padding-start: 0;
         }
 
         .tree li {
             list-style-type: none;
-            margin: 10px;
+            margin: 0;
+            padding: 10px 5px 0 5px;
             position: relative;
-            padding: 20px 5px 0 5px;
         }
 
-        .tree li::before, .tree li::after {
+        .tree li::before {
             content: '';
             position: absolute;
             top: 0;
-            right: 50%;
-            border-top: 2px solid #3498db;
-            width: 50%;
-            height: 20px;
+            left: -10px;
+            width: 1px;
+            height: 100%;
+            border-left: 2px solid #3498db;
         }
 
         .tree li::after {
-            right: auto;
-            left: 50%;
-            border-left: 2px solid #3498db;
-        }
-
-        .tree li:only-child::after, .tree li:only-child::before {
-            display: none;
-        }
-
-        .tree li:only-child {
-            padding-top: 0;
-        }
-
-        .tree li:first-child::before, .tree li:last-child::after {
-            border: 0 none;
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: -10px;
+            width: 15px;
+            height: 1px;
+            border-top: 2px solid #3498db;
         }
 
         .tree li:last-child::before {
-            border-right: 2px solid #3498db;
-            border-radius: 0 5px 0 0;
-        }
-
-        .tree li:first-child::after {
-            border-radius: 5px 0 0 0;
-        }
-
-        .tree ul ul::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            border-left: 2px solid #3498db;
-            width: 0;
             height: 20px;
+        }
+
+        .tree li:first-child::before {
+            top: 20px;
+        }
+
+        .tree > ul > li::before {
+            border-left: none;
+        }
+
+        .tree > ul > li::after {
+            display: none;
         }
 
         .tree .tree-node {
@@ -363,6 +351,7 @@
             min-width: 200px;
             text-align: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-left: 15px;
         }
 
         .tree .tree-node:hover {
@@ -430,7 +419,7 @@
             margin-top: 2px;
         }
 
-        /* Accordion Styles */
+        /* Исправленные Accordion Styles */
         .accordion {
             width: 100%;
         }
@@ -450,6 +439,7 @@
             justify-content: space-between;
             align-items: center;
             transition: background 0.3s;
+            user-select: none;
         }
 
         .accordion-header:hover {
@@ -518,6 +508,11 @@
             font-size: 1.2em;
             cursor: pointer;
             padding: 5px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
@@ -837,7 +832,7 @@
         const accordionManager = {
             init() {
                 this.accordionContainer = document.getElementById('accordion');
-                this.expandedState = {}; // Храним состояние раскрытия
+                this.expandedState = JSON.parse(localStorage.getItem('accordionExpandedState')) || {}; // Загружаем состояние из localStorage
                 this.renderAccordion();
             },
 
@@ -855,12 +850,20 @@
                 }
 
                 this.buildAccordion(techData.categories, this.accordionContainer, []);
+                
+                // Сохраняем состояние раскрытия
+                localStorage.setItem('accordionExpandedState', JSON.stringify(this.expandedState));
             },
 
             buildAccordion(nodes, parentElement, path) {
                 nodes.forEach((node, index) => {
                     const currentPath = [...path, index];
                     const pathKey = currentPath.join('-');
+                    
+                    // Если состояние не задано, по умолчанию раскрываем только корневые элементы
+                    if (this.expandedState[pathKey] === undefined) {
+                        this.expandedState[pathKey] = path.length === 0; // Корневые элементы раскрыты по умолчанию
+                    }
                     
                     const item = document.createElement('div');
                     item.className = 'accordion-item';
@@ -888,6 +891,14 @@
                     // Заголовок аккордеона
                     const header = document.createElement('div');
                     header.className = `accordion-header ${node.type === 'technology' ? 'technology' : 'category'}`;
+                    
+                    // Обработчик клика для раскрытия/скрытия
+                    header.onclick = (e) => {
+                        // Предотвращаем срабатывание при клике на кнопки действий
+                        if (!e.target.closest('.accordion-actions') && !e.target.closest('.accordion-toggle')) {
+                            this.toggleItem(pathKey);
+                        }
+                    };
                     
                     const title = document.createElement('div');
                     title.className = 'accordion-title';
