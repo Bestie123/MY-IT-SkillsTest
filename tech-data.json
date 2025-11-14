@@ -11,17 +11,13 @@
             {
               "name": "Многопоточность и Concurrent Collections",
               "type": "technology",
-              "checklist": [
-                {
-                  "text": "yj",
-                  "completed": false
-                }
-              ]
+              "checklist": []
             },
             {
               "name": "Глубокое изучение Collections (HashMap, ArrayList)",
               "type": "technology",
-              "checklist": []
+              "checklist": [],
+              "completed": false
             }
           ]
         }
