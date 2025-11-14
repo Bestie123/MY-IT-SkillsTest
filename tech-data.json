@@ -324,6 +324,12 @@
           "type": "technology",
           "checklist": [],
           "completed": false
+        },
+        {
+          "name": "Kanban",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
         }
       ]
     }
