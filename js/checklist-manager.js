@@ -6,15 +6,12 @@ const checklistManager = {
 
     // === УПРАВЛЕНИЕ ЧЕК-ЛИСТАМИ ===
     manageChecklist(path, techIndex) {
-        console.log('Opening checklist for:', path, techIndex);
-        this.currentChecklist = { path, techIndex };
-        const tech = this.getTechnology();
+        this.currentChecklist = {
+            path,
+            techIndex
+        };
         
-        if (!tech) {
-            uiManager.showNotification('Технология не найдена', 'error');
-            return;
-        }
-
+        const tech = this.getTechnology();
         document.getElementById('checklistTitle').textContent = `Чек-лист: ${tech.name}`;
         
         if (!tech.checklist) {
@@ -27,12 +24,8 @@ const checklistManager = {
     
     renderChecklist() {
         const tech = this.getTechnology();
-        if (!tech) return;
-
         const checklistItems = document.getElementById('checklistItems');
         const checklistStats = document.getElementById('checklistStats');
-        
-        if (!checklistItems || !checklistStats) return;
         
         checklistItems.innerHTML = '';
         
@@ -42,36 +35,24 @@ const checklistManager = {
                 itemElement.className = `checklist-item ${item.completed ? 'completed' : ''}`;
                 itemElement.innerHTML = `
                     <input type="checkbox" ${item.completed ? 'checked' : ''} 
-                           onchange="checklistManager.toggleChecklistItem(${index})">
+                           onchange="checklistManager.toggleChecklistItem(${JSON.stringify(this.currentChecklist.path)}, ${this.currentChecklist.techIndex}, ${index})">
                     <span class="checklist-item-text">${item.text}</span>
-                    <div class="checklist-item-actions">
-                        <button class="action-btn" onclick="checklistManager.editChecklistItem(${index})" title="Редактировать">✏️</button>
-                        <button class="action-btn" onclick="checklistManager.removeChecklistItem(${index})" title="Удалить">🗑️</button>
-                    </div>
+                    <button onclick="checklistManager.removeChecklistItem(${index})" class="delete" style="margin-left: 10px;">🗑️</button>
+                    <button onclick="checklistManager.editChecklistItem(${index})" style="margin-left: 5px;">✏️</button>
                 `;
                 checklistItems.appendChild(itemElement);
             });
         } else {
-            checklistItems.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">Чек-лист пуст. Добавьте первый пункт!</div>';
+            checklistItems.innerHTML = '<p style="text-align: center; color: #6c757d;">Чек-лист пуст. Добавьте первый пункт!</p>';
         }
-        
-        this.updateChecklistStats();
-    },
-    
-    updateChecklistStats() {
-        const tech = this.getTechnology();
-        if (!tech) return;
-
-        const checklistStats = document.getElementById('checklistStats');
-        if (!checklistStats) return;
         
         const completed = tech.checklist ? tech.checklist.filter(item => item.completed).length : 0;
         const total = tech.checklist ? tech.checklist.length : 0;
         const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
         
         checklistStats.innerHTML = `
-            <div>Прогресс: ${completed}/${total} задач выполнено (${progress}%)</div>
-            <div class="progress-bar">
+            Прогресс: ${completed}/${total} (${progress}%)
+            <div class="progress-bar" style="width: 100%; margin-top: 5px;">
                 <div class="progress-fill" style="width: ${progress}%"></div>
             </div>
         `;
@@ -79,118 +60,75 @@ const checklistManager = {
     
     addChecklistItem() {
         const input = document.getElementById('newChecklistItem');
-        if (!input) return;
-
         const text = input.value.trim();
         
-        if (!text) {
-            uiManager.showNotification('Введите текст пункта', 'warning');
-            return;
+        if (text) {
+            const tech = this.getTechnology();
+            
+            if (!tech.checklist) {
+                tech.checklist = [];
+            }
+            
+            tech.checklist.push({
+                text: text,
+                completed: false
+            });
+            
+            input.value = '';
+            this.renderChecklist();
+            dataManager.saveToLocalStorage();
+            authManager.scheduleAutoSave();
         }
-
-        const tech = this.getTechnology();
-        if (!tech) {
-            uiManager.showNotification('Технология не найдена', 'error');
-            return;
-        }
-
-        if (!tech.checklist) {
-            tech.checklist = [];
-        }
-        
-        tech.checklist.push({
-            text: text,
-            completed: false
-        });
-        
-        input.value = '';
-        this.renderChecklist();
-        dataManager.saveToLocalStorage();
-        uiManager.renderStructure(); // Обновляем всё дерево для отображения прогресса
-        authManager.scheduleAutoSave();
     },
     
     removeChecklistItem(index) {
         const tech = this.getTechnology();
-        if (!tech || !tech.checklist) {
-            uiManager.showNotification('Пункт не найден', 'error');
-            return;
-        }
-
-        if (index >= tech.checklist.length) {
-            uiManager.showNotification('Неверный индекс пункта', 'error');
-            return;
-        }
-
-        if (confirm('Удалить этот пункт?')) {
+        
+        if (tech.checklist && tech.checklist.length > index) {
             tech.checklist.splice(index, 1);
             this.renderChecklist();
             dataManager.saveToLocalStorage();
-            uiManager.renderStructure(); // Обновляем всё дерево
             authManager.scheduleAutoSave();
         }
     },
     
     editChecklistItem(index) {
         const tech = this.getTechnology();
-        if (!tech || !tech.checklist || index >= tech.checklist.length) {
-            uiManager.showNotification('Пункт не найден', 'error');
-            return;
+        
+        if (tech.checklist && tech.checklist.length > index) {
+            const newText = prompt('Редактировать пункт:', tech.checklist[index].text);
+            if (newText !== null) {
+                tech.checklist[index].text = newText.trim();
+                this.renderChecklist();
+                dataManager.saveToLocalStorage();
+                authManager.scheduleAutoSave();
+            }
         }
-
-        const newText = prompt('Редактировать пункт:', tech.checklist[index].text);
-        if (newText !== null && newText.trim() !== '') {
-            tech.checklist[index].text = newText.trim();
+    },
+    
+    toggleChecklistItem(path, techIndex, itemIndex) {
+        this.currentChecklist = { path, techIndex };
+        const tech = this.getTechnology();
+        
+        if (tech.checklist && tech.checklist.length > itemIndex) {
+            tech.checklist[itemIndex].completed = !tech.checklist[itemIndex].completed;
             this.renderChecklist();
+            uiManager.renderTable();
             dataManager.saveToLocalStorage();
             authManager.scheduleAutoSave();
         }
     },
     
-    // === ОСНОВНОЙ МЕТОД ДЛЯ ПЕРЕКЛЮЧЕНИЯ ЧЕКБОКСОВ ===
-    toggleChecklistItem(index) {
-        console.log('Toggling checklist item:', index);
-        const tech = this.getTechnology();
-        if (!tech || !tech.checklist || index >= tech.checklist.length) {
-            console.error('Checklist item not found at index:', index);
-            return;
-        }
-
-        // Переключаем состояние
-        tech.checklist[index].completed = !tech.checklist[index].completed;
-        console.log('Item toggled, new state:', tech.checklist[index].completed);
-        
-        // Обновляем отображение чеклиста
-        this.renderChecklist();
-        
-        // Сохраняем данные
+    saveChecklist() {
+        uiManager.hideModals();
+        uiManager.renderTable();
         dataManager.saveToLocalStorage();
-        
-        // ОБНОВЛЯЕМ ВСЁ ДЕРЕВО для отображения измененного прогресса
-        uiManager.renderStructure();
-        
-        if (authManager.autoSaveEnabled) {
-            authManager.scheduleAutoSave();
-        }
-    },
-
-    // === МЕТОД ДЛЯ ПЕРЕКЛЮЧЕНИЯ ИЗ ДЕРЕВА ===
-    toggleChecklistItemFromTree(path, techIndex, itemIndex) {
-        console.log('Toggling from tree:', path, techIndex, itemIndex);
-        
-        // Устанавливаем текущий контекст
-        this.currentChecklist = { path, techIndex };
-        
-        // Используем основной метод переключения
-        this.toggleChecklistItem(itemIndex);
+        uiManager.showNotification('Чек-лист сохранен!', 'success');
+        authManager.scheduleAutoSave();
     },
     
     getTechnology() {
         const parent = dataManager.getNodeByPath(this.currentChecklist.path);
-        if (!parent || !parent[this.currentChecklist.techIndex]) {
-            console.error('Technology not found at path:', this.currentChecklist.path, 'index:', this.currentChecklist.techIndex);
-            return null;
-        }
-        return parent[this.currentChecklist.techIndex];
+        return parent ? parent[this.currentChecklist.techIndex] : null;
     }
 };
