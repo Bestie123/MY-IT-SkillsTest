@@ -139,7 +139,20 @@
         {
           "name": "Архитектура",
           "type": "node",
-          "children": []
+          "children": [
+            {
+              "name": "REST API",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            },
+            {
+              "name": "Основы HTTP",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            }
+          ]
         }
       ]
     }
