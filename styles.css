@@ -47,103 +47,13 @@ body {
     border-radius: 5px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+.tree-container {
     margin-top: 20px;
-    background: white;
-    table-layout: fixed;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
-    vertical-align: top;
-    word-wrap: break-word;
-}
-
-th {
-    background-color: #e9ecef;
-    font-weight: bold;
-}
-
-/* Ширины колонок */
-th:nth-child(1),
-td:nth-child(1) {
-    width: 12%;
-}
-
-th:nth-child(2),
-td:nth-child(2) {
-    width: 12%;
-}
-
-th:nth-child(3),
-td:nth-child(3) {
-    width: 12%;
-}
-
-th:nth-child(4),
-td:nth-child(4) {
-    width: 12%;
-}
-
-th:nth-child(5),
-td:nth-child(5) {
-    width: 12%;
-}
-
-th:nth-child(6),
-td:nth-child(6) {
-    width: 15%;
-}
-
-th:nth-child(7),
-td:nth-child(7) {
-    width: 10%;
-}
-
-th:nth-child(8),
-td:nth-child(8) {
-    width: 10%;
-}
-
-th:nth-child(9),
-td:nth-child(9) {
-    width: 10%;
-}
-
-th:nth-child(10),
-td:nth-child(10) {
-    width: 15%;
-}
-
-.node-level-0 { background-color: #e3f2fd; }
-.node-level-1 { background-color: #e8f5e8; }
-.node-level-2 { background-color: #fff3cd; }
-.node-level-3 { background-color: #f8d7da; }
-.node-level-4 { background-color: #e2e3e5; }
-.node-level-5 { background-color: #d1ecf1; }
-
-.status-planned { color: #6c757d; }
-.status-in-progress { color: #fd7e14; }
-.status-completed { color: #198754; }
-
-.progress-bar {
-    width: 100px;
-    height: 20px;
-    background-color: #e9ecef;
-    border-radius: 10px;
-    overflow: hidden;
-    display: inline-block;
-    margin-right: 10px;
-}
-
-.progress-fill {
-    height: 100%;
-    background-color: #20c997;
-    transition: width 0.3s ease;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 5px;
+    min-height: 500px;
+    overflow: auto;
 }
 
 button {
@@ -232,26 +142,6 @@ input, textarea, select {
 .success { background: #28a745; }
 .error { background: #dc3545; }
 .warning { background: #ffc107; color: black; }
-
-.breadcrumb {
-    background: #f8f9fa;
-    padding: 8px 15px;
-    border-radius: 4px;
-    margin-bottom: 15px;
-}
-
-.breadcrumb-item {
-    display: inline;
-}
-
-.breadcrumb-item:after {
-    content: " > ";
-    padding: 0 5px;
-}
-
-.breadcrumb-item:last-child:after {
-    content: "";
-}
 
 .checklist-section {
     margin-top: 10px;
