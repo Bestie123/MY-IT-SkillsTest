@@ -135,6 +135,11 @@
               "completed": false
             }
           ]
+        },
+        {
+          "name": "Архитектура",
+          "type": "node",
+          "children": []
         }
       ]
     }
