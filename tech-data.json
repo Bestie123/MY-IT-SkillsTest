@@ -97,6 +97,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "JDBC",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         }
