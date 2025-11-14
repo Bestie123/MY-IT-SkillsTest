@@ -73,6 +73,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Spring Security (+ JWT, OAuth2,HTTPS/SSL)",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         }
