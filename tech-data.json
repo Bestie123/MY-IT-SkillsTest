@@ -343,6 +343,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Google Cloud (GCP)",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         }
