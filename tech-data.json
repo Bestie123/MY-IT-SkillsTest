@@ -187,7 +187,14 @@
         {
           "name": "Инструменты сборки",
           "type": "node",
-          "children": []
+          "children": [
+            {
+              "name": "Maven/Gradle",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            }
+          ]
         }
       ]
     }
