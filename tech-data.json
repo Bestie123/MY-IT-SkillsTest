@@ -47,7 +47,7 @@
           ]
         },
         {
-          "name": "Spring Frsmework",
+          "name": "Spring Framework",
           "type": "node",
           "children": [
             {
@@ -106,6 +106,12 @@
             },
             {
               "name": "Redis",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            },
+            {
+              "name": "MongoDB",
               "type": "technology",
               "checklist": [],
               "completed": false
