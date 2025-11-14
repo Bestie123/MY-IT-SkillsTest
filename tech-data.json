@@ -337,7 +337,14 @@
         {
           "name": "Облачные платформы",
           "type": "node",
-          "children": []
+          "children": [
+            {
+              "name": "AWS",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            }
+          ]
         }
       ]
     },
