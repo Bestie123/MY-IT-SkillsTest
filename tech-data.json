@@ -314,6 +314,18 @@
           "completed": false
         }
       ]
+    },
+    {
+      "name": "Не определено",
+      "type": "category",
+      "children": [
+        {
+          "name": "Jira",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
+        }
+      ]
     }
   ]
 }
