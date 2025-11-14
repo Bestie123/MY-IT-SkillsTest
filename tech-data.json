@@ -79,6 +79,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Spring Actuator",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         }
