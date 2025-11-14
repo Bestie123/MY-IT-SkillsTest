@@ -60,7 +60,7 @@
               "name": "Spring Core & Context (DI/IoC)",
               "type": "technology",
               "checklist": [],
-              "completed": false
+              "completed": true
             },
             {
               "name": "Spring MVC",
@@ -72,7 +72,7 @@
               "name": "Spring Data JPA",
               "type": "technology",
               "checklist": [],
-              "completed": false
+              "completed": true
             },
             {
               "name": "Spring Security (+ JWT, OAuth2,HTTPS/SSL)",
@@ -206,7 +206,7 @@
           "name": "Docker",
           "type": "technology",
           "checklist": [],
-          "completed": false
+          "completed": true
         },
         {
           "name": "DockerCompose",
