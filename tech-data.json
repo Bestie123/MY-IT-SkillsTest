@@ -257,6 +257,17 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Базы данных",
+      "type": "category",
+      "children": [
+        {
+          "name": "SQL",
+          "type": "node",
+          "children": []
+        }
+      ]
     }
   ]
 }
