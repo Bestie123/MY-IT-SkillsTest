@@ -60,7 +60,7 @@
               "name": "Spring Core & Context (DI/IoC)",
               "type": "technology",
               "checklist": [],
-              "completed": true
+              "completed": false
             },
             {
               "name": "Spring MVC",
@@ -124,6 +124,12 @@
           "children": [
             {
               "name": "JUnit 5/4",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            },
+            {
+              "name": "Mockito",
               "type": "technology",
               "checklist": [],
               "completed": false
