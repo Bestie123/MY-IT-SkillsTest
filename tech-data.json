@@ -61,6 +61,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Аннотации & Reflection — понимание того, как работают фреймворки",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         },
@@ -178,6 +184,12 @@
             },
             {
               "name": "Микросервисная архитектура",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            },
+            {
+              "name": "GraphQL",
               "type": "technology",
               "checklist": [],
               "completed": false
