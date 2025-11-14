@@ -2,7 +2,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     authManager.loadAuth();
     dataManager.loadFromLocalStorage();
-    navigation.updateBreadcrumb();
     
     // Включить автосохранение по умолчанию, если настроен GitHub
     const token = localStorage.getItem('githubToken');
@@ -10,7 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const repo = localStorage.getItem('repoName');
     
     if (token && owner && repo) {
-        // Автосохранение будет включено после проверки подключения
         console.log('GitHub настроен, автосохранение доступно');
     }
+    
+    // Инициализация дерева
+    treeManager.init();
 });
