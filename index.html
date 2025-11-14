@@ -666,6 +666,10 @@
                 if (savedView) {
                     this.setView(savedView, false);
                 }
+                
+                // Инициализируем менеджеры отображения
+                treeManager.init();
+                accordionManager.init();
             },
             
             setView(viewType, save = true) {
