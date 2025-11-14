@@ -223,7 +223,14 @@
         {
           "name": "CI/CD",
           "type": "node",
-          "children": []
+          "children": [
+            {
+              "name": "GitHub Actions",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            }
+          ]
         }
       ]
     }
