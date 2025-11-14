@@ -43,6 +43,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Модули JPMS (Java Platform Module System)",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         },
