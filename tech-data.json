@@ -361,7 +361,14 @@
         {
           "name": "Инфраструктура как код (IaC)",
           "type": "node",
-          "children": []
+          "children": [
+            {
+              "name": "Terraform",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            }
+          ]
         }
       ]
     },
