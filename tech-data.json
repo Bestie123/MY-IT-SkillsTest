@@ -55,6 +55,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Работа с датой и временем (java.time)",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         },
