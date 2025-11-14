@@ -5,684 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Technologies Documentation - Multi View</title>
     <style>
-        /* Базовые стили */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
-            background: #f8f9fa;
-            line-height: 1.6;
+            background: #f5f5f5;
         }
 
         .container {
             background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        /* Упрощенное дерево */
-        .tree {
             padding: 20px;
-            font-size: 14px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .tree ul {
-            padding-left: 0;
-            margin: 0;
+        .auth-section {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ffeaa7;
         }
 
-        .tree li {
-            list-style: none;
-            margin: 8px 0;
-            position: relative;
-            padding-left: 20px;
-        }
-
-        .tree li:before {
-            content: "📁";
-            position: absolute;
-            left: 0;
-            color: #4a90e2;
-        }
-
-        .tree li.technology:before {
-            content: "⚙️";
-            color: #28a745;
-        }
-
-        .tree-node {
-            background: white;
-            border: 1px solid #e1e5e9;
-            border-radius: 8px;
-            padding: 12px 15px;
-            margin: 5px 0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
-        }
-
-        .tree-node:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            transform: translateY(-1px);
-        }
-
-        .node-content {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .node-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 15px;
-        }
-
-        .node-name {
-            font-weight: 600;
-            font-size: 15px;
-            color: #2c3e50;
-            flex-grow: 1;
-        }
-
-        .node-actions {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-
-        .node-actions button {
-            padding: 4px 8px;
-            font-size: 12px;
+        .auth-status {
+            margin-top: 10px;
+            padding: 10px;
             border-radius: 4px;
-            border: 1px solid #ddd;
-            background: white;
-            color: #555;
-            cursor: pointer;
-            transition: all 0.2s;
+            display: none;
         }
 
-        .node-actions button:hover {
+        .auth-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .auth-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
             background: #f8f9fa;
-            border-color: #007bff;
-        }
-
-        .node-details {
+            border-radius: 5px;
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
-            font-size: 13px;
-            color: #6c757d;
         }
 
-        .status-badge {
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 500;
-        }
-
-        .status-planned { background: #f8f9fa; color: #6c757d; }
-        .status-in-progress { background: #fff3cd; color: #856404; }
-        .status-completed { background: #d4edda; color: #155724; }
-
-        .progress-container {
+        .view-controls {
+            margin-left: auto;
             display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 120px;
+            gap: 10px;
         }
 
-        .progress-bar {
-            width: 60px;
-            height: 6px;
-            background: #e9ecef;
-            border-radius: 3px;
-            overflow: hidden;
+        .view-btn {
+            background: #6c757d;
+            color: white;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: #20c997;
-            transition: width 0.3s ease;
+        .view-btn.active {
+            background: #007bff;
         }
 
-        /* Аккордеон */
-        .accordion-item {
-            margin-bottom: 8px;
-            border: 1px solid #e1e5e9;
-            border-radius: 8px;
-            overflow: hidden;
-            background: white;
-        }
-
-        .accordion-header {
-            padding: 15px 20px;
+        .tree-container, .accordion-container {
+            margin-top: 20px;
+            padding: 20px;
             background: #f8f9fa;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.2s;
+            border-radius: 5px;
+            min-height: 500px;
+            overflow: auto;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
             border: none;
-            width: 100%;
-            text-align: left;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 2px;
         }
 
-        .accordion-header:hover {
-            background: #e9ecef;
+        button:hover {
+            background: #0056b3;
         }
-
-        .accordion-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-grow: 1;
-        }
-
-        .accordion-content {
-            padding: 0;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            background: white;
-        }
-
-        .accordion-content.expanded {
-            max-height: 5000px;
-        }
-
-        .accordion-child {
-            margin-left: 30px;
-            border-left: 2px solid #e9ecef;
-        }
-
-        /* Остальные стили остаются прежними */
-        .hidden { display: none; }
-        .controls { margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 8px; }
-        button { padding: 10px 16px; border-radius: 6px; border: 1px solid #007bff; background: #007bff; color: white; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
-        .modal-content { background: white; margin: 5% auto; padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🌳 Документация технологий - Multi View</h1>
-        
-        <!-- Секция аутентификации -->
-        <div class="auth-section" id="authSection">
-            <h3>🔐 Настройка доступа к GitHub</h3>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                <input type="password" id="githubToken" placeholder="GitHub Token" style="width: 250px;">
-                <input type="text" id="repoOwner" placeholder="Владелец" style="width: 120px;">
-                <input type="text" id="repoName" placeholder="Репозиторий" style="width: 120px;">
-                <button onclick="authManager.saveAuth()">💾 Сохранить</button>
-                <button onclick="authManager.testAuth()" class="success">🔍 Проверить</button>
-            </div>
-            <div id="authStatus" class="auth-status"></div>
-        </div>
-
-        <!-- Основные контролы -->
-        <div class="controls">
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button onclick="uiManager.showModal('categoryModal')">+ Категория</button>
-                <button onclick="uiManager.showAddNodeModal()">+ Подкатегория</button>
-                <button onclick="uiManager.showAddTechModal()">+ Технология</button>
-                <button onclick="authManager.loadFromGitHub()">🔄 Загрузить</button>
-                <button onclick="authManager.saveToGitHub()">💾 Сохранить</button>
-                <button onclick="dataManager.exportToJSON()">📥 Экспорт JSON</button>
-            </div>
-            
-            <div class="view-controls" style="display: flex; gap: 10px; margin-left: auto;">
-                <button id="treeViewBtn" class="view-btn active" onclick="viewManager.setView('tree')">🌳 Дерево</button>
-                <button id="accordionViewBtn" class="view-btn" onclick="viewManager.setView('accordion')">📁 Аккордеон</button>
-            </div>
-        </div>
-
-        <!-- Контейнеры для разных видов -->
-        <div id="treeContainer" class="tree-container">
-            <div id="tree" class="tree"></div>
-        </div>
-
-        <div id="accordionContainer" class="accordion-container hidden">
-            <div id="accordion" class="accordion"></div>
-        </div>
-
-        <!-- Модальные окна -->
-        <div id="categoryModal" class="modal">
-            <div class="modal-content">
-                <h3>Добавить категорию</h3>
-                <input type="text" id="newCategoryName" placeholder="Название категории">
-                <div style="margin-top: 15px; display: flex; gap: 10px;">
-                    <button onclick="dataManager.addCategory()">Добавить</button>
-                    <button onclick="uiManager.hideModals()" style="background: #6c757d;">Отмена</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Остальные модальные окна остаются без изменений -->
-    </div>
-
-    <script>
-        // =============================================================================
-        // КОНФИГУРАЦИЯ И ИНИЦИАЛИЗАЦИЯ
-        // =============================================================================
-
-        /**
-         * Основная структура данных приложения
-         * categories: массив корневых категорий
-         */
-        const techData = {
-            categories: []
-        };
-
-        let currentModalPath = [];
-
-        // =============================================================================
-        // МЕНЕДЖЕР ВИДОВ
-        // =============================================================================
-
-        const viewManager = {
-            currentView: 'tree',
-            
-            init() {
-                const savedView = localStorage.getItem('techViewMode');
-                if (savedView) this.setView(savedView, false);
-                treeManager.init();
-                accordionManager.init();
-            },
-            
-            setView(viewType, save = true) {
-                this.currentView = viewType;
-                
-                // Обновление активных кнопок
-                document.getElementById('treeViewBtn').classList.toggle('active', viewType === 'tree');
-                document.getElementById('accordionViewBtn').classList.toggle('active', viewType === 'accordion');
-                
-                // Переключение видимости контейнеров
-                document.getElementById('treeContainer').classList.toggle('hidden', viewType !== 'tree');
-                document.getElementById('accordionContainer').classList.toggle('hidden', viewType !== 'accordion');
-                
-                // Рендер выбранного вида
-                if (viewType === 'tree') {
-                    treeManager.renderTree();
-                } else {
-                    accordionManager.renderAccordion();
-                }
-                
-                if (save) localStorage.setItem('techViewMode', viewType);
-            }
-        };
-
-        // =============================================================================
-        // МЕНЕДЖЕР ДЕРЕВА (УПРОЩЕННАЯ ВЕРСИЯ)
-        // =============================================================================
-
-        const treeManager = {
-            init() {
-                this.treeContainer = document.getElementById('tree');
-                this.renderTree();
-            },
-
-            renderTree() {
-                if (!this.treeContainer) return;
-                
-                this.treeContainer.innerHTML = '';
-                
-                if (techData.categories.length === 0) {
-                    this.treeContainer.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 40px;">Нет данных. Добавьте первую категорию!</p>';
-                    return;
-                }
-
-                const tree = document.createElement('ul');
-                this.buildTree(techData.categories, tree);
-                this.treeContainer.appendChild(tree);
-            },
-
-            buildTree(nodes, parentElement, path = []) {
-                nodes.forEach((node, index) => {
-                    const currentPath = [...path, index];
-                    const li = document.createElement('li');
-                    
-                    // Добавляем класс для технологии
-                    if (node.type === 'technology') {
-                        li.classList.add('technology');
-                    }
-
-                    const nodeElement = this.createTreeNode(node, path, index, currentPath);
-                    li.appendChild(nodeElement);
-
-                    // Рекурсивно обрабатываем дочерние элементы
-                    if (node.children && node.children.length > 0) {
-                        const childUl = document.createElement('ul');
-                        this.buildTree(node.children, childUl, currentPath);
-                        li.appendChild(childUl);
-                    }
-
-                    parentElement.appendChild(li);
-                });
-            },
-
-            createTreeNode(node, path, index, currentPath) {
-                const nodeElement = document.createElement('div');
-                nodeElement.className = 'tree-node';
-                
-                const completedTasks = node.checklist ? node.checklist.filter(item => item.completed).length : 0;
-                const totalTasks = node.checklist ? node.checklist.length : 0;
-                const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-
-                // Статус для технологий
-                let statusText = '';
-                let statusClass = '';
-                
-                if (node.type === 'technology') {
-                    if (totalTasks === 0) {
-                        statusText = 'В планах';
-                        statusClass = 'status-planned';
-                    } else if (completedTasks === totalTasks) {
-                        statusText = 'Изучено';
-                        statusClass = 'status-completed';
-                    } else {
-                        statusText = 'В процессе';
-                        statusClass = 'status-in-progress';
-                    }
-                }
-
-                // Основное содержимое узла
-                nodeElement.innerHTML = `
-                    <div class="node-content">
-                        <div class="node-header">
-                            <div class="node-name">${this.escapeHtml(node.name)}</div>
-                            <div class="node-actions">
-                                ${this.getNodeActions(node, path, index, currentPath)}
-                            </div>
-                        </div>
-                        ${node.type === 'technology' ? this.getTechnologyDetails(statusText, statusClass, progress, completedTasks, totalTasks, node) : ''}
-                    </div>
-                `;
-
-                return nodeElement;
-            },
-
-            getNodeActions(node, path, index, currentPath) {
-                if (node.type === 'technology') {
-                    return `
-                        <button onclick="checklistManager.manageChecklist(${JSON.stringify(path)}, ${index})" title="Чек-лист">📋</button>
-                        <button onclick="dataManager.editTechnology(${JSON.stringify(path)}, ${index})" title="Редактировать">✏️</button>
-                        <button onclick="dataManager.deleteTechnology(${JSON.stringify(path)}, ${index})" title="Удалить" style="background: #dc3545;">🗑️</button>
-                    `;
-                } else {
-                    return `
-                        <button onclick="uiManager.showAddNodeModal(${JSON.stringify(currentPath)})" title="Добавить подкатегорию">+ 📁</button>
-                        <button onclick="uiManager.showAddTechModal(${JSON.stringify(currentPath)})" title="Добавить технологию">+ ⚙️</button>
-                        <button onclick="dataManager.editNode(${JSON.stringify(path)}, ${index})" title="Редактировать">✏️</button>
-                        <button onclick="dataManager.deleteNode(${JSON.stringify(path)}, ${index})" title="Удалить" style="background: #dc3545;">🗑️</button>
-                    `;
-                }
-            },
-
-            getTechnologyDetails(statusText, statusClass, progress, completedTasks, totalTasks, node) {
-                return `
-                    <div class="node-details">
-                        <span class="status-badge ${statusClass}">${statusText}</span>
-                        <div class="progress-container">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${progress}%"></div>
-                            </div>
-                            <span>${Math.round(progress)}% (${completedTasks}/${totalTasks})</span>
-                        </div>
-                        ${node.checklist && node.checklist.length > 0 ? 
-                            `<span title="Количество задач">📋 ${node.checklist.length}</span>` : ''}
-                    </div>
-                `;
-            },
-
-            escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-        };
-
-        // =============================================================================
-        // МЕНЕДЖЕР АККОРДЕОНА (УПРОЩЕННАЯ ВЕРСИЯ)
-        // =============================================================================
-
-        const accordionManager = {
-            init() {
-                this.accordionContainer = document.getElementById('accordion');
-                this.expandedState = JSON.parse(localStorage.getItem('accordionExpandedState')) || {};
-                this.renderAccordion();
-            },
-
-            renderAccordion() {
-                if (!this.accordionContainer) return;
-                
-                this.accordionContainer.innerHTML = '';
-                
-                if (techData.categories.length === 0) {
-                    this.accordionContainer.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 40px;">Нет данных. Добавьте первую категорию!</p>';
-                    return;
-                }
-
-                this.buildAccordion(techData.categories, this.accordionContainer, []);
-                localStorage.setItem('accordionExpandedState', JSON.stringify(this.expandedState));
-            },
-
-            buildAccordion(nodes, parentElement, path) {
-                nodes.forEach((node, index) => {
-                    const currentPath = [...path, index];
-                    const pathKey = currentPath.join('-');
-                    
-                    if (this.expandedState[pathKey] === undefined) {
-                        this.expandedState[pathKey] = path.length === 0;
-                    }
-                    
-                    const item = document.createElement('div');
-                    item.className = 'accordion-item';
-                    
-                    const header = this.createAccordionHeader(node, path, index, currentPath, pathKey);
-                    item.appendChild(header);
-                    
-                    if (node.children && node.children.length > 0) {
-                        const content = this.createAccordionContent(node, currentPath, pathKey);
-                        item.appendChild(content);
-                    }
-                    
-                    parentElement.appendChild(item);
-                });
-            },
-
-            createAccordionHeader(node, path, index, currentPath, pathKey) {
-                const header = document.createElement('button');
-                header.className = 'accordion-header';
-                header.onclick = () => this.toggleItem(pathKey);
-                
-                const completedTasks = node.checklist ? node.checklist.filter(item => item.completed).length : 0;
-                const totalTasks = node.checklist ? node.checklist.length : 0;
-                const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-
-                let statusHtml = '';
-                if (node.type === 'technology') {
-                    let statusClass = totalTasks === 0 ? 'status-planned' : 
-                                    completedTasks === totalTasks ? 'status-completed' : 'status-in-progress';
-                    let statusText = totalTasks === 0 ? 'В планах' : 
-                                   completedTasks === totalTasks ? 'Изучено' : 'В процессе';
-                    statusHtml = `<span class="status-badge ${statusClass}">${statusText} ${Math.round(progress)}%</span>`;
-                }
-
-                header.innerHTML = `
-                    <div class="accordion-title">
-                        <span>${node.type === 'technology' ? '⚙️' : '📁'} ${this.escapeHtml(node.name)}</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        ${statusHtml}
-                        ${node.children && node.children.length > 0 ? 
-                            `<span style="font-size: 12px; color: #6c757d;">${this.expandedState[pathKey] ? '▼' : '►'}</span>` : ''}
-                        <div class="node-actions">
-                            ${this.getAccordionActions(node, path, index, currentPath)}
-                        </div>
-                    </div>
-                `;
-
-                return header;
-            },
-
-            getAccordionActions(node, path, index, currentPath) {
-                // Аналогично treeManager, но без всплытия событий
-                if (node.type === 'technology') {
-                    return `
-                        <button onclick="event.stopPropagation(); checklistManager.manageChecklist(${JSON.stringify(path)}, ${index})">📋</button>
-                        <button onclick="event.stopPropagation(); dataManager.editTechnology(${JSON.stringify(path)}, ${index})">✏️</button>
-                        <button onclick="event.stopPropagation(); dataManager.deleteTechnology(${JSON.stringify(path)}, ${index})" style="background: #dc3545;">🗑️</button>
-                    `;
-                } else {
-                    return `
-                        <button onclick="event.stopPropagation(); uiManager.showAddNodeModal(${JSON.stringify(currentPath)})">+ 📁</button>
-                        <button onclick="event.stopPropagation(); uiManager.showAddTechModal(${JSON.stringify(currentPath)})">+ ⚙️</button>
-                        <button onclick="event.stopPropagation(); dataManager.editNode(${JSON.stringify(path)}, ${index})">✏️</button>
-                        <button onclick="event.stopPropagation(); dataManager.deleteNode(${JSON.stringify(path)}, ${index})" style="background: #dc3545;">🗑️</button>
-                    `;
-                }
-            },
-
-            createAccordionContent(node, currentPath, pathKey) {
-                const content = document.createElement('div');
-                content.className = 'accordion-content';
-                if (this.expandedState[pathKey]) {
-                    content.classList.add('expanded');
-                }
-                
-                const childContainer = document.createElement('div');
-                childContainer.className = 'accordion-child';
-                this.buildAccordion(node.children, childContainer, currentPath);
-                content.appendChild(childContainer);
-                
-                return content;
-            },
-
-            toggleItem(pathKey) {
-                this.expandedState[pathKey] = !this.expandedState[pathKey];
-                this.renderAccordion();
-            },
-
-            escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-        };
-
-        // =============================================================================
-        // МЕНЕДЖЕР ДАННЫХ (ОСНОВНЫЕ ФУНКЦИИ)
-        // =============================================================================
-
-        const dataManager = {
-            getNodeByPath(path) {
-                let currentNode = techData.categories;
-                for (const index of path) {
-                    if (currentNode[index]) {
-                        currentNode = currentNode[index].children || [];
-                    } else {
-                        return null;
-                    }
-                }
-                return currentNode;
-            },
-
-            saveToLocalStorage() {
-                localStorage.setItem('techData', JSON.stringify(techData));
-            },
-
-            loadFromLocalStorage() {
-                const saved = localStorage.getItem('techData');
-                if (saved) {
-                    try {
-                        const parsedData = JSON.parse(saved);
-                        techData.categories = parsedData.categories || [];
-                        this.renderCurrentView();
-                    } catch (e) {
-                        console.error('Error parsing saved data:', e);
-                    }
-                }
-            },
-
-            renderCurrentView() {
-                if (viewManager.currentView === 'tree') {
-                    treeManager.renderTree();
-                } else {
-                    accordionManager.renderAccordion();
-                }
-            },
-
-            addCategory() {
-                const name = document.getElementById('newCategoryName').value.trim();
-                if (name) {
-                    techData.categories.push({
-                        name: name,
-                        type: 'category',
-                        children: []
-                    });
-                    this.renderCurrentView();
-                    this.saveToLocalStorage();
-                    uiManager.hideModals();
-                    document.getElementById('newCategoryName').value = '';
-                    uiManager.showNotification('Категория добавлена!', 'success');
-                }
-            },
-
-            // ... остальные функции dataManager
-        };
-
-        // =============================================================================
-        // UI МЕНЕДЖЕР
-        // =============================================================================
-
-        const uiManager = {
-            showModal(modalId) {
-                document.getElementById(modalId).style.display = 'block';
-            },
-
-            hideModals() {
-                document.querySelectorAll('.modal').forEach(modal => {
-                    modal.style.display = 'none';
-                });
-            },
-
-            showNotification(message, type) {
-                // Упрощенная версия уведомлений
-                const notification = document.createElement('div');
-                notification.className = `notification ${type}`;
-                notification.textContent = message;
-                notification.style.cssText = `
-                    position: fixed; top: 20px; right: 20px; padding: 12px 20px; 
-                    border-radius: 6px; color: white; z-index: 1001; font-weight: 500;
-                    background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#ffc107'};
-                `;
-                document.body.appendChild(notification);
-                setTimeout(() => notification.remove(), 3000);
-            }
-        };
-
-        // =============================================================================
-        // ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
-        // =============================================================================
-
-        document.addEventListener('DOMContentLoaded', function() {
-            dataManager.loadFromLocalStorage();
-            viewManager.init();
-        });
-
-        // Закрытие модальных окон при клике вне их
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                uiManager.hideModals();
-            }
-        };
-    </script>
-</body>
-</html>
