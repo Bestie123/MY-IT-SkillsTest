@@ -282,7 +282,13 @@
     {
       "name": "QA & инструменты разработки",
       "type": "category",
-      "children": []
+      "children": [
+        {
+          "name": "Postman",
+          "type": "node",
+          "children": []
+        }
+      ]
     }
   ]
 }
