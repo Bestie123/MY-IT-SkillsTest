@@ -133,6 +133,11 @@
       "name": "button.delete",
       "type": "node",
       "children": []
+    },
+    {
+      "name": "11111",
+      "type": "category",
+      "children": []
     }
   ]
 }
