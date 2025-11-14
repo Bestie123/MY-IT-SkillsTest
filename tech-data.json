@@ -157,6 +157,12 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "JdbcTemplate",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         },
