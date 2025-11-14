@@ -1,437 +1,48 @@
 {
   "categories": [
     {
-      "name": "☕ Java Ecosystem",
+      "name": "132",
       "type": "category",
       "children": [
         {
-          "name": "Java Core",
+          "name": "11132",
           "type": "node",
           "children": [
             {
-              "name": "Многопоточность и Concurrent Collections",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
+              "name": "2341241",
+              "type": "node",
+              "children": [
+                {
+                  "name": "31231",
+                  "type": "technology",
+                  "checklist": [
+                    {
+                      "text": "321321341",
+                      "completed": false
+                    },
+                    {
+                      "text": "4141",
+                      "completed": true
+                    },
+                    {
+                      "text": "21312312",
+                      "completed": false
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "name": "Глубокое изучение Collections (HashMap, ArrayList)",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Паттерны проектирования (Singleton, Factory, Builder)",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Garbage Collection (основы)",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Логирование (SLF4J/Logback)",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Функциональный интерфейс",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Модули JPMS (Java Platform Module System)",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Сериализация (JSON, XML, Jackson/Gson)",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Работа с датой и временем (java.time)",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Аннотации & Reflection — понимание того, как работают фреймворки",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
+              "name": "42131",
+              "type": "node",
+              "children": []
             }
           ]
         },
         {
-          "name": "Spring Framework",
-          "type": "node",
-          "children": [
-            {
-              "name": "Spring Boot",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Spring Core & Context (DI/IoC)",
-              "type": "technology",
-              "checklist": [],
-              "completed": true
-            },
-            {
-              "name": "Spring MVC",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Spring Data JPA",
-              "type": "technology",
-              "checklist": [],
-              "completed": true
-            },
-            {
-              "name": "Spring Security (+ JWT, OAuth2,HTTPS/SSL)",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Spring Actuator",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            }
-          ]
-        },
-        {
-          "name": "Базы данных  & Хранилища",
-          "type": "node",
-          "children": [
-            {
-              "name": "JPA/Hibernate",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "JDBC",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Redis",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "MongoDB",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Транзакции (ACID)",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Уровни изоляции в SQL БД",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Индексы — как они работают и зачем нужны",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "JdbcTemplate",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            }
-          ]
-        },
-        {
-          "name": "Тестирование",
-          "type": "node",
-          "children": [
-            {
-              "name": "JUnit 5/4",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Mockito",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            }
-          ]
-        },
-        {
-          "name": "Архитектура",
-          "type": "node",
-          "children": [
-            {
-              "name": "REST API",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Основы HTTP",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "CRUD",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Микросервисная архитектура",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "GraphQL",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Веб-сокеты (WebSockets) для real-time коммуникации.",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Кэширование (например, Caffeine или Ehcache).",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            }
-          ]
-        },
-        {
-          "name": "Message Brokers",
-          "type": "node",
-          "children": [
-            {
-              "name": "RabbitMQ",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Kafka",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            }
-          ]
-        },
-        {
-          "name": "Инструменты сборки",
-          "type": "node",
-          "children": [
-            {
-              "name": "Maven/Gradle",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Infrastructure & DevOps",
-      "type": "category",
-      "children": [
-        {
-          "name": "Docker",
-          "type": "technology",
-          "checklist": [],
-          "completed": false
-        },
-        {
-          "name": "DockerCompose",
-          "type": "technology",
-          "checklist": [],
-          "completed": false
-        },
-        {
-          "name": "Kubernetes",
-          "type": "technology",
-          "checklist": [],
-          "completed": false
-        },
-        {
-          "name": "CI/CD",
-          "type": "node",
-          "children": [
-            {
-              "name": "GitHub Actions",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "GitLab CI",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            }
-          ]
-        },
-        {
-          "name": "Мониторинг",
-          "type": "node",
-          "children": [
-            {
-              "name": "Prometheus + Grafana (основы)",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "ELK Stack (Elasticsearch, Logstash, Kibana) - основы",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            }
-          ]
-        },
-        {
-          "name": "Веб-серверы / Reverse Proxy",
-          "type": "node",
-          "children": [
-            {
-              "name": "Nginx",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            }
-          ]
-        },
-        {
-          "name": "Облачные платформы",
-          "type": "node",
-          "children": [
-            {
-              "name": "AWS",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Google Cloud (GCP)",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            },
-            {
-              "name": "Azure",
-              "type": "technology",
-              "checklist": [],
-              "completed": false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Базы данных",
-      "type": "category",
-      "children": [
-        {
-          "name": "SQL",
+          "name": "124134",
           "type": "node",
           "children": []
-        },
-        {
-          "name": "MySQL",
-          "type": "node",
-          "children": []
-        },
-        {
-          "name": "SQLite",
-          "type": "node",
-          "children": []
-        }
-      ]
-    },
-    {
-      "name": "QA & инструменты разработки",
-      "type": "category",
-      "children": [
-        {
-          "name": "Postman",
-          "type": "technology",
-          "checklist": [],
-          "completed": false
-        },
-        {
-          "name": "Insomnia",
-          "type": "technology",
-          "checklist": [],
-          "completed": false
-        },
-        {
-          "name": "Swagger",
-          "type": "technology",
-          "checklist": [],
-          "completed": false
-        },
-        {
-          "name": "OpenAPI",
-          "type": "technology",
-          "checklist": [],
-          "completed": false
-        },
-        {
-          "name": "PostgreSQL",
-          "type": "technology",
-          "checklist": [],
-          "completed": false
-        }
-      ]
-    },
-    {
-      "name": "Не определено",
-      "type": "category",
-      "children": [
-        {
-          "name": "Jira",
-          "type": "technology",
-          "checklist": [],
-          "completed": false
-        },
-        {
-          "name": "Kanban",
-          "type": "technology",
-          "checklist": [],
-          "completed": false
         }
       ]
     }
