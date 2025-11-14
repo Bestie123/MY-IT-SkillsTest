@@ -207,6 +207,18 @@
           "type": "technology",
           "checklist": [],
           "completed": false
+        },
+        {
+          "name": "DockerCompose",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
+        },
+        {
+          "name": "Kubernetes",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
         }
       ]
     }
