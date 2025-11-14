@@ -25,6 +25,18 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Garbage Collection (основы)",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            },
+            {
+              "name": "Логирование (SLF4J/Logback)",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         }
