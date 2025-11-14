@@ -145,6 +145,18 @@
               "type": "technology",
               "checklist": [],
               "completed": false
+            },
+            {
+              "name": "Уровни изоляции в SQL БД",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            },
+            {
+              "name": "Индексы — как они работают и зачем нужны",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
             }
           ]
         },
