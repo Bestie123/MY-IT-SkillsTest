@@ -300,6 +300,12 @@
           "type": "technology",
           "checklist": [],
           "completed": false
+        },
+        {
+          "name": "OpenAPI",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
         }
       ]
     }
