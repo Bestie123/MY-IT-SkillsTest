@@ -1,0 +1,159 @@
+.tree {
+    position: relative;
+    padding: 20px;
+}
+
+.tree ul {
+    padding-left: 0;
+    position: relative;
+    transition: all 0.5s;
+}
+
+.tree li {
+    list-style-type: none;
+    margin: 10px;
+    position: relative;
+    padding: 20px 5px 0 5px;
+}
+
+.tree li::before, .tree li::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 50%;
+    border-top: 2px solid #ccc;
+    width: 50%;
+    height: 20px;
+}
+
+.tree li::after {
+    right: auto;
+    left: 50%;
+    border-left: 2px solid #ccc;
+}
+
+.tree li:only-child::after, .tree li:only-child::before {
+    display: none;
+}
+
+.tree li:only-child {
+    padding-top: 0;
+}
+
+.tree li:first-child::before, .tree li:last-child::after {
+    border: 0 none;
+}
+
+.tree li:last-child::before {
+    border-right: 2px solid #ccc;
+    border-radius: 0 5px 0 0;
+}
+
+.tree li:first-child::after {
+    border-radius: 5px 0 0 0;
+}
+
+.tree ul ul::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    border-left: 2px solid #ccc;
+    width: 0;
+    height: 20px;
+}
+
+.tree .tree-node {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    background: white;
+    display: inline-block;
+    position: relative;
+    transition: all 0.5s;
+    min-width: 150px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.tree .tree-node:hover {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transform: translateY(-2px);
+}
+
+.tree .tree-node.category {
+    background: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.tree .tree-node.technology {
+    background: #e8f5e9;
+    border-color: #4caf50;
+}
+
+.tree .tree-node .node-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.tree .tree-node .node-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.tree .tree-node .node-actions {
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.tree .tree-node .node-actions button {
+    padding: 2px 6px;
+    font-size: 0.8em;
+    margin: 1px;
+}
+
+.tree .progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 5px 0;
+}
+
+.tree .progress-fill {
+    height: 100%;
+    background-color: #20c997;
+    transition: width 0.3s ease;
+}
+
+.tree .status-planned { color: #6c757d; }
+.tree .status-in-progress { color: #fd7e14; }
+.tree .status-completed { color: #198754; }
+
+.tree .checklist-indicator {
+    font-size: 0.8em;
+    color: #6c757d;
+    margin-top: 2px;
+}
+
+.tree .connector {
+    position: absolute;
+    background: #ccc;
+    z-index: -1;
+}
+
+.tree .horizontal-connector {
+    height: 2px;
+    top: 0;
+}
+
+.tree .vertical-connector {
+    width: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+}
