@@ -1,3 +1,9 @@
 {
-  "categories": []
+  "categories": [
+    {
+      "name": "☕ Java Ecosystem",
+      "type": "category",
+      "children": []
+    }
+  ]
 }
