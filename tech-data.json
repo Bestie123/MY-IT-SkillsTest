@@ -68,7 +68,12 @@
                 {
                   "name": "ÐÐ¾ Ð¾Ð³ÑÐ½",
                   "type": "technology",
-                  "checklist": [],
+                  "checklist": [
+                    {
+                      "text": "Го он п",
+                      "completed": true
+                    }
+                  ],
                   "expanded": true
                 }
               ],
