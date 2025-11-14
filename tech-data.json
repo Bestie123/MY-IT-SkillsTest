@@ -3,7 +3,13 @@
     {
       "name": "☕ Java Ecosystem",
       "type": "category",
-      "children": []
+      "children": [
+        {
+          "name": "Java Core",
+          "type": "node",
+          "children": []
+        }
+      ]
     }
   ]
 }
