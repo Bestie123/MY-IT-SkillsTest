@@ -169,7 +169,20 @@
         {
           "name": "Message Brokers",
           "type": "node",
-          "children": []
+          "children": [
+            {
+              "name": "RabbitMQ",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            },
+            {
+              "name": "Kafka",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            }
+          ]
         }
       ]
     }
