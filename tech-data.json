@@ -87,6 +87,18 @@
               "completed": false
             }
           ]
+        },
+        {
+          "name": "Базы данных  & Хранилища",
+          "type": "node",
+          "children": [
+            {
+              "name": "JPA/Hibernate",
+              "type": "technology",
+              "checklist": [],
+              "completed": false
+            }
+          ]
         }
       ]
     }
