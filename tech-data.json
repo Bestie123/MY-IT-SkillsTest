@@ -1,3 +1,46 @@
 {
-  "categories": []
+  "categories": [
+    {
+      "name": "132",
+      "type": "category",
+      "children": [
+        {
+          "name": "11132",
+          "type": "node",
+          "children": [
+            {
+              "name": "2341241",
+              "type": "node",
+              "children": [
+                {
+                  "name": "31231",
+                  "type": "technology",
+                  "checklist": [
+                    {
+                      "text": "321321341",
+                      "completed": false
+                    },
+                    {
+                      "text": "4141",
+                      "completed": false
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "42131",
+              "type": "node",
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "124134",
+          "type": "node",
+          "children": []
+        }
+      ]
+    }
+  ]
 }
