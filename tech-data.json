@@ -29,7 +29,16 @@
             {
               "name": "Garbage Collection (основы)",
               "type": "technology",
-              "checklist": [],
+              "checklist": [
+                {
+                  "text": "Подкатегории 1",
+                  "completed": true
+                },
+                {
+                  "text": "Что-то ещё",
+                  "completed": false
+                }
+              ],
               "completed": false
             },
             {
@@ -60,7 +69,7 @@
               "name": "Spring Core & Context (DI/IoC)",
               "type": "technology",
               "checklist": [],
-              "completed": false
+              "completed": true
             },
             {
               "name": "Spring MVC",
