@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Technologies Knowledge Base - Accordion View</title>
     <style>
-        /* Все предыдущие стили остаются */
+        /* Все существующие стили остаются */
         body {
             font-family: Arial, sans-serif;
             max-width: 1400px;
@@ -21,7 +21,476 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        /* Добавляем новые стили для системы знаний */
+        .auth-section {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ffeaa7;
+        }
+
+        .auth-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .auth-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .auth-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 2px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        button.delete {
+            background: #dc3545;
+        }
+
+        button.delete:hover {
+            background: #c82333;
+        }
+
+        button.success {
+            background: #28a745;
+        }
+
+        button.success:hover {
+            background: #218838;
+        }
+
+        button.warning {
+            background: #ffc107;
+            color: black;
+        }
+
+        button.warning:hover {
+            background: #e0a800;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            color: white;
+            z-index: 1001;
+        }
+
+        .success { background: #28a745; }
+        .error { background: #dc3545; }
+        .warning { background: #ffc107; color: black; }
+
+        .accordion-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            min-height: 500px;
+            overflow: auto;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .checklist-section {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .checklist-item-text {
+            flex-grow: 1;
+        }
+
+        .checklist-item.completed .checklist-item-text {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        .checklist-stats {
+            margin-top: 10px;
+            padding: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .checklist-actions {
+            margin-top: 10px;
+        }
+
+        .checklist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checklist-title {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        button.auto-save-enabled {
+            background: #28a745;
+        }
+
+        button.auto-save-enabled:hover {
+            background: #218838;
+        }
+
+        button.auto-save-disabled {
+            background: #6c757d;
+        }
+
+        button.auto-save-disabled:hover {
+            background: #5a6268;
+        }
+
+        .auto-save-status {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        .auto-save-on {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .auto-save-off {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .path-display {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-left: 10px;
+            font-style: italic;
+        }
+
+        .parent-select-item {
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            background: #f8f9fa;
+        }
+
+        .parent-select-item:hover {
+            background: #e9ecef;
+        }
+
+        .parent-select-item.selected {
+            background: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+
+        /* Аккордеон стили */
+        .accordion {
+            width: 100%;
+        }
+
+        .accordion-item {
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 12px 15px;
+            background: #f8f9fa;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+            user-select: none;
+        }
+
+        .accordion-header:hover {
+            background: #e9ecef;
+        }
+
+        .accordion-header.category {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+
+        .accordion-header.technology {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+
+        .accordion-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .accordion-icon {
+            font-size: 1.2em;
+        }
+
+        .accordion-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: white;
+        }
+
+        .accordion-content.expanded {
+            max-height: 5000px;
+        }
+
+        .accordion-child {
+            margin-left: 30px;
+            border-left: 2px solid #e9ecef;
+        }
+
+        .accordion-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-right: 10px;
+        }
+
+        .accordion-progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .accordion-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .accordion-toggle {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-bar {
+            width: 100px;
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #20c997;
+            transition: width 0.3s ease;
+        }
+
+        .status-planned { color: #6c757d; }
+        .status-in-progress { color: #fd7e14; }
+        .status-completed { color: #198754; }
+
+        .checklist-indicator {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+
+        /* Стили для встроенного чек-листа */
+        .inline-checklist {
+            padding: 15px;
+            border-top: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .inline-checklist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .inline-checklist-title {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .inline-checklist-toggle {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .inline-checklist-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .inline-checklist-content.expanded {
+            max-height: 1000px;
+        }
+
+        .inline-checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .inline-checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .inline-checklist-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .inline-checklist-item-text {
+            flex-grow: 1;
+            font-size: 0.9em;
+        }
+
+        .inline-checklist-item.completed .inline-checklist-item-text {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        .inline-checklist-stats {
+            padding: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-top: 10px;
+        }
+
+        .inline-checklist-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .technology-checkbox {
+            margin-left: 10px;
+        }
+
+        .technology-checkbox input[type="checkbox"] {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        .sync-status {
+            margin-top: 10px;
+            padding: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        /* НОВЫЕ СТИЛИ ДЛЯ СИСТЕМЫ ЗНАНИЙ */
         
         /* Редактор контента */
         .content-editor {
@@ -344,21 +813,20 @@
             font-size: 0.8em;
             margin-left: 10px;
         }
-        
-        /* Остальные существующие стили остаются без изменений */
-        .auth-section, .controls, .accordion-container, .modal, .notification, 
-        .accordion-item, .accordion-header, .checklist-item, etc. {
-            /* Все предыдущие стили сохраняются */
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
         }
     </style>
-    <!-- Подключаем библиотеку для работы с Markdown (опционально) -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>📚 Technologies Knowledge Base - Accordion View</h1>
         
-        <!-- Секция аутентификации (без изменений) -->
+        <!-- Секция аутентификации -->
         <div class="auth-section" id="authSection">
             <h3>🔐 Настройка доступа к GitHub</h3>
             <div>
@@ -373,7 +841,7 @@
             <p><small>Токен хранится только в вашем браузере. Создайте токен в GitHub с правами repo</small></p>
         </div>
 
-        <!-- Основные контролы с добавлением кнопок для системы знаний -->
+        <!-- Основные контролы -->
         <div class="controls">
             <div>
                 <button onclick="uiManager.showModal('categoryModal')">+ Добавить категорию</button>
@@ -394,11 +862,75 @@
             <div id="accordion" class="accordion"></div>
         </div>
 
-        <!-- Модальные окна (существующие + новые для системы знаний) -->
-        
-        <!-- Существующие модальные окна (categoryModal, nodeModal, techModal, checklistModal) -->
-        
-        <!-- Новое модальное окно для системы знаний -->
+        <!-- СУЩЕСТВУЮЩИЕ МОДАЛЬНЫЕ ОКНА -->
+        <div id="categoryModal" class="modal">
+            <div class="modal-content">
+                <h3>Добавить категорию</h3>
+                <input type="text" id="newCategoryName" placeholder="Название категории">
+                <div>
+                    <button onclick="dataManager.addCategory()">Добавить</button>
+                    <button onclick="uiManager.hideModals()">Отмена</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="nodeModal" class="modal">
+            <div class="modal-content">
+                <h3>Добавить подкатегорию</h3>
+                <div id="nodeParentSelect">
+                    <!-- Динамически генерируемый выбор родителя -->
+                </div>
+                <input type="text" id="newNodeName" placeholder="Название подкатегории">
+                <div>
+                    <button onclick="dataManager.addNode()">Добавить</button>
+                    <button onclick="uiManager.hideModals()">Отмена</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="techModal" class="modal">
+            <div class="modal-content">
+                <h3>Добавить технологию</h3>
+                <div id="techParentSelect">
+                    <!-- Динамически генерируемый выбор родителя -->
+                </div>
+                <input type="text" id="newTechName" placeholder="Название технологии">
+                <div>
+                    <button onclick="dataManager.addTechnology()">Добавить</button>
+                    <button onclick="uiManager.hideModals()">Отмена</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для управления чек-листом -->
+        <div id="checklistModal" class="modal">
+            <div class="modal-content">
+                <div class="checklist-header">
+                    <h3 id="checklistTitle">Чек-лист</h3>
+                    <button onclick="uiManager.hideModals()">✕</button>
+                </div>
+                
+                <div class="checklist-stats" id="checklistStats">
+                    <!-- Статистика будет здесь -->
+                </div>
+                
+                <div id="checklistItems">
+                    <!-- Элементы чек-листа будут здесь -->
+                </div>
+                
+                <div class="checklist-actions">
+                    <input type="text" id="newChecklistItem" placeholder="Новый пункт чек-листа" style="width: calc(100% - 100px);">
+                    <button onclick="checklistManager.addChecklistItem()">+ Добавить</button>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <button onclick="checklistManager.saveChecklist()" class="success">💾 Сохранить чек-лист</button>
+                    <button onclick="uiManager.hideModals()">Отмена</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- НОВЫЕ МОДАЛЬНЫЕ ОКНА ДЛЯ СИСТЕМЫ ЗНАНИЙ -->
         <div id="knowledgeModal" class="modal knowledge-modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -492,7 +1024,16 @@
             </div>
         </div>
 
-        <!-- Остальные существующие модальные окна и секции -->
+        <!-- Секция для JSON -->
+        <div id="jsonSection" class="hidden">
+            <h3>JSON данные:</h3>
+            <textarea id="jsonOutput" style="width: 100%; height: 200px;"></textarea>
+            <div>
+                <button onclick="dataManager.copyToClipboard()">📋 Копировать JSON</button>
+                <button onclick="dataManager.importFromJSONText()">📤 Импорт из этого JSON</button>
+                <button onclick="uiManager.hideJSON()">Скрыть</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -511,16 +1052,178 @@
         // Текущий редактируемый элемент для системы знаний
         let currentKnowledgeItem = null;
 
-        // Менеджер аккордеона (остается без изменений, но добавляем кнопку для базы знаний)
+        // === СУЩЕСТВУЮЩИЙ КОД АККОРДЕОНА ===
         const accordionManager = {
-            // ... существующий код аккордеона ...
-            
-            // В buildAccordion добавляем кнопку для базы знаний
+            init() {
+                this.accordionContainer = document.getElementById('accordion');
+                this.expandedState = JSON.parse(localStorage.getItem('accordionExpandedState')) || {};
+                this.checklistExpandedState = JSON.parse(localStorage.getItem('checklistExpandedState')) || {};
+                this.renderAccordion();
+            },
+
+            renderAccordion() {
+                if (!this.accordionContainer) {
+                    console.error('Accordion container not found');
+                    return;
+                }
+                
+                this.accordionContainer.innerHTML = '';
+                
+                if (techData.categories.length === 0) {
+                    this.accordionContainer.innerHTML = '<p style="text-align: center; color: #6c757d;">Нет данных. Добавьте первую категорию!</p>';
+                    return;
+                }
+
+                this.buildAccordion(techData.categories, this.accordionContainer, []);
+                
+                // Сохраняем состояние раскрытия
+                localStorage.setItem('accordionExpandedState', JSON.stringify(this.expandedState));
+                localStorage.setItem('checklistExpandedState', JSON.stringify(this.checklistExpandedState));
+            },
+
             buildAccordion(nodes, parentElement, path) {
                 nodes.forEach((node, index) => {
-                    // ... существующий код создания элемента аккордеона ...
+                    const currentPath = [...path, index];
+                    const pathKey = currentPath.join('-');
                     
-                    // В раздел действий добавляем кнопку для базы знаний
+                    // Если состояние не задано, по умолчанию раскрываем только корневые элементы
+                    if (this.expandedState[pathKey] === undefined) {
+                        this.expandedState[pathKey] = path.length === 0;
+                    }
+                    
+                    const item = document.createElement('div');
+                    item.className = 'accordion-item';
+                    
+                    // Расчет прогресса для узла
+                    const nodeProgress = this.calculateNodeProgress(node);
+                    const progress = nodeProgress.progress;
+                    const hasChecklistItems = nodeProgress.hasChecklistItems;
+                    
+                    let statusText = '';
+                    let statusClass = '';
+                    
+                    if (node.type === 'technology') {
+                        if (!hasChecklistItems) {
+                            statusText = node.completed ? '✅ Изучено' : '📝 В планах';
+                            statusClass = node.completed ? 'status-completed' : 'status-planned';
+                        } else {
+                            if (progress === 0) {
+                                statusText = '📝 В планах';
+                                statusClass = 'status-planned';
+                            } else if (progress === 100) {
+                                statusText = '✅ Изучено';
+                                statusClass = 'status-completed';
+                            } else {
+                                statusText = '🚧 В процессе';
+                                statusClass = 'status-in-progress';
+                            }
+                        }
+                    } else {
+                        // Для категорий показываем прогресс дочерних элементов
+                        if (progress === 0) {
+                            statusText = '📝 Не начато';
+                            statusClass = 'status-planned';
+                        } else if (progress === 100) {
+                            statusText = '✅ Завершено';
+                            statusClass = 'status-completed';
+                        } else {
+                            statusText = '🚧 В процессе';
+                            statusClass = 'status-in-progress';
+                        }
+                    }
+
+                    // Заголовок аккордеона
+                    const header = document.createElement('div');
+                    header.className = `accordion-header ${node.type === 'technology' ? 'technology' : 'category'}`;
+                    
+                    // Обработчик клика для раскрытия/скрытия
+                    header.onclick = (e) => {
+                        // Предотвращаем срабатывание при клике на кнопки действий
+                        if (!e.target.closest('.accordion-actions') && !e.target.closest('.accordion-toggle') && 
+                            !e.target.closest('.technology-checkbox')) {
+                            this.toggleItem(pathKey);
+                        }
+                    };
+                    
+                    const title = document.createElement('div');
+                    title.className = 'accordion-title';
+                    
+                    // Иконка для категорий/технологий
+                    const icon = document.createElement('span');
+                    icon.className = 'accordion-icon';
+                    icon.textContent = node.type === 'technology' ? '⚙️' : '📁';
+                    title.appendChild(icon);
+                    
+                    // Название
+                    const name = document.createElement('span');
+                    name.textContent = node.name;
+                    name.style.fontWeight = 'bold';
+                    title.appendChild(name);
+
+                    // Бейдж для контента базы знаний
+                    if (node.content && node.content.length > 0) {
+                        const badge = document.createElement('span');
+                        badge.className = 'knowledge-badge';
+                        badge.textContent = '📚';
+                        badge.title = 'Есть контент в базе знаний';
+                        title.appendChild(badge);
+                    }
+                    
+                    header.appendChild(title);
+                    
+                    // Статистика и прогресс
+                    const stats = document.createElement('div');
+                    stats.className = 'accordion-stats';
+                    
+                    const status = document.createElement('span');
+                    status.className = statusClass;
+                    status.textContent = statusText;
+                    stats.appendChild(status);
+                    
+                    const progressContainer = document.createElement('div');
+                    progressContainer.className = 'accordion-progress';
+                    
+                    const progressBar = document.createElement('div');
+                    progressBar.className = 'progress-bar';
+                    progressBar.style.width = '100px';
+                    const progressFill = document.createElement('div');
+                    progressFill.className = 'progress-fill';
+                    progressFill.style.width = `${progress}%`;
+                    progressBar.appendChild(progressFill);
+                    progressContainer.appendChild(progressBar);
+                    
+                    const progressText = document.createElement('span');
+                    progressText.textContent = `${Math.round(progress)}%`;
+                    progressText.style.fontSize = '0.9em';
+                    progressText.style.color = '#6c757d';
+                    progressContainer.appendChild(progressText);
+                    
+                    stats.appendChild(progressContainer);
+                    
+                    // Чекбокс для технологии без чек-листа
+                    if (node.type === 'technology' && (!node.checklist || node.checklist.length === 0)) {
+                        const checkboxContainer = document.createElement('div');
+                        checkboxContainer.className = 'technology-checkbox';
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.checked = node.completed || false;
+                        checkbox.onchange = (e) => {
+                            node.completed = e.target.checked;
+                            dataManager.saveToLocalStorage();
+                            authManager.scheduleAutoSave();
+                            this.renderAccordion();
+                        };
+                        checkboxContainer.appendChild(checkbox);
+                        const label = document.createElement('span');
+                        label.textContent = 'Изучено';
+                        label.style.fontSize = '0.9em';
+                        checkboxContainer.appendChild(label);
+                        stats.appendChild(checkboxContainer);
+                    }
+                    
+                    header.appendChild(stats);
+                    
+                    // Действия
                     const actions = document.createElement('div');
                     actions.className = 'accordion-actions';
                     
@@ -532,17 +1235,1278 @@
                             <button class="delete" onclick="dataManager.deleteTechnology('${JSON.stringify(path)}', ${index})" title="Удалить">🗑️</button>
                         `;
                     } else {
-                        // ... существующий код для категорий ...
+                        actions.innerHTML = `
+                            <button onclick="uiManager.showAddNodeModal('${JSON.stringify(currentPath)}')" title="Добавить подкатегорию">+ 📁</button>
+                            <button onclick="uiManager.showAddTechModal('${JSON.stringify(currentPath)}')" title="Добавить технологию">+ ⚙️</button>
+                            <button onclick="dataManager.editNode('${JSON.stringify(path)}', ${index})" title="Редактировать">✏️</button>
+                            <button class="delete" onclick="dataManager.deleteNode('${JSON.stringify(path)}', ${index})" title="Удалить">🗑️</button>
+                        `;
                     }
                     
-                    // ... остальной код аккордеона ...
+                    header.appendChild(actions);
+                    
+                    // Кнопка раскрытия для категорий
+                    if (node.children && node.children.length > 0) {
+                        const toggle = document.createElement('button');
+                        toggle.className = 'accordion-toggle';
+                        toggle.innerHTML = this.expandedState[pathKey] ? '▼' : '►';
+                        toggle.onclick = (e) => {
+                            e.stopPropagation();
+                            this.toggleItem(pathKey);
+                        };
+                        header.appendChild(toggle);
+                    }
+                    
+                    item.appendChild(header);
+                    
+                    // Содержимое аккордеона (дочерние элементы)
+                    if (node.children && node.children.length > 0) {
+                        const content = document.createElement('div');
+                        content.className = 'accordion-content';
+                        if (this.expandedState[pathKey]) {
+                            content.classList.add('expanded');
+                        }
+                        
+                        const childContainer = document.createElement('div');
+                        childContainer.className = 'accordion-child';
+                        this.buildAccordion(node.children, childContainer, currentPath);
+                        content.appendChild(childContainer);
+                        
+                        item.appendChild(content);
+                    }
+                    
+                    // Добавляем встроенный чек-лист для технологий с пунктами
+                    if (node.type === 'technology' && node.checklist && node.checklist.length > 0) {
+                        const inlineChecklist = this.createInlineChecklist(node, path, index);
+                        item.appendChild(inlineChecklist);
+                    }
+                    
+                    parentElement.appendChild(item);
                 });
             },
             
-            // ... остальные методы аккордеона ...
+            toggleItem(pathKey) {
+                this.expandedState[pathKey] = !this.expandedState[pathKey];
+                this.renderAccordion();
+            },
+            
+            createInlineChecklist(tech, path, index) {
+                const checklistContainer = document.createElement('div');
+                checklistContainer.className = 'inline-checklist';
+                
+                const checklistKey = path.join('-') + '-' + index;
+                const isExpanded = this.checklistExpandedState[checklistKey] !== false; // По умолчанию раскрыто
+                
+                const header = document.createElement('div');
+                header.className = 'inline-checklist-header';
+                
+                const title = document.createElement('div');
+                title.className = 'inline-checklist-title';
+                
+                const completedCount = tech.checklist ? tech.checklist.filter(item => item.completed).length : 0;
+                const totalCount = tech.checklist ? tech.checklist.length : 0;
+                
+                title.innerHTML = `
+                    <span>📋 Чек-лист</span>
+                    <span style="font-size: 0.8em; color: #6c757d;">(${completedCount}/${totalCount})</span>
+                `;
+                
+                const toggle = document.createElement('button');
+                toggle.className = 'inline-checklist-toggle';
+                toggle.innerHTML = isExpanded ? '▼' : '►';
+                toggle.onclick = (e) => {
+                    e.stopPropagation();
+                    this.toggleChecklist(checklistKey);
+                };
+                
+                header.appendChild(title);
+                header.appendChild(toggle);
+                checklistContainer.appendChild(header);
+                
+                const content = document.createElement('div');
+                content.className = 'inline-checklist-content';
+                if (isExpanded) {
+                    content.classList.add('expanded');
+                }
+                
+                // Статистика
+                const progress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+                
+                const stats = document.createElement('div');
+                stats.className = 'inline-checklist-stats';
+                stats.innerHTML = `
+                    Прогресс: ${completedCount}/${totalCount} (${progress}%)
+                    <div class="progress-bar" style="width: 100%; margin-top: 5px;">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                `;
+                content.appendChild(stats);
+                
+                // Элементы чек-листа
+                if (tech.checklist && tech.checklist.length > 0) {
+                    tech.checklist.forEach((item, itemIndex) => {
+                        const itemElement = document.createElement('div');
+                        itemElement.className = `inline-checklist-item ${item.completed ? 'completed' : ''}`;
+                        itemElement.innerHTML = `
+                            <input type="checkbox" ${item.completed ? 'checked' : ''} 
+                                   onchange="checklistManager.toggleChecklistItem('${JSON.stringify(path)}', ${index}, ${itemIndex})">
+                            <span class="inline-checklist-item-text">${item.text}</span>
+                            <button onclick="checklistManager.editChecklistItemInAccordion('${JSON.stringify(path)}', ${index}, ${itemIndex})" style="margin-left: 5px; padding: 2px 6px; font-size: 0.8em;">✏️</button>
+                            <button onclick="checklistManager.removeChecklistItemInAccordion('${JSON.stringify(path)}', ${index}, ${itemIndex})" class="delete" style="margin-left: 2px; padding: 2px 6px; font-size: 0.8em;">🗑️</button>
+                        `;
+                        content.appendChild(itemElement);
+                    });
+                }
+                
+                // Кнопки действий
+                const actions = document.createElement('div');
+                actions.className = 'inline-checklist-actions';
+                actions.innerHTML = `
+                    <button onclick="checklistManager.manageChecklist('${JSON.stringify(path)}', ${index})" class="warning" style="font-size: 0.8em; padding: 4px 8px;">📋 Расширенное управление</button>
+                    <button onclick="checklistManager.addChecklistItemInAccordion('${JSON.stringify(path)}', ${index})" style="font-size: 0.8em; padding: 4px 8px;">+ Добавить пункт</button>
+                `;
+                content.appendChild(actions);
+                
+                checklistContainer.appendChild(content);
+                return checklistContainer;
+            },
+            
+            toggleChecklist(checklistKey) {
+                this.checklistExpandedState[checklistKey] = !this.checklistExpandedState[checklistKey];
+                this.renderAccordion();
+            },
+            
+            // Расчет прогресса для узла (рекурсивно для категорий)
+            calculateNodeProgress(node) {
+                if (node.type === 'technology') {
+                    // Для технологии
+                    if (node.checklist && node.checklist.length > 0) {
+                        // Если есть чек-лист, считаем по нему
+                        const completed = node.checklist.filter(item => item.completed).length;
+                        const total = node.checklist.length;
+                        const progress = total > 0 ? (completed / total) * 100 : 0;
+                        return { progress, hasChecklistItems: true };
+                    } else {
+                        // Если нет чек-листа, используем поле completed
+                        const progress = node.completed ? 100 : 0;
+                        return { progress, hasChecklistItems: false };
+                    }
+                } else {
+                    // Для категории - рекурсивно считаем прогресс всех детей
+                    if (!node.children || node.children.length === 0) {
+                        return { progress: 0, hasChecklistItems: false };
+                    }
+                    
+                    let totalProgress = 0;
+                    let childCount = 0;
+                    let hasChecklistItems = false;
+                    
+                    node.children.forEach(child => {
+                        const childProgress = this.calculateNodeProgress(child);
+                        totalProgress += childProgress.progress;
+                        childCount++;
+                        if (childProgress.hasChecklistItems) {
+                            hasChecklistItems = true;
+                        }
+                    });
+                    
+                    const progress = childCount > 0 ? totalProgress / childCount : 0;
+                    return { progress, hasChecklistItems };
+                }
+            }
         };
 
-        // Система управления знаниями
+        // === СУЩЕСТВУЮЩИЙ КОД DATA MANAGER ===
+        const dataManager = {
+            // Вспомогательные функции для работы с путями
+            getNodeByPath(path) {
+                let currentNode = techData.categories;
+                for (const index of path) {
+                    if (currentNode[index]) {
+                        currentNode = currentNode[index].children || [];
+                    } else {
+                        return null;
+                    }
+                }
+                return currentNode;
+            },
+
+            getNodeAtIndex(path, index) {
+                const parent = this.getNodeByPath(path);
+                return parent ? parent[index] : null;
+            },
+
+            // === ЛОКАЛЬНОЕ ХРАНИЛИЩЕ ===
+            saveToLocalStorage() {
+                localStorage.setItem('techData', JSON.stringify(techData));
+            },
+
+            loadFromLocalStorage() {
+                const saved = localStorage.getItem('techData');
+                if (saved) {
+                    try {
+                        const parsedData = JSON.parse(saved);
+                        techData.categories = parsedData.categories || [];
+                        this.renderCurrentView();
+                    } catch (e) {
+                        console.error('Error parsing saved data:', e);
+                    }
+                }
+            },
+
+            // Перерисовка текущего вида
+            renderCurrentView() {
+                accordionManager.renderAccordion();
+            },
+
+            // === УПРАВЛЕНИЕ ДАННЫМИ ===
+            addCategory() {
+                const name = document.getElementById('newCategoryName').value.trim();
+                if (name) {
+                    techData.categories.push({
+                        name: name,
+                        type: 'category',
+                        children: []
+                    });
+                    this.renderCurrentView();
+                    this.saveToLocalStorage();
+                    uiManager.hideModals();
+                    document.getElementById('newCategoryName').value = '';
+                    uiManager.showNotification('Категория добавлена!', 'success');
+                    
+                    authManager.scheduleAutoSave();
+                } else {
+                    uiManager.showNotification('Введите название категории!', 'error');
+                }
+            },
+
+            addNode() {
+                const name = document.getElementById('newNodeName').value.trim();
+                
+                if (name && currentModalPath.length >= 0) {
+                    const parent = this.getNodeByPath(currentModalPath);
+                    if (!parent) {
+                        uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
+                        return;
+                    }
+
+                    parent.push({
+                        name: name,
+                        type: 'node',
+                        children: []
+                    });
+
+                    this.renderCurrentView();
+                    this.saveToLocalStorage();
+                    uiManager.hideModals();
+                    document.getElementById('newNodeName').value = '';
+                    uiManager.showNotification('Подкатегория добавлена!', 'success');
+                    
+                    authManager.scheduleAutoSave();
+                } else {
+                    uiManager.showNotification('Введите название подкатегории!', 'error');
+                }
+            },
+
+            addTechnology() {
+                const name = document.getElementById('newTechName').value.trim();
+                
+                if (name && currentModalPath.length >= 0) {
+                    const parent = this.getNodeByPath(currentModalPath);
+                    if (!parent) {
+                        uiManager.showNotification('Ошибка: родительская категория не найдена', 'error');
+                        return;
+                    }
+
+                    const tech = {
+                        name: name,
+                        type: 'technology',
+                        checklist: [],
+                        completed: false
+                    };
+
+                    parent.push(tech);
+
+                    this.renderCurrentView();
+                    this.saveToLocalStorage();
+                    uiManager.hideModals();
+                    document.getElementById('newTechName').value = '';
+                    uiManager.showNotification('Технология добавлена!', 'success');
+                    
+                    authManager.scheduleAutoSave();
+                } else {
+                    uiManager.showNotification('Введите название технологии!', 'error');
+                }
+            },
+
+            // Функции редактирования
+            editNode(pathStr, index) {
+                const path = JSON.parse(pathStr);
+                const node = this.getNodeAtIndex(path, index);
+                if (!node) return;
+
+                const newName = prompt('Введите новое название:', node.name);
+                if (newName && newName.trim()) {
+                    node.name = newName.trim();
+                    this.renderCurrentView();
+                    this.saveToLocalStorage();
+                    uiManager.showNotification('Категория обновлена!', 'success');
+                    authManager.scheduleAutoSave();
+                }
+            },
+
+            editTechnology(pathStr, index) {
+                const path = JSON.parse(pathStr);
+                const node = this.getNodeAtIndex(path, index);
+                if (!node) return;
+
+                const newName = prompt('Введите новое название технологии:', node.name);
+                if (newName && newName.trim()) {
+                    node.name = newName.trim();
+                    this.renderCurrentView();
+                    this.saveToLocalStorage();
+                    uiManager.showNotification('Технология обновлена!', 'success');
+                    authManager.scheduleAutoSave();
+                }
+            },
+
+            // Функции удаления
+            deleteNode(pathStr, index) {
+                const path = JSON.parse(pathStr);
+                if (confirm('Удалить эту категорию и все её содержимое?')) {
+                    const parent = this.getNodeByPath(path);
+                    if (parent) {
+                        parent.splice(index, 1);
+                        this.renderCurrentView();
+                        this.saveToLocalStorage();
+                        uiManager.showNotification('Категория удалена!', 'success');
+                        authManager.scheduleAutoSave();
+                    }
+                }
+            },
+
+            deleteTechnology(pathStr, index) {
+                const path = JSON.parse(pathStr);
+                if (confirm('Удалить эту технологию и все её задачи?')) {
+                    const parent = this.getNodeByPath(path);
+                    if (parent) {
+                        parent.splice(index, 1);
+                        this.renderCurrentView();
+                        this.saveToLocalStorage();
+                        uiManager.showNotification('Технология удалена!', 'success');
+                        authManager.scheduleAutoSave();
+                    }
+                }
+            },
+
+            // === РАБОТА С JSON ===
+            exportToJSON() {
+                const jsonOutput = document.getElementById('jsonOutput');
+                const jsonSection = document.getElementById('jsonSection');
+                
+                jsonOutput.value = JSON.stringify(techData, null, 2);
+                jsonSection.classList.remove('hidden');
+            },
+
+            importFromJSON() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = function(e) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const parsedData = JSON.parse(e.target.result);
+                            techData.categories = parsedData.categories || [];
+                            dataManager.renderCurrentView();
+                            dataManager.saveToLocalStorage();
+                            uiManager.showNotification('Данные импортированы!', 'success');
+                            authManager.scheduleAutoSave();
+                        } catch (error) {
+                            uiManager.showNotification('Ошибка при чтении JSON файла', 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                input.click();
+            },
+
+            importFromJSONText() {
+                const jsonText = document.getElementById('jsonOutput').value;
+                try {
+                    const parsedData = JSON.parse(jsonText);
+                    techData.categories = parsedData.categories || [];
+                    this.renderCurrentView();
+                    this.saveToLocalStorage();
+                    uiManager.showNotification('Данные импортированы из JSON!', 'success');
+                    authManager.scheduleAutoSave();
+                } catch (error) {
+                    uiManager.showNotification('Ошибка при разборе JSON', 'error');
+                }
+            },
+
+            copyToClipboard() {
+                const jsonOutput = document.getElementById('jsonOutput');
+                jsonOutput.select();
+                document.execCommand('copy');
+                uiManager.showNotification('JSON скопирован в буфер обмена!', 'success');
+            }
+        };
+
+        // === СУЩЕСТВУЮЩИЙ КОД UI MANAGER ===
+        const uiManager = {
+            showModal(modalId) {
+                document.getElementById(modalId).style.display = 'block';
+            },
+
+            showAddNodeModal(pathStr = '[]') {
+                const path = JSON.parse(pathStr);
+                currentModalPath = path;
+                this.updateParentSelect('nodeModal', path);
+                this.showModal('nodeModal');
+            },
+
+            showAddTechModal(pathStr = '[]') {
+                const path = JSON.parse(pathStr);
+                currentModalPath = path;
+                this.updateParentSelect('techModal', path);
+                this.showModal('techModal');
+            },
+
+            hideModals() {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            },
+
+            hideJSON() {
+                document.getElementById('jsonSection').classList.add('hidden');
+            },
+
+            updateParentSelect(modalId, currentPath) {
+                const container = document.getElementById(modalId === 'nodeModal' ? 'nodeParentSelect' : 'techParentSelect');
+                if (!container) return;
+                
+                container.innerHTML = '';
+                
+                const title = document.createElement('div');
+                title.innerHTML = `<strong>Родительская категория:</strong> ${this.getPathDisplay(currentPath) || 'Корень'}`;
+                container.appendChild(title);
+            },
+
+            getPathDisplay(path) {
+                if (path.length === 0) return '';
+                let currentNode = techData.categories;
+                let pathNames = [];
+                
+                for (const index of path) {
+                    if (currentNode[index]) {
+                        pathNames.push(currentNode[index].name);
+                        currentNode = currentNode[index].children || [];
+                    }
+                }
+                
+                return pathNames.join(' → ');
+            },
+
+            showNotification(message, type) {
+                const oldNotifications = document.querySelectorAll('.notification');
+                oldNotifications.forEach(notif => notif.remove());
+                
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+        };
+
+        // === СУЩЕСТВУЮЩИЙ КОД CHECKLIST MANAGER ===
+        const checklistManager = {
+            currentChecklist: {
+                path: [],
+                techIndex: -1
+            },
+
+            // === УПРАВЛЕНИЕ ЧЕК-ЛИСТАМИ ===
+            manageChecklist(pathStr, techIndex) {
+                const path = JSON.parse(pathStr);
+                this.currentChecklist = {
+                    path,
+                    techIndex
+                };
+                
+                const tech = this.getTechnology();
+                if (!tech) return;
+                
+                document.getElementById('checklistTitle').textContent = `Чек-лист: ${tech.name}`;
+                
+                if (!tech.checklist) {
+                    tech.checklist = [];
+                }
+                
+                this.renderChecklist();
+                uiManager.showModal('checklistModal');
+            },
+            
+            renderChecklist() {
+                const tech = this.getTechnology();
+                if (!tech) return;
+                
+                const checklistItems = document.getElementById('checklistItems');
+                const checklistStats = document.getElementById('checklistStats');
+                
+                if (!checklistItems || !checklistStats) return;
+                
+                checklistItems.innerHTML = '';
+                
+                if (tech.checklist && tech.checklist.length > 0) {
+                    tech.checklist.forEach((item, index) => {
+                        const itemElement = document.createElement('div');
+                        itemElement.className = `checklist-item ${item.completed ? 'completed' : ''}`;
+                        itemElement.innerHTML = `
+                            <input type="checkbox" ${item.completed ? 'checked' : ''} 
+                                   onchange="checklistManager.toggleChecklistItem('${JSON.stringify(this.currentChecklist.path)}', ${this.currentChecklist.techIndex}, ${index})">
+                            <span class="checklist-item-text">${item.text}</span>
+                            <button onclick="checklistManager.removeChecklistItem(${index})" class="delete" style="margin-left: 10px;">🗑️</button>
+                            <button onclick="checklistManager.editChecklistItem(${index})" style="margin-left: 5px;">✏️</button>
+                        `;
+                        checklistItems.appendChild(itemElement);
+                    });
+                } else {
+                    checklistItems.innerHTML = '<p style="text-align: center; color: #6c757d;">Чек-лист пуст. Добавьте первый пункт!</p>';
+                }
+                
+                const completed = tech.checklist ? tech.checklist.filter(item => item.completed).length : 0;
+                const total = tech.checklist ? tech.checklist.length : 0;
+                const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+                
+                checklistStats.innerHTML = `
+                    Прогресс: ${completed}/${total} (${progress}%)
+                    <div class="progress-bar" style="width: 100%; margin-top: 5px;">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                `;
+            },
+            
+            addChecklistItem() {
+                const input = document.getElementById('newChecklistItem');
+                if (!input) return;
+                
+                const text = input.value.trim();
+                
+                if (text) {
+                    const tech = this.getTechnology();
+                    if (!tech) return;
+                    
+                    if (!tech.checklist) {
+                        tech.checklist = [];
+                    }
+                    
+                    tech.checklist.push({
+                        text: text,
+                        completed: false
+                    });
+                    
+                    input.value = '';
+                    this.renderChecklist();
+                    dataManager.saveToLocalStorage();
+                    authManager.scheduleAutoSave();
+                    dataManager.renderCurrentView();
+                }
+            },
+
+            addChecklistItemInAccordion(pathStr, techIndex) {
+                const path = JSON.parse(pathStr);
+                this.currentChecklist = { path, techIndex };
+                const text = prompt('Введите новый пункт чек-листа:');
+                if (text && text.trim()) {
+                    const tech = this.getTechnology();
+                    if (!tech) return;
+                    
+                    if (!tech.checklist) {
+                        tech.checklist = [];
+                    }
+                    
+                    tech.checklist.push({
+                        text: text.trim(),
+                        completed: false
+                    });
+                    
+                    dataManager.saveToLocalStorage();
+                    authManager.scheduleAutoSave();
+                    dataManager.renderCurrentView();
+                }
+            },
+            
+            removeChecklistItem(index) {
+                const tech = this.getTechnology();
+                if (!tech) return;
+                
+                if (tech.checklist && tech.checklist.length > index) {
+                    tech.checklist.splice(index, 1);
+                    this.renderChecklist();
+                    dataManager.saveToLocalStorage();
+                    authManager.scheduleAutoSave();
+                    dataManager.renderCurrentView();
+                }
+            },
+
+            removeChecklistItemInAccordion(pathStr, techIndex, itemIndex) {
+                const path = JSON.parse(pathStr);
+                this.currentChecklist = { path, techIndex };
+                if (confirm('Удалить этот пункт чек-листа?')) {
+                    const tech = this.getTechnology();
+                    if (!tech) return;
+                    
+                    if (tech.checklist && tech.checklist.length > itemIndex) {
+                        tech.checklist.splice(itemIndex, 1);
+                        dataManager.saveToLocalStorage();
+                        authManager.scheduleAutoSave();
+                        dataManager.renderCurrentView();
+                    }
+                }
+            },
+            
+            editChecklistItem(index) {
+                const tech = this.getTechnology();
+                if (!tech) return;
+                
+                if (tech.checklist && tech.checklist.length > index) {
+                    const newText = prompt('Редактировать пункт:', tech.checklist[index].text);
+                    if (newText !== null) {
+                        tech.checklist[index].text = newText.trim();
+                        this.renderChecklist();
+                        dataManager.saveToLocalStorage();
+                        authManager.scheduleAutoSave();
+                        dataManager.renderCurrentView();
+                    }
+                }
+            },
+
+            editChecklistItemInAccordion(pathStr, techIndex, itemIndex) {
+                const path = JSON.parse(pathStr);
+                this.currentChecklist = { path, techIndex };
+                const tech = this.getTechnology();
+                if (!tech) return;
+                
+                if (tech.checklist && tech.checklist.length > itemIndex) {
+                    const newText = prompt('Редактировать пункт:', tech.checklist[itemIndex].text);
+                    if (newText !== null) {
+                        tech.checklist[itemIndex].text = newText.trim();
+                        dataManager.saveToLocalStorage();
+                        authManager.scheduleAutoSave();
+                        dataManager.renderCurrentView();
+                    }
+                }
+            },
+            
+            toggleChecklistItem(pathStr, techIndex, itemIndex) {
+                const path = JSON.parse(pathStr);
+                this.currentChecklist = { path, techIndex };
+                const tech = this.getTechnology();
+                if (!tech) return;
+                
+                if (tech.checklist && tech.checklist.length > itemIndex) {
+                    tech.checklist[itemIndex].completed = !tech.checklist[itemIndex].completed;
+                    dataManager.saveToLocalStorage();
+                    authManager.scheduleAutoSave();
+                    dataManager.renderCurrentView();
+                }
+            },
+            
+            saveChecklist() {
+                uiManager.hideModals();
+                dataManager.saveToLocalStorage();
+                uiManager.showNotification('Чек-лист сохранен!', 'success');
+                authManager.scheduleAutoSave();
+                dataManager.renderCurrentView();
+            },
+            
+            getTechnology() {
+                const parent = dataManager.getNodeByPath(this.currentChecklist.path);
+                return parent ? parent[this.currentChecklist.techIndex] : null;
+            }
+        };
+
+        // === СУЩЕСТВУЮЩИЙ КОД AUTH MANAGER ===
+        const authManager = {
+            autoSaveEnabled: false,
+            autoSaveInterval: null,
+            lastSaveTime: null,
+            autoSaveTimeout: null,
+
+            // === АУТЕНТИФИКАЦИЯ С ПРОВЕРКОЙ ===
+            async testAuth() {
+                const token = document.getElementById('githubToken').value;
+                const owner = document.getElementById('repoOwner').value;
+                const repo = document.getElementById('repoName').value;
+                
+                if (!token || !owner || !repo) {
+                    this.showAuthStatus('Заполните все поля!', 'error');
+                    return;
+                }
+
+                try {
+                    this.showAuthStatus('Проверка подключения...', 'warning');
+                    
+                    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'User-Agent': 'TechDocs-App'
+                        }
+                    });
+
+                    const responseData = await response.json();
+
+                    if (response.status === 200) {
+                        const permissions = responseData.permissions;
+                        if (permissions && permissions.push) {
+                            this.showAuthStatus('✅ Подключение успешно! Репозиторий доступен для записи.', 'success');
+                            this.enableAutoSave();
+                        } else {
+                            this.showAuthStatus('⚠️ Репозиторий доступен, но нет прав на запись.', 'warning');
+                        }
+                    } else if (response.status === 404) {
+                        this.showAuthStatus('❌ Репозиторий не найден. Проверьте имя и владельца.', 'error');
+                    } else if (response.status === 401) {
+                        this.showAuthStatus('❌ Ошибка аутентификации. Проверьте токен.', 'error');
+                    } else if (response.status === 403) {
+                        this.showAuthStatus('🚫 Доступ запрещен. Убедитесь, что токен имеет права repo.', 'error');
+                    } else {
+                        this.showAuthStatus(`❌ Ошибка: ${response.status} - ${responseData.message || response.statusText}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Auth test error:', error);
+                    this.showAuthStatus('❌ Ошибка сети: ' + error.message, 'error');
+                }
+            },
+
+            saveAuth() {
+                const token = document.getElementById('githubToken').value;
+                const owner = document.getElementById('repoOwner').value;
+                const repo = document.getElementById('repoName').value;
+                
+                if (token && owner && repo) {
+                    localStorage.setItem('githubToken', token);
+                    localStorage.setItem('repoOwner', owner);
+                    localStorage.setItem('repoName', repo);
+                    uiManager.showNotification('Настройки сохранены!', 'success');
+                    setTimeout(() => this.testAuth(), 500);
+                } else {
+                    uiManager.showNotification('Заполните все поля!', 'error');
+                }
+            },
+
+            loadAuth() {
+                const token = localStorage.getItem('githubToken');
+                const owner = localStorage.getItem('repoOwner');
+                const repo = localStorage.getItem('repoName');
+                
+                if (token) document.getElementById('githubToken').value = token;
+                if (owner) document.getElementById('repoOwner').value = owner;
+                if (repo) document.getElementById('repoName').value = repo;
+                
+                if (token && owner && repo) {
+                    setTimeout(() => this.testAuth(), 1000);
+                }
+            },
+
+            showAuthStatus(message, type) {
+                const authStatus = document.getElementById('authStatus');
+                if (!authStatus) return;
+                
+                authStatus.textContent = message;
+                authStatus.className = 'auth-status';
+                authStatus.classList.add(type === 'success' ? 'auth-success' : 
+                                       type === 'warning' ? 'auth-warning' : 'auth-error');
+                authStatus.style.display = 'block';
+            },
+
+            // === АВТОСОХРАНЕНИЕ С ПРЕДОТВРАЩЕНИЕМ ПЕРЕЗАПИСИ ===
+            enableAutoSave() {
+                if (this.autoSaveEnabled) return;
+                
+                this.autoSaveEnabled = true;
+                this.updateAutoSaveButton();
+                
+                this.autoSaveInterval = setInterval(() => {
+                    this.autoSaveToGitHub();
+                }, 2 * 60 * 1000);
+                
+                window.addEventListener('beforeunload', this.autoSaveToGitHub.bind(this));
+                
+                uiManager.showNotification('🔄 Автосохранение включено (каждые 2 минуты)', 'success');
+            },
+            
+            disableAutoSave() {
+                if (this.autoSaveInterval) {
+                    clearInterval(this.autoSaveInterval);
+                    this.autoSaveInterval = null;
+                }
+                this.autoSaveEnabled = false;
+                this.updateAutoSaveButton();
+                window.removeEventListener('beforeunload', this.autoSaveToGitHub.bind(this));
+                uiManager.showNotification('⏸️ Автосохранение отключено', 'warning');
+            },
+            
+            toggleAutoSave() {
+                if (this.autoSaveEnabled) {
+                    this.disableAutoSave();
+                } else {
+                    this.enableAutoSave();
+                }
+            },
+            
+            updateAutoSaveButton() {
+                const button = document.getElementById('autoSaveBtn');
+                if (!button) return;
+                
+                if (this.autoSaveEnabled) {
+                    button.innerHTML = '✅ Автосохранение';
+                    button.className = 'auto-save-enabled';
+                } else {
+                    button.innerHTML = '🚫 Автосохранение';
+                    button.className = 'auto-save-disabled';
+                }
+            },
+            
+            async autoSaveToGitHub() {
+                const token = localStorage.getItem('githubToken');
+                const owner = localStorage.getItem('repoOwner');
+                const repo = localStorage.getItem('repoName');
+                
+                if (!token || !owner || !repo || !this.autoSaveEnabled) {
+                    return;
+                }
+
+                const now = Date.now();
+                if (this.lastSaveTime && (now - this.lastSaveTime) < 30000) {
+                    return;
+                }
+
+                try {
+                    console.log('🔄 Автосохранение на GitHub...');
+                    
+                    let currentRemoteSha = null;
+                    let remoteData = null;
+                    
+                    // Получаем текущее состояние файла на GitHub
+                    try {
+                        const getResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
+                            headers: {
+                                'Authorization': `token ${token}`,
+                                'Accept': 'application/vnd.github.v3+json',
+                                'User-Agent': 'TechDocs-App'
+                            }
+                        });
+                        
+                        if (getResponse.status === 200) {
+                            const data = await getResponse.json();
+                            currentRemoteSha = data.sha;
+                            
+                            // Если файл изменился с момента последней синхронизации
+                            if (lastKnownRemoteSha && currentRemoteSha !== lastKnownRemoteSha) {
+                                console.log('⚠️ Обнаружены изменения на сервере, загружаем для слияния...');
+                                const remoteContent = decodeURIComponent(escape(atob(data.content)));
+                                remoteData = JSON.parse(remoteContent);
+                                
+                                // Сливаем изменения
+                                this.mergeData(remoteData);
+                            }
+                            
+                            lastKnownRemoteSha = currentRemoteSha;
+                        } else if (getResponse.status === 404) {
+                            // Файл не существует, это нормально для первого сохранения
+                            console.log('📝 Файл не найден, будет создан новый');
+                        }
+                    } catch (e) {
+                        console.error('Ошибка при проверке файла для автосохранения:', e);
+                        return;
+                    }
+
+                    const content = JSON.stringify(techData, null, 2);
+                    const contentBase64 = btoa(unescape(encodeURIComponent(content)));
+                    const message = `Auto-save: ${new Date().toLocaleString()}`;
+                    
+                    const requestBody = {
+                        message: message,
+                        content: contentBase64
+                    };
+
+                    if (currentRemoteSha) {
+                        requestBody.sha = currentRemoteSha;
+                    }
+
+                    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json',
+                            'User-Agent': 'TechDocs-App'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    if (response.status === 200 || response.status === 201) {
+                        this.lastSaveTime = Date.now();
+                        lastSyncTime = Date.now();
+                        this.updateSyncStatus();
+                        console.log('✅ Автосохранение выполнено успешно');
+                        
+                        if (!document.hidden) {
+                            this.showAutoSaveNotification();
+                        }
+                    } else {
+                        console.warn('⚠️ Автосохранение не удалось:', response.status);
+                        
+                        // Если возник конфликт, предлагаем пользователю разрешить его
+                        if (response.status === 409) {
+                            this.handleSyncConflict();
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ Ошибка автосохранения:', error);
+                }
+            },
+            
+            // Функция для слияния данных
+            mergeData(remoteData) {
+                if (!remoteData || !remoteData.categories) return;
+                
+                console.log('🔄 Начинаем слияние данных...');
+                
+                // Простое слияние: добавляем отсутствующие категории и технологии
+                // В реальном приложении здесь должна быть более сложная логика
+                remoteData.categories.forEach(remoteCategory => {
+                    const localCategory = techData.categories.find(cat => cat.name === remoteCategory.name);
+                    
+                    if (!localCategory) {
+                        // Категории нет в локальных данных, добавляем её
+                        techData.categories.push(JSON.parse(JSON.stringify(remoteCategory)));
+                        console.log(`✅ Добавлена категория: ${remoteCategory.name}`);
+                    } else {
+                        // Сливаем технологии внутри категории
+                        this.mergeTechnologies(localCategory, remoteCategory);
+                    }
+                });
+                
+                // Сохраняем объединенные данные
+                dataManager.saveToLocalStorage();
+                dataManager.renderCurrentView();
+                
+                uiManager.showNotification('✅ Данные синхронизированы с сервером', 'success');
+            },
+
+            // Функция для слияния технологий
+            mergeTechnologies(localCategory, remoteCategory) {
+                if (!remoteCategory.children) return;
+                
+                remoteCategory.children.forEach(remoteItem => {
+                    // Проверяем, есть ли уже такая технология/подкатегория
+                    const exists = localCategory.children.some(localItem => 
+                        localItem.name === remoteItem.name && localItem.type === remoteItem.type
+                    );
+                    
+                    if (!exists) {
+                        // Добавляем отсутствующий элемент
+                        localCategory.children.push(JSON.parse(JSON.stringify(remoteItem)));
+                        console.log(`✅ Добавлен ${remoteItem.type === 'technology' ? 'технология' : 'подкатегория'}: ${remoteItem.name}`);
+                    } else if (remoteItem.type === 'technology') {
+                        // Для технологий можно также сливать чек-листы
+                        this.mergeChecklists(localCategory, remoteItem);
+                    }
+                });
+            },
+
+            // Функция для слияния чек-листов
+            mergeChecklists(localCategory, remoteTech) {
+                const localTech = localCategory.children.find(item => 
+                    item.name === remoteTech.name && item.type === 'technology'
+                );
+                
+                if (!localTech || !remoteTech.checklist) return;
+                
+                if (!localTech.checklist) {
+                    localTech.checklist = [];
+                }
+                
+                // Добавляем отсутствующие пункты чек-листа
+                remoteTech.checklist.forEach(remoteItem => {
+                    const exists = localTech.checklist.some(localItem => 
+                        localItem.text === remoteItem.text
+                    );
+                    
+                    if (!exists) {
+                        localTech.checklist.push(JSON.parse(JSON.stringify(remoteItem)));
+                        console.log(`✅ Добавлен пункт чек-листа: ${remoteItem.text}`);
+                    }
+                });
+            },
+
+            // Функция для обработки конфликтов синхронизации
+            handleSyncConflict() {
+                if (confirm('Обнаружен конфликт версий. Хотите загрузить данные с сервера и объединить с вашими изменениями?')) {
+                    this.loadFromGitHubWithMerge();
+                } else {
+                    uiManager.showNotification('⚠️ Автосохранение отключено из-за конфликта', 'warning');
+                    this.disableAutoSave();
+                }
+            },
+
+            // Модифицированная функция загрузки с GitHub для слияния
+            async loadFromGitHubWithMerge() {
+                const token = localStorage.getItem('githubToken');
+                const owner = localStorage.getItem('repoOwner');
+                const repo = localStorage.getItem('repoName');
+                
+                if (!token || !owner || !repo) {
+                    uiManager.showNotification('Сначала настройте доступ к GitHub!', 'error');
+                    return;
+                }
+
+                try {
+                    uiManager.showNotification('Загрузка и слияние данных с GitHub...', 'warning');
+                    
+                    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'User-Agent': 'TechDocs-App'
+                        }
+                    });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+                        const content = decodeURIComponent(escape(atob(data.content)));
+                        const remoteData = JSON.parse(content);
+                        
+                        // Сохраняем текущие локальные данные перед слиянием
+                        const localDataBackup = JSON.parse(JSON.stringify(techData));
+                        
+                        // Сливаем данные
+                        this.mergeData(remoteData);
+                        
+                        // Обновляем SHA
+                        lastKnownRemoteSha = data.sha;
+                        lastSyncTime = Date.now();
+                        this.updateSyncStatus();
+                        
+                        uiManager.showNotification('✅ Данные успешно загружены и объединены!', 'success');
+                        
+                        // Включаем автосохранение обратно
+                        this.enableAutoSave();
+                    } else {
+                        throw new Error(`GitHub API error: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error('GitHub load error:', error);
+                    uiManager.showNotification('❌ Ошибка загрузки: ' + error.message, 'error');
+                }
+            },
+
+            // Функция для принудительной синхронизации
+            async forceSync() {
+                if (confirm('Это загрузит последнюю версию с GitHub и объединит с вашими изменениями. Продолжить?')) {
+                    await this.loadFromGitHubWithMerge();
+                }
+            },
+
+            showAutoSaveNotification() {
+                const notification = document.createElement('div');
+                notification.innerHTML = '💾 Автосохранено';
+                notification.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: #28a745;
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    z-index: 1002;
+                    opacity: 0.9;
+                `;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 2000);
+            },
+            
+            scheduleAutoSave() {
+                if (!this.autoSaveEnabled) return;
+                
+                if (this.autoSaveTimeout) {
+                    clearTimeout(this.autoSaveTimeout);
+                }
+                
+                this.autoSaveTimeout = setTimeout(() => {
+                    this.autoSaveToGitHub();
+                }, 10000);
+            },
+
+            // Обновление статуса синхронизации
+            updateSyncStatus() {
+                const syncStatus = document.getElementById('syncStatus');
+                if (!syncStatus) return;
+                
+                if (lastSyncTime) {
+                    const lastSync = new Date(lastSyncTime).toLocaleString();
+                    syncStatus.innerHTML = `🔄 Последняя синхронизация: ${lastSync}`;
+                } else {
+                    syncStatus.innerHTML = '⏳ Синхронизация не выполнялась';
+                }
+            },
+
+            // === РАБОТА С GITHUB API ===
+            async loadFromGitHub() {
+                const token = localStorage.getItem('githubToken');
+                const owner = localStorage.getItem('repoOwner');
+                const repo = localStorage.getItem('repoName');
+                
+                if (!token || !owner || !repo) {
+                    uiManager.showNotification('Сначала настройте доступ к GitHub!', 'error');
+                    return;
+                }
+
+                try {
+                    uiManager.showNotification('Загрузка данных с GitHub...', 'warning');
+                    
+                    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'User-Agent': 'TechDocs-App'
+                        }
+                    });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+                        const content = decodeURIComponent(escape(atob(data.content)));
+                        const parsedData = JSON.parse(content);
+                        
+                        techData.categories = parsedData.categories || [];
+                        dataManager.renderCurrentView();
+                        dataManager.saveToLocalStorage();
+                        
+                        // Обновляем информацию о последней синхронизации
+                        lastKnownRemoteSha = data.sha;
+                        lastSyncTime = Date.now();
+                        this.updateSyncStatus();
+                        
+                        uiManager.showNotification('✅ Данные загружены с GitHub!', 'success');
+                    } else if (response.status === 404) {
+                        uiManager.showNotification('📝 Файл не найден. Создан новый пустой файл.', 'warning');
+                        techData.categories = [];
+                        dataManager.renderCurrentView();
+                        dataManager.saveToLocalStorage();
+                    } else {
+                        const errorData = await response.json();
+                        throw new Error(`GitHub API error: ${response.status} - ${errorData.message || response.statusText}`);
+                    }
+                } catch (error) {
+                    console.error('GitHub load error:', error);
+                    uiManager.showNotification('❌ Ошибка загрузки: ' + error.message, 'error');
+                }
+            },
+
+            async saveToGitHub() {
+                const token = localStorage.getItem('githubToken');
+                const owner = localStorage.getItem('repoOwner');
+                const repo = localStorage.getItem('repoName');
+                
+                if (!token || !owner || !repo) {
+                    uiManager.showNotification('Сначала настройте доступ к GitHub!', 'error');
+                    return;
+                }
+
+                try {
+                    uiManager.showNotification('Сохранение на GitHub...', 'warning');
+                    
+                    if (!techData || techData.categories.length === 0) {
+                        uiManager.showNotification('Нет данных для сохранения!', 'error');
+                        return;
+                    }
+
+                    let sha = null;
+                    
+                    try {
+                        const getResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
+                            headers: {
+                                'Authorization': `token ${token}`,
+                                'Accept': 'application/vnd.github.v3+json',
+                                'User-Agent': 'TechDocs-App'
+                            }
+                        });
+                        
+                        if (getResponse.status === 200) {
+                            const data = await getResponse.json();
+                            sha = data.sha;
+                        }
+                    } catch (e) {
+                        console.error('Ошибка при проверке файла:', e);
+                    }
+
+                    const content = JSON.stringify(techData, null, 2);
+                    const contentBase64 = btoa(unescape(encodeURIComponent(content)));
+                    const message = `Update tech data: ${new Date().toLocaleString()}`;
+                    
+                    const requestBody = {
+                        message: message,
+                        content: contentBase64
+                    };
+
+                    if (sha) {
+                        requestBody.sha = sha;
+                    }
+
+                    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json',
+                            'User-Agent': 'TechDocs-App'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    const responseData = await response.json();
+
+                    if (response.status === 200 || response.status === 201) {
+                        lastSyncTime = Date.now();
+                        this.updateSyncStatus();
+                        uiManager.showNotification('✅ Данные успешно сохранены на GitHub!', 'success');
+                    } else {
+                        let errorMessage = `Ошибка сохранения: ${response.status}`;
+                        if (responseData && responseData.message) {
+                            errorMessage += ` - ${responseData.message}`;
+                            
+                            if (responseData.message.includes('bad credentials')) {
+                                errorMessage += '\nПроверьте правильность токена';
+                            } else if (responseData.message.includes('not found')) {
+                                errorMessage += '\nПроверьте имя репозитория и владельца';
+                            } else if (responseData.message.includes('sha')) {
+                                errorMessage += '\nПопробуйте загрузить данные сначала, затем сохранить';
+                            }
+                        }
+                        throw new Error(errorMessage);
+                    }
+                } catch (error) {
+                    console.error('GitHub save error:', error);
+                    uiManager.showNotification('❌ Ошибка сохранения: ' + error.message, 'error');
+                }
+            }
+        };
+
+        // === НОВЫЙ КОД ДЛЯ СИСТЕМЫ ЗНАНИЙ ===
         const knowledgeManager = {
             currentItem: null,
             
@@ -948,6 +2912,7 @@
             scheduleSave() {
                 dataManager.saveToLocalStorage();
                 authManager.scheduleAutoSave();
+                accordionManager.renderAccordion();
             }
         };
 
@@ -1139,12 +3104,6 @@
             });
         };
 
-        // Остальной код (dataManager, uiManager, checklistManager, authManager) остается без изменений
-        // но нужно добавить обработку новых полей (content, media, links) при сохранении/загрузке
-
-        // В dataManager нужно обновить функции сохранения/загрузки для работы с новыми полями
-        // В authManager нужно убедиться, что новые поля правильно сериализуются при сохранении на GitHub
-
         // Инициализация приложения
         document.addEventListener('DOMContentLoaded', function() {
             authManager.loadAuth();
@@ -1153,8 +3112,12 @@
             authManager.updateSyncStatus();
         });
 
-        // Остальной существующий код (dataManager, uiManager, checklistManager, authManager) 
-        // остается без изменений, но нужно убедиться, что они корректно работают с новыми полями
+        // Закрытие модальных окон при клике вне их
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                uiManager.hideModals();
+            }
+        };
     </script>
 </body>
 </html>
