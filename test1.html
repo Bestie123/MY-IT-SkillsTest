@@ -921,8 +921,15 @@
         
         /* Модальные окна для системы знаний */
         .knowledge-modal .modal-content {
-            max-width: 900px;
-            max-height: 90vh;
+            max-width: 95vw;
+            max-height: 95vh;
+            width: 95vw;
+        }
+
+        .editor-content {
+            min-height: 400px;
+            max-height: 60vh;
+            overflow-y: auto;
         }
         
         .content-tabs {
@@ -1299,32 +1306,7 @@
                                 </div>
                             </div>
 
-                            <!-- Палитра цветов -->
-                            <div id="colorPalette" class="color-palette">
-                                <div class="color-option" style="background: #000000;" onclick="knowledgeEditor.applyColor('#000000')"></div>
-                                <div class="color-option" style="background: #FF0000;" onclick="knowledgeEditor.applyColor('#FF0000')"></div>
-                                <div class="color-option" style="background: #00FF00;" onclick="knowledgeEditor.applyColor('#00FF00')"></div>
-                                <div class="color-option" style="background: #0000FF;" onclick="knowledgeEditor.applyColor('#0000FF')"></div>
-                                <div class="color-option" style="background: #FFFF00;" onclick="knowledgeEditor.applyColor('#FFFF00')"></div>
-                                <div class="color-option" style="background: #FF00FF;" onclick="knowledgeEditor.applyColor('#FF00FF')"></div>
-                                <div class="color-option" style="background: #00FFFF;" onclick="knowledgeEditor.applyColor('#00FFFF')"></div>
-                                <div class="color-option" style="background: #FFA500;" onclick="knowledgeEditor.applyColor('#FFA500')"></div>
-                                <div class="color-option" style="background: #800080;" onclick="knowledgeEditor.applyColor('#800080')"></div>
-                                <div class="color-option" style="background: #008000;" onclick="knowledgeEditor.applyColor('#008000')"></div>
-                                <div class="color-option" style="background: #808080;" onclick="knowledgeEditor.applyColor('#808080')"></div>
-                                <div class="color-option" style="background: #FFC0CB;" onclick="knowledgeEditor.applyColor('#FFC0CB')"></div>
-                                <div class="color-option" style="background: #A52A2A;" onclick="knowledgeEditor.applyColor('#A52A2A')"></div>
-                                <div class="color-option" style="background: #000080;" onclick="knowledgeEditor.applyColor('#000080')"></div>
-                                <div class="color-option" style="background: #008080;" onclick="knowledgeEditor.applyColor('#008080')"></div>
-                                <div class="color-option" style="background: #FFFFFF; border: 1px solid #ddd;" onclick="knowledgeEditor.applyColor('#FFFFFF')"></div>
-                            </div>
 
-                            <!-- Панель эмодзи -->
-                            <div id="emojiPanel" class="emoji-panel">
-                                <div class="emoji-grid" id="emojiGrid">
-                                    😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🤭 🤫 🤥 😶 😐 😑 😬 🙄 😯 😦 😧 😮 😲 🥱 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕 🤑 🤠 😈 👿 👹 👺 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾
-                                </div>
-                            </div>
 
                             <!-- Контролы таблиц (показываются при работе с таблицами) -->
                             <div id="tableControls" class="table-controls">
@@ -3096,7 +3078,7 @@
             // Получение всех технологий
             getAllTechnologies() {
                 const technologies = [];
-                
+
                 function traverse(nodes) {
                     nodes.forEach(node => {
                         if (node.type === 'technology') {
@@ -3106,15 +3088,21 @@
                             }
                             technologies.push(node);
                         }
-                        
+
                         if (node.children) {
                             traverse(node.children);
                         }
                     });
                 }
-                
+
                 traverse(techData.categories);
                 return technologies;
+            },
+
+            // Поиск технологии по названию
+            findTechnologyByName(name) {
+                const allTech = this.getAllTechnologies();
+                return allTech.find(tech => tech.name === name);
             },
             
             // Переключение ссылки
@@ -3144,14 +3132,19 @@
                 this.scheduleSave();
             },
             
-            // Поиск технологии по ID
-            findTechnologyById(id) {
+            // Поиск технологии по ID с генерацией ID если отсутствует
+            findTechnologyById(targetId) {
                 function findInNodes(nodes) {
                     for (const node of nodes) {
-                        if (node.id === id) {
+                        // Генерируем ID если его нет
+                        if (!node.id) {
+                            node.id = 'tech_' + Math.random().toString(36).substr(2, 9);
+                        }
+
+                        if (node.id === targetId) {
                             return node;
                         }
-                        
+
                         if (node.children) {
                             const found = findInNodes(node.children);
                             if (found) return found;
@@ -3159,7 +3152,7 @@
                     }
                     return null;
                 }
-                
+
                 return findInNodes(techData.categories);
             },
             
@@ -3328,8 +3321,10 @@
             // Инициализация клавиатурных сокращений
             initKeyboardShortcuts() {
                 document.addEventListener('keydown', (e) => {
-                    // Проверяем, что мы в редакторе
-                    if (document.activeElement.id !== 'knowledgeEditor') return;
+                    // Проверяем, что мы в редакторе и модальное окно открыто
+                    if (document.activeElement.id !== 'knowledgeEditor' ||
+                        !document.getElementById('knowledgeModal').style.display ||
+                        document.getElementById('knowledgeModal').style.display === 'none') return;
 
                     // Ctrl+B - жирный
                     if (e.ctrlKey && e.key === 'b') {
@@ -3412,19 +3407,341 @@
             insertTable() {
                 const rows = parseInt(prompt('Количество строк:', '3')) || 3;
                 const cols = parseInt(prompt('Количество столбцов:', '3')) || 3;
-                
-                let tableHtml = '<table style="width: 100%; border-collapse: collapse;">';
-                
+
+                let tableHtml = '<table style="width: 100%; border-collapse: collapse;" class="editable-table">';
+
                 for (let i = 0; i < rows; i++) {
                     tableHtml += '<tr>';
                     for (let j = 0; j < cols; j++) {
-                        tableHtml += `<td style="border: 1px solid #ddd; padding: 8px;">&nbsp;</td>`;
+                        tableHtml += `<td style="border: 1px solid #ddd; padding: 8px;" contenteditable="true">&nbsp;</td>`;
                     }
                     tableHtml += '</tr>';
                 }
-                
+
                 tableHtml += '</table>';
                 this.insertHtml(tableHtml);
+
+                // Показываем контролы таблиц
+                this.showTableControls();
+            },
+
+            // Показать контролы таблиц
+            showTableControls() {
+                const controls = document.getElementById('tableControls');
+                if (controls) {
+                    controls.classList.add('show');
+                }
+            },
+
+            // Скрыть контролы таблиц
+            hideTableControls() {
+                const controls = document.getElementById('tableControls');
+                if (controls) {
+                    controls.classList.remove('show');
+                }
+            },
+
+            // Добавить строку таблицы
+            insertTableRow() {
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return;
+
+                const cell = selection.getRangeAt(0).startContainer;
+                const row = cell.closest('tr');
+                if (!row) return;
+
+                const newRow = row.cloneNode(true);
+                // Очищаем содержимое новой строки
+                const cells = newRow.querySelectorAll('td');
+                cells.forEach(cell => cell.innerHTML = '&nbsp;');
+
+                row.parentNode.insertBefore(newRow, row.nextSibling);
+                this.scheduleTableSave();
+            },
+
+            // Удалить строку таблицы
+            deleteTableRow() {
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return;
+
+                const cell = selection.getRangeAt(0).startContainer;
+                const row = cell.closest('tr');
+                if (!row) return;
+
+                const table = row.closest('table');
+                const rows = table.querySelectorAll('tr');
+
+                // Не удаляем последнюю строку
+                if (rows.length <= 1) {
+                    uiManager.showNotification('Нельзя удалить последнюю строку таблицы', 'warning');
+                    return;
+                }
+
+                row.remove();
+                this.scheduleTableSave();
+            },
+
+            // Добавить столбец таблицы
+            insertTableColumn() {
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return;
+
+                const cell = selection.getRangeAt(0).startContainer;
+                const currentCell = cell.closest('td');
+                if (!currentCell) return;
+
+                const table = currentCell.closest('table');
+                const rows = table.querySelectorAll('tr');
+                const cellIndex = Array.from(currentCell.parentNode.children).indexOf(currentCell);
+
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    const newCell = document.createElement('td');
+                    newCell.style.border = '1px solid #ddd';
+                    newCell.style.padding = '8px';
+                    newCell.contentEditable = 'true';
+                    newCell.innerHTML = '&nbsp;';
+
+                    if (cellIndex < cells.length) {
+                        row.insertBefore(newCell, cells[cellIndex + 1]);
+                    } else {
+                        row.appendChild(newCell);
+                    }
+                });
+
+                this.scheduleTableSave();
+            },
+
+            // Удалить столбец таблицы
+            deleteTableColumn() {
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return;
+
+                const cell = selection.getRangeAt(0).startContainer;
+                const currentCell = cell.closest('td');
+                if (!currentCell) return;
+
+                const table = currentCell.closest('table');
+                const rows = table.querySelectorAll('tr');
+                const cellIndex = Array.from(currentCell.parentNode.children).indexOf(currentCell);
+
+                // Проверяем, что есть хотя бы один столбец
+                const firstRowCells = rows[0].querySelectorAll('td');
+                if (firstRowCells.length <= 1) {
+                    uiManager.showNotification('Нельзя удалить последний столбец таблицы', 'warning');
+                    return;
+                }
+
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells[cellIndex]) {
+                        cells[cellIndex].remove();
+                    }
+                });
+
+                this.scheduleTableSave();
+            },
+
+            // Объединить ячейки таблицы
+            mergeTableCells() {
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return;
+
+                const cell = selection.getRangeAt(0).startContainer;
+                const currentCell = cell.closest('td');
+                if (!currentCell) return;
+
+                // Получаем выделенные ячейки
+                const selectedCells = this.getSelectedTableCells();
+                if (selectedCells.length < 2) {
+                    uiManager.showNotification('Выберите несколько ячеек для объединения', 'warning');
+                    return;
+                }
+
+                // Проверяем, что ячейки образуют прямоугольную область
+                if (!this.isValidMergeSelection(selectedCells)) {
+                    uiManager.showNotification('Выберите смежные ячейки для объединения', 'warning');
+                    return;
+                }
+
+                // Объединяем ячейки
+                this.performCellMerge(selectedCells);
+                this.scheduleTableSave();
+            },
+
+            // Разделить ячейку таблицы
+            splitTableCell() {
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return;
+
+                const cell = selection.getRangeAt(0).startContainer;
+                const currentCell = cell.closest('td');
+                if (!currentCell) return;
+
+                const colspan = parseInt(currentCell.getAttribute('colspan') || 1);
+                const rowspan = parseInt(currentCell.getAttribute('rowspan') || 1);
+
+                if (colspan === 1 && rowspan === 1) {
+                    uiManager.showNotification('Эта ячейка не объединена', 'warning');
+                    return;
+                }
+
+                // Разделяем ячейку
+                currentCell.removeAttribute('colspan');
+                currentCell.removeAttribute('rowspan');
+
+                // Добавляем недостающие ячейки
+                const row = currentCell.parentNode;
+                const cellIndex = Array.from(row.children).indexOf(currentCell);
+
+                // Добавляем строки если нужно
+                const table = row.closest('table');
+                let currentRow = row;
+
+                for (let r = 1; r < rowspan; r++) {
+                    currentRow = currentRow.nextElementSibling;
+                    if (!currentRow) break;
+
+                    for (let c = 0; c < colspan; c++) {
+                        const newCell = document.createElement('td');
+                        newCell.style.border = '1px solid #ddd';
+                        newCell.style.padding = '8px';
+                        newCell.contentEditable = 'true';
+                        newCell.innerHTML = '&nbsp;';
+
+                        if (cellIndex + c < currentRow.children.length) {
+                            currentRow.insertBefore(newCell, currentRow.children[cellIndex + c]);
+                        } else {
+                            currentRow.appendChild(newCell);
+                        }
+                    }
+                }
+
+                // Добавляем ячейки в текущей строке
+                for (let c = 1; c < colspan; c++) {
+                    const newCell = document.createElement('td');
+                    newCell.style.border = '1px solid #ddd';
+                    newCell.style.padding = '8px';
+                    newCell.contentEditable = 'true';
+                    newCell.innerHTML = '&nbsp;';
+
+                    row.insertBefore(newCell, currentCell.nextSibling);
+                }
+
+                this.scheduleTableSave();
+            },
+
+            // Получить выделенные ячейки таблицы
+            getSelectedTableCells() {
+                const selection = window.getSelection();
+                const cells = [];
+
+                if (selection.rangeCount) {
+                    const range = selection.getRangeAt(0);
+                    const container = range.commonAncestorContainer;
+
+                    // Если выделение внутри таблицы
+                    const table = container.nodeType === Node.TEXT_NODE ?
+                        container.parentElement.closest('table') :
+                        container.closest('table');
+
+                    if (table) {
+                        const selectedCells = table.querySelectorAll('td.selected-for-merge');
+                        return Array.from(selectedCells);
+                    }
+                }
+
+                return cells;
+            },
+
+            // Проверить корректность выделения для объединения
+            isValidMergeSelection(cells) {
+                if (cells.length < 2) return false;
+
+                // Получаем координаты всех ячеек
+                const positions = cells.map(cell => {
+                    const row = cell.parentNode;
+                    const table = row.closest('table');
+                    const rowIndex = Array.from(table.rows).indexOf(row);
+                    const cellIndex = Array.from(row.cells).indexOf(cell);
+                    return { row: rowIndex, col: cellIndex };
+                });
+
+                // Находим границы
+                const minRow = Math.min(...positions.map(p => p.row));
+                const maxRow = Math.max(...positions.map(p => p.row));
+                const minCol = Math.min(...positions.map(p => p.col));
+                const maxCol = Math.max(...positions.map(p => p.col));
+
+                // Проверяем, что все ячейки в прямоугольнике присутствуют
+                for (let r = minRow; r <= maxRow; r++) {
+                    for (let c = minCol; c <= maxCol; c++) {
+                        const found = positions.some(p => p.row === r && p.col === c);
+                        if (!found) return false;
+                    }
+                }
+
+                return true;
+            },
+
+            // Выполнить объединение ячеек
+            performCellMerge(cells) {
+                // Сортируем ячейки по позиции
+                cells.sort((a, b) => {
+                    const rowA = a.parentNode;
+                    const rowB = b.parentNode;
+                    const table = rowA.closest('table');
+                    const rowIndexA = Array.from(table.rows).indexOf(rowA);
+                    const rowIndexB = Array.from(table.rows).indexOf(rowB);
+
+                    if (rowIndexA !== rowIndexB) return rowIndexA - rowIndexB;
+
+                    const cellIndexA = Array.from(rowA.cells).indexOf(a);
+                    const cellIndexB = Array.from(rowB.cells).indexOf(b);
+                    return cellIndexA - cellIndexB;
+                });
+
+                const firstCell = cells[0];
+                let combinedContent = '';
+
+                // Собираем содержимое всех ячеек
+                cells.forEach(cell => {
+                    combinedContent += cell.innerHTML + ' ';
+                    if (cell !== firstCell) {
+                        cell.remove();
+                    }
+                });
+
+                // Устанавливаем атрибуты объединения
+                const positions = cells.map(cell => {
+                    const row = cell.parentNode;
+                    const table = row.closest('table');
+                    const rowIndex = Array.from(table.rows).indexOf(row);
+                    const cellIndex = Array.from(row.cells).indexOf(cell);
+                    return { row: rowIndex, col: cellIndex };
+                });
+
+                const minRow = Math.min(...positions.map(p => p.row));
+                const maxRow = Math.max(...positions.map(p => p.row));
+                const minCol = Math.min(...positions.map(p => p.col));
+                const maxCol = Math.max(...positions.map(p => p.col));
+
+                const rowspan = maxRow - minRow + 1;
+                const colspan = maxCol - minCol + 1;
+
+                if (rowspan > 1) firstCell.setAttribute('rowspan', rowspan);
+                if (colspan > 1) firstCell.setAttribute('colspan', colspan);
+
+                firstCell.innerHTML = combinedContent.trim();
+            },
+
+            // Планирование сохранения таблицы
+            scheduleTableSave() {
+                // Сохраняем изменения в knowledgeManager
+                if (knowledgeManager.currentItem) {
+                    knowledgeManager.currentItem.content = document.getElementById('knowledgeEditor').innerHTML;
+                    knowledgeManager.scheduleSave();
+                }
             },
             
             // Вставка изображения
@@ -3614,17 +3931,18 @@
             const modal = document.createElement('div');
             modal.className = 'modal';
             modal.innerHTML = `
-                <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-content" style="max-width: 600px;">
                     <div class="modal-header">
                         <h3>Выберите технологию для ссылки</h3>
                         <button onclick="this.closest('.modal').remove()">✕</button>
                     </div>
-                    <div style="max-height: 300px; overflow-y: auto;">
-                        <input type="text" id="internalLinkSearch" placeholder="Поиск технологий..." style="width: 100%; margin-bottom: 10px;">
-                        <div id="internalLinkList">
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        <input type="text" id="internalLinkSearch" placeholder="Поиск технологий..." style="width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <div id="internalLinkList" style="border: 1px solid #eee; border-radius: 4px; max-height: 300px; overflow-y: auto;">
                             ${technologies.map(tech => `
-                                <div class="link-item" onclick="knowledgeManager.insertInternalLink('${tech.id}', '${tech.name}')" style="cursor: pointer; padding: 8px; border-bottom: 1px solid #eee;">
-                                    ${tech.name}
+                                <div class="link-item" onclick="knowledgeManager.insertInternalLink('${tech.id}', '${tech.name}')" style="cursor: pointer; padding: 10px; border-bottom: 1px solid #f0f0f0; hover: background: #f8f9fa;">
+                                    <strong>${tech.name}</strong>
+                                    ${tech.content ? `<br><small style="color: #666;">${tech.content.replace(/<[^>]*>/g, '').substring(0, 50)}...</small>` : ''}
                                 </div>
                             `).join('')}
                         </div>
