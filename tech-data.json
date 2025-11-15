@@ -13,10 +13,7 @@
               "type": "technology",
               "checklist": [],
               "completed": false,
-              "id": "tech_mh7t656c8",
-              "content": "",
-              "media": [],
-              "links": []
+              "id": "tech_mh7t656c8"
             },
             {
               "name": "Глубокое изучение Collections (HashMap, ArrayList)",
@@ -81,8 +78,7 @@
               "completed": false,
               "id": "tech_rctfnz1b7"
             }
-          ],
-          "id": "tech_dgk0bcxjo"
+          ]
         },
         {
           "name": "Spring Framework",
@@ -330,8 +326,7 @@
             }
           ]
         }
-      ],
-      "id": "tech_s1kb0u24b"
+      ]
     },
     {
       "name": "Infrastructure & DevOps",
@@ -477,13 +472,7 @@
           "completed": false,
           "content": "<br>",
           "media": [],
-          "links": [
-            {
-              "id": "tech_mh7t656c8",
-              "name": "Многопоточность и Concurrent Collections",
-              "path": []
-            }
-          ],
+          "links": [],
           "id": "tech_whlcue108"
         },
         {
@@ -491,20 +480,14 @@
           "type": "technology",
           "checklist": [],
           "completed": false,
-          "id": "tech_e214zxitt",
-          "content": "",
-          "media": [],
-          "links": []
+          "id": "tech_e214zxitt"
         },
         {
           "name": "Swagger",
           "type": "technology",
           "checklist": [],
           "completed": false,
-          "id": "tech_zpuvvb0h1",
-          "content": "",
-          "media": [],
-          "links": []
+          "id": "tech_zpuvvb0h1"
         },
         {
           "name": "OpenAPI",
@@ -541,6 +524,11 @@
           "id": "tech_l3ef8hyqv"
         }
       ]
+    },
+    {
+      "name": "Нейросети",
+      "type": "category",
+      "children": []
     }
   ]
 }
