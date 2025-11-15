@@ -1,44 +1,3 @@
-Skip to content
-Navigation Menu
-Bestie123
-MY-IT-SkillsTest
-
-Type / to search
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-Settings
-Files
-Go to file
-t
-js
-Инструкции
-README.md
-example.html
-index (1).html
-index.html
-styles.css
-tech-data.json
-test1.html
-tree.css
-MY-IT-SkillsTest
-/test1.html
-Bestie123
-Bestie123
-Update test1.html
-5bcd345
- · 
-27 minutes ago
-
-Code
-
-Blame
-4001 lines (3380 loc) · 168 KB
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -551,6 +510,25 @@ Blame
             position: sticky;
             top: 0;
             z-index: 10;
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            padding: 0 8px;
+            border-right: 1px solid #ddd;
+        }
+
+        .toolbar-group:last-child {
+            border-right: none;
+        }
+
+        .toolbar-separator {
+            width: 1px;
+            height: 24px;
+            background: #ddd;
+            margin: 0 4px;
         }
 
         .editor-toolbar button {
@@ -1232,108 +1210,122 @@ Blame
                 <div id="editorTab" class="tab-content active">
                     <div class="content-editor">
                         <div class="editor-toolbar">
-                            <!-- Основные инструменты -->
-                            <button onclick="knowledgeEditor.undo()" title="Отменить (Ctrl+Z)">↶</button>
-                            <button onclick="knowledgeEditor.redo()" title="Повторить (Ctrl+Y)">↷</button>
-                            <div class="separator"></div>
-
-                            <!-- Форматирование текста -->
-                            <select onchange="knowledgeEditor.formatText('fontSize', this.value)" class="font-size-select" title="Размер шрифта">
-                                <option value="">Размер</option>
-                                <option value="1">8pt</option>
-                                <option value="2">10pt</option>
-                                <option value="3">12pt</option>
-                                <option value="4">14pt</option>
-                                <option value="5">18pt</option>
-                                <option value="6">24pt</option>
-                                <option value="7">36pt</option>
-                            </select>
-                            <select onchange="knowledgeEditor.formatText('fontName', this.value)" title="Шрифт">
-                                <option value="">Шрифт</option>
-                                <option value="Arial">Arial</option>
-                                <option value="Times New Roman">Times New Roman</option>
-                                <option value="Courier New">Courier New</option>
-                                <option value="Georgia">Georgia</option>
-                                <option value="Verdana">Verdana</option>
-                            </select>
-                            <div class="separator"></div>
-
-                            <!-- Стили текста -->
-                            <button onclick="knowledgeEditor.formatText('bold')" title="Жирный (Ctrl+B)"><b>B</b></button>
-                            <button onclick="knowledgeEditor.formatText('italic')" title="Курсив (Ctrl+I)"><i>I</i></button>
-                            <button onclick="knowledgeEditor.formatText('underline')" title="Подчеркивание (Ctrl+U)"><u>U</u></button>
-                            <button onclick="knowledgeEditor.formatText('strikeThrough')" title="Зачеркивание"><s>S</s></button>
-                            <div class="separator"></div>
-
-                            <!-- Цвета -->
-                            <div class="color-picker" onclick="knowledgeEditor.showColorPalette('foreColor')" title="Цвет текста">
-                                <div style="width: 20px; height: 20px; background: #000; border-radius: 2px; margin: 4px;"></div>
+                            <!-- Группа 1: Основные операции -->
+                            <div class="toolbar-group">
+                                <button onclick="knowledgeEditor.undo()" title="Отменить (Ctrl+Z)">↶</button>
+                                <button onclick="knowledgeEditor.redo()" title="Повторить (Ctrl+Y)">↷</button>
                             </div>
-                            <div class="color-picker" onclick="knowledgeEditor.showColorPalette('backColor')" title="Цвет фона">
-                                <div style="width: 20px; height: 20px; background: #fff; border: 1px solid #ddd; border-radius: 2px; margin: 4px;"></div>
+                            <div class="toolbar-separator"></div>
+
+                            <!-- Группа 2: Форматирование текста -->
+                            <div class="toolbar-group">
+                                <select onchange="knowledgeEditor.formatText('fontSize', this.value)" class="font-size-select" title="Размер шрифта (Ctrl+Shift+>)">
+                                    <option value="">Размер</option>
+                                    <option value="1">8pt</option>
+                                    <option value="2">10pt</option>
+                                    <option value="3">12pt</option>
+                                    <option value="4">14pt</option>
+                                    <option value="5">18pt</option>
+                                    <option value="6">24pt</option>
+                                    <option value="7">36pt</option>
+                                </select>
+                                <select onchange="knowledgeEditor.formatText('fontName', this.value)" title="Шрифт">
+                                    <option value="">Шрифт</option>
+                                    <option value="Arial">Arial</option>
+                                    <option value="Times New Roman">Times New Roman</option>
+                                    <option value="Courier New">Courier New</option>
+                                    <option value="Georgia">Georgia</option>
+                                    <option value="Verdana">Verdana</option>
+                                </select>
                             </div>
-                            <div class="separator"></div>
+                            <div class="toolbar-separator"></div>
 
-                            <!-- Выравнивание -->
-                            <button onclick="knowledgeEditor.formatText('justifyLeft')" title="Выровнять по левому краю">⬅️</button>
-                            <button onclick="knowledgeEditor.formatText('justifyCenter')" title="Выровнять по центру">⬌</button>
-                            <button onclick="knowledgeEditor.formatText('justifyRight')" title="Выровнять по правому краю">➡️</button>
-                            <button onclick="knowledgeEditor.formatText('justifyFull')" title="Выровнять по ширине">⬌⬅️</button>
-                            <div class="separator"></div>
+                            <!-- Группа 3: Стили текста -->
+                            <div class="toolbar-group">
+                                <button onclick="knowledgeEditor.formatText('bold')" title="Жирный (Ctrl+B)"><b>B</b></button>
+                                <button onclick="knowledgeEditor.formatText('italic')" title="Курсив (Ctrl+I)"><i>I</i></button>
+                                <button onclick="knowledgeEditor.formatText('underline')" title="Подчеркивание (Ctrl+U)"><u>U</u></button>
+                                <button onclick="knowledgeEditor.formatText('strikeThrough')" title="Зачеркивание"><s>S</s></button>
+                            </div>
+                            <div class="toolbar-separator"></div>
 
-                            <!-- Отступы -->
-                            <button onclick="knowledgeEditor.outdent()" title="Уменьшить отступ">↶</button>
-                            <button onclick="knowledgeEditor.indent()" title="Увеличить отступ">↷</button>
-                            <div class="separator"></div>
+                            <!-- Группа 4: Цвета и выделение -->
+                            <div class="toolbar-group">
+                                <div class="color-picker" onclick="knowledgeEditor.showColorPalette('foreColor')" title="Цвет текста">
+                                    <div style="width: 20px; height: 20px; background: #000; border-radius: 2px; margin: 4px;"></div>
+                                </div>
+                                <div class="color-picker" onclick="knowledgeEditor.showColorPalette('backColor')" title="Цвет фона">
+                                    <div style="width: 20px; height: 20px; background: #fff; border: 1px solid #ddd; border-radius: 2px; margin: 4px;"></div>
+                                </div>
+                                <button onclick="knowledgeEditor.highlightText()" title="Выделить текст">🖍️</button>
+                            </div>
+                            <div class="toolbar-separator"></div>
 
-                            <!-- Надстрочный/подстрочный -->
-                            <button onclick="knowledgeEditor.formatText('superscript')" title="Надстрочный">X²</button>
-                            <button onclick="knowledgeEditor.formatText('subscript')" title="Подстрочный">X₂</button>
-                            <div class="separator"></div>
+                            <!-- Группа 5: Выравнивание -->
+                            <div class="toolbar-group">
+                                <button onclick="knowledgeEditor.formatText('justifyLeft')" title="Выровнять по левому краю">⬅️</button>
+                                <button onclick="knowledgeEditor.formatText('justifyCenter')" title="Выровнять по центру">⬌</button>
+                                <button onclick="knowledgeEditor.formatText('justifyRight')" title="Выровнять по правому краю">➡️</button>
+                                <button onclick="knowledgeEditor.formatText('justifyFull')" title="Выровнять по ширине">⬌⬅️</button>
+                            </div>
+                            <div class="toolbar-separator"></div>
 
-                            <!-- Выделение -->
-                            <button onclick="knowledgeEditor.highlightText()" title="Выделить текст">🖍️</button>
-                            <div class="separator"></div>
+                            <!-- Группа 6: Отступы и индексы -->
+                            <div class="toolbar-group">
+                                <button onclick="knowledgeEditor.outdent()" title="Уменьшить отступ">↶</button>
+                                <button onclick="knowledgeEditor.indent()" title="Увеличить отступ">↷</button>
+                                <button onclick="knowledgeEditor.formatText('superscript')" title="Надстрочный">X²</button>
+                                <button onclick="knowledgeEditor.formatText('subscript')" title="Подстрочный">X₂</button>
+                            </div>
+                            <div class="toolbar-separator"></div>
 
-                            <!-- Заголовки -->
-                            <select onchange="knowledgeEditor.insertHeading(this.value)" class="heading-select" title="Заголовки">
-                                <option value="">Заголовок</option>
-                                <option value="1">Заголовок 1</option>
-                                <option value="2">Заголовок 2</option>
-                                <option value="3">Заголовок 3</option>
-                                <option value="4">Заголовок 4</option>
-                                <option value="5">Заголовок 5</option>
-                                <option value="6">Заголовок 6</option>
-                            </select>
-                            <div class="separator"></div>
+                            <!-- Группа 7: Заголовки -->
+                            <div class="toolbar-group">
+                                <select onchange="knowledgeEditor.insertHeading(this.value)" class="heading-select" title="Заголовки">
+                                    <option value="">Заголовок</option>
+                                    <option value="1">Заголовок 1</option>
+                                    <option value="2">Заголовок 2</option>
+                                    <option value="3">Заголовок 3</option>
+                                    <option value="4">Заголовок 4</option>
+                                    <option value="5">Заголовок 5</option>
+                                    <option value="6">Заголовок 6</option>
+                                </select>
+                            </div>
+                            <div class="toolbar-separator"></div>
 
-                            <!-- Дополнительные элементы -->
-                            <button onclick="knowledgeEditor.insertBlockQuote()" title="Цитата">"❝</button>
-                            <button onclick="knowledgeEditor.insertHorizontalRule()" title="Разделитель">━</button>
-                            <button onclick="knowledgeEditor.insertCollapsibleSection()" title="Сворачиваемый раздел">📦</button>
-                            <div class="separator"></div>
-                            <div class="separator"></div>
+                            <!-- Группа 8: Списки -->
+                            <div class="toolbar-group">
+                                <button onclick="knowledgeEditor.insertList('ul')" title="Маркированный список">•</button>
+                                <button onclick="knowledgeEditor.insertList('ol')" title="Нумерованный список">1.</button>
+                            </div>
+                            <div class="toolbar-separator"></div>
 
-                            <!-- Списки -->
-                            <button onclick="knowledgeEditor.insertList('ul')" title="Маркированный список">•</button>
-                            <button onclick="knowledgeEditor.insertList('ol')" title="Нумерованный список">1.</button>
-                            <div class="separator"></div>
+                            <!-- Группа 9: Медиа и ссылки -->
+                            <div class="toolbar-group">
+                                <button onclick="knowledgeEditor.insertLink()" title="Вставить ссылку (Ctrl+K)">🔗</button>
+                                <button onclick="knowledgeEditor.insertImage()" title="Вставить изображение">🖼️</button>
+                                <button onclick="knowledgeEditor.insertVideo()" title="Вставить видео">🎬</button>
+                                <button onclick="knowledgeEditor.insertTable()" title="Вставить таблицу">⧠</button>
+                            </div>
+                            <div class="toolbar-separator"></div>
 
-                            <!-- Элементы -->
-                            <button onclick="knowledgeEditor.insertLink()" title="Вставить ссылку">🔗</button>
-                            <button onclick="knowledgeEditor.insertImage()" title="Вставить изображение">🖼️</button>
-                            <button onclick="knowledgeEditor.insertVideo()" title="Вставить видео">🎬</button>
-                            <button onclick="knowledgeEditor.insertTable()" title="Вставить таблицу">⧠</button>
-                            <button onclick="knowledgeEditor.insertCode()" title="Вставить код">{"{}"}</button>
-                            <button onclick="knowledgeEditor.insertQuote()" title="Цитата">"❝</button>
-                            <button onclick="knowledgeEditor.insertHorizontalRule()" title="Разделитель">━</button>
-                            <div class="separator"></div>
+                            <!-- Группа 10: Код и элементы -->
+                            <div class="toolbar-group">
+                                <button onclick="knowledgeEditor.insertCodeBlock()" title="Вставить блок кода (Ctrl+Shift+C)">{"{}"}</button>
+                                <button onclick="knowledgeEditor.insertBlockQuote()" title="Цитата">"❝</button>
+                                <button onclick="knowledgeEditor.insertHorizontalRule()" title="Разделитель">━</button>
+                                <button onclick="knowledgeEditor.insertCollapsibleSection()" title="Сворачиваемый раздел">📦</button>
+                            </div>
+                            <div class="toolbar-separator"></div>
 
-                            <!-- Дополнительно -->
-                            <button onclick="knowledgeEditor.showEmojiPanel()" title="Эмодзи">😊</button>
-                            <button onclick="knowledgeEditor.showFindReplace()" title="Найти и заменить">🔍</button>
-                            <button onclick="knowledgeEditor.insertInternalLink()" title="Внутренняя ссылка">📎</button>
-                            <button onclick="knowledgeEditor.clearFormatting()" title="Очистить форматирование">🧹</button>
+                            <!-- Группа 11: Дополнительно -->
+                            <div class="toolbar-group">
+                                <button onclick="knowledgeEditor.showEmojiPanel()" title="Эмодзи">😊</button>
+                                <button onclick="knowledgeEditor.showFindReplace()" title="Найти и заменить (Ctrl+F)">🔍</button>
+                                <button onclick="knowledgeEditor.insertInternalLink()" title="Внутренняя ссылка">📎</button>
+                                <button onclick="knowledgeEditor.insertFootnote()" title="Сноска">📝</button>
+                                <button onclick="knowledgeEditor.clearFormatting()" title="Очистить форматирование">🧹</button>
+                            </div>
 
                             <!-- Панель поиска и замены -->
                             <div id="findReplacePanel" class="find-replace-panel">
@@ -1347,17 +1339,16 @@ Blame
                                 </div>
                             </div>
 
-
-
                             <!-- Контролы таблиц (показываются при работе с таблицами) -->
                             <div id="tableControls" class="table-controls">
-                                <div class="separator"></div>
+                                <div class="toolbar-separator"></div>
                                 <button onclick="knowledgeEditor.insertTableRow()" title="Добавить строку">➕↔️</button>
                                 <button onclick="knowledgeEditor.deleteTableRow()" title="Удалить строку">➖↔️</button>
                                 <button onclick="knowledgeEditor.insertTableColumn()" title="Добавить столбец">➕↕️</button>
                                 <button onclick="knowledgeEditor.deleteTableColumn()" title="Удалить столбец">➖↕️</button>
                                 <button onclick="knowledgeEditor.mergeTableCells()" title="Объединить ячейки">🔗</button>
                                 <button onclick="knowledgeEditor.splitTableCell()" title="Разделить ячейку">🔀</button>
+                                <button onclick="knowledgeEditor.showTableProperties()" title="Свойства таблицы">⚙️</button>
                             </div>
                         </div>
                         <div id="knowledgeEditor" class="editor-content" contenteditable="true" spellcheck="false"></div>
@@ -4040,4 +4031,3 @@ Blame
     </script>
 </body>
 </html>
-MY-IT-SkillsTest/test1.html at main · Bestie123/MY-IT-SkillsTest 
