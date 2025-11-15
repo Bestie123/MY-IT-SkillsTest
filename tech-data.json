@@ -528,7 +528,20 @@
     {
       "name": "Нейросети",
       "type": "category",
-      "children": []
+      "children": [
+        {
+          "name": "Depseek",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
+        },
+        {
+          "name": "BlackBox Grok",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
+        }
+      ]
     }
   ]
 }
