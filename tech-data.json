@@ -81,7 +81,8 @@
               "completed": false,
               "id": "tech_g7ld9pq5y"
             }
-          ]
+          ],
+          "id": "item_mmvl1uh6i"
         },
         {
           "name": "Spring Framework",
@@ -97,7 +98,12 @@
             {
               "name": "Spring Core & Context (DI/IoC)",
               "type": "technology",
-              "checklist": [],
+              "checklist": [
+                {
+                  "text": "Атов",
+                  "completed": false
+                }
+              ],
               "completed": true,
               "id": "tech_wurynot8h"
             },
@@ -134,7 +140,8 @@
               "completed": false,
               "id": "tech_2ylv3zlto"
             }
-          ]
+          ],
+          "id": "item_tfjbpw9um"
         },
         {
           "name": "Базы данных  & Хранилища",
@@ -224,7 +231,8 @@
               "completed": false,
               "id": "tech_brkv97ju9"
             }
-          ]
+          ],
+          "id": "item_s6ygc4b2x"
         },
         {
           "name": "Тестирование",
@@ -244,7 +252,8 @@
               "completed": false,
               "id": "tech_1a7wmk3rf"
             }
-          ]
+          ],
+          "id": "item_u603eigtu"
         },
         {
           "name": "Архитектура",
@@ -299,7 +308,8 @@
               "completed": false,
               "id": "tech_h9yur72zq"
             }
-          ]
+          ],
+          "id": "item_vryby5o5v"
         },
         {
           "name": "Message Brokers",
@@ -319,7 +329,8 @@
               "completed": false,
               "id": "tech_thvwblodx"
             }
-          ]
+          ],
+          "id": "item_cykfog255"
         },
         {
           "name": "Инструменты сборки",
@@ -332,9 +343,11 @@
               "completed": false,
               "id": "tech_v1o8jlool"
             }
-          ]
+          ],
+          "id": "item_hx6q8n7k8"
         }
-      ]
+      ],
+      "id": "item_n22lb1ust"
     },
     {
       "name": "Infrastructure & DevOps",
@@ -379,7 +392,8 @@
               "completed": false,
               "id": "tech_r429gvw3r"
             }
-          ]
+          ],
+          "id": "item_fiz72pn8q"
         },
         {
           "name": "Мониторинг",
@@ -399,7 +413,8 @@
               "completed": false,
               "id": "tech_zhc61qb4o"
             }
-          ]
+          ],
+          "id": "item_t0oldsmtq"
         },
         {
           "name": "Веб-серверы / Reverse Proxy",
@@ -412,7 +427,8 @@
               "completed": false,
               "id": "tech_rkxiix6nr"
             }
-          ]
+          ],
+          "id": "item_w5liy3tbg"
         },
         {
           "name": "Облачные платформы",
@@ -439,7 +455,8 @@
               "completed": false,
               "id": "tech_ztp1g0q7s"
             }
-          ]
+          ],
+          "id": "item_fpp1jpkxs"
         },
         {
           "name": "Инфраструктура как код (IaC)",
@@ -452,7 +469,8 @@
               "completed": false,
               "id": "tech_8wm1dryih"
             }
-          ]
+          ],
+          "id": "item_dije65q09"
         },
         {
           "name": "Базовая администрация Linux",
@@ -465,9 +483,11 @@
               "completed": false,
               "id": "tech_6p3y0tl37"
             }
-          ]
+          ],
+          "id": "item_eyhwtelr4"
         }
-      ]
+      ],
+      "id": "item_2pxarzche"
     },
     {
       "name": "QA & инструменты разработки",
@@ -511,7 +531,8 @@
           "completed": false,
           "id": "tech_s645jqxud"
         }
-      ]
+      ],
+      "id": "item_op8r5tftl"
     },
     {
       "name": "Управление проектами",
@@ -531,7 +552,8 @@
           "completed": false,
           "id": "tech_2cmo68lfs"
         }
-      ]
+      ],
+      "id": "item_j3rlkvb2d"
     }
   ]
 }
