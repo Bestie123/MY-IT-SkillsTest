@@ -416,8 +416,7 @@
           "name": "Postman",
           "type": "technology",
           "checklist": [],
-          "completed": false,
-          "content": ""
+          "completed": false
         },
         {
           "name": "Insomnia",
