@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Technologies Knowledge Base - Enhanced Editor</title>
+    <title>Technologies Knowledge Base - Accordion View</title>
     <style>
-        /* Базовые стили */
+        /* Основные стили */
         body {
             font-family: Arial, sans-serif;
             max-width: 1400px;
@@ -490,26 +490,71 @@
             color: #6c757d;
         }
 
-        .knowledge-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: #e3f2fd;
-            color: #1976d2;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            margin-left: 10px;
+        /* НОВЫЕ СТИЛИ ДЛЯ СИСТЕМЫ ЗНАНИЙ */
+        
+        /* Редактор контента */
+        .content-editor {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px 0;
         }
-
-        .modal-header {
+        
+        .editor-toolbar {
+            background: #f8f9fa;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 5px;
         }
-
-        /* Стили для системы знаний */
+        
+        .toolbar-group {
+            display: flex;
+            border-right: 1px solid #ddd;
+            padding-right: 5px;
+            margin-right: 5px;
+        }
+        
+        .toolbar-group:last-child {
+            border-right: none;
+        }
+        
+        .editor-toolbar button {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .editor-toolbar button:hover {
+            background: #e9ecef;
+        }
+        
+        .editor-content {
+            min-height: 300px;
+            padding: 15px;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        
+        .editor-content:focus {
+            outline: none;
+        }
+        
+        .editor-status {
+            display: flex;
+            gap: 15px;
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border-top: 1px solid #ddd;
+            font-size: 0.8em;
+            color: #6c757d;
+        }
+        
+        /* Просмотр контента */
         .knowledge-content {
             padding: 15px;
             line-height: 1.6;
@@ -660,6 +705,116 @@
             font-size: 12px;
         }
         
+        .media-actions {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .linked-items {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .linked-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .template-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: #3498db;
+        }
+        
+        .template-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .template-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .template-desc {
+            font-size: 0.8em;
+            color: #6c757d;
+        }
+        
+        .content-block {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        
+        .block-note {
+            background: #e3f2fd;
+            border-left-color: #2196f3;
+        }
+        
+        .block-warning {
+            background: #fff3e0;
+            border-left-color: #ff9800;
+        }
+        
+        .block-tip {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+        
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .internal-link-item {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+        }
+        
+        .internal-link-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .internal-link-item:last-child {
+            border-bottom: none;
+        }
+
         /* Модальные окна для системы знаний */
         .knowledge-modal .modal-content {
             max-width: 900px;
@@ -777,352 +932,30 @@
             height: 40px;
             background: linear-gradient(transparent, white);
         }
-
-        /* Улучшенные стили для редактора */
-        .enhanced-editor {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin: 10px 0;
-            background: white;
-        }
         
-        .enhanced-toolbar {
-            background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            border-radius: 8px 8px 0 0;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        
-        .toolbar-group {
-            display: flex;
-            gap: 2px;
-            padding: 4px;
-            border-radius: 4px;
-            background: rgba(255,255,255,0.7);
-            border: 1px solid #dee2e6;
-        }
-        
-        .enhanced-toolbar button {
-            background: white;
-            color: #495057;
-            border: 1px solid #ced4da;
-            padding: 6px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            min-width: 36px;
-            height: 36px;
-            display: flex;
+        .knowledge-badge {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
+            gap: 5px;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 10px;
         }
-        
-        .enhanced-toolbar button:hover {
-            background: #e9ecef;
-            border-color: #adb5bd;
-            transform: translateY(-1px);
-        }
-        
-        .enhanced-toolbar button.active {
-            background: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-        
-        .enhanced-toolbar select {
-            background: white;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            padding: 6px;
-            font-size: 14px;
-            min-width: 100px;
-        }
-        
-        .color-picker {
-            display: flex;
-            gap: 2px;
-        }
-        
-        .color-option {
-            width: 20px;
-            height: 20px;
-            border-radius: 3px;
-            cursor: pointer;
-            border: 1px solid #ddd;
-        }
-        
-        .enhanced-editor-content {
-            min-height: 400px;
-            padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            font-size: 16px;
-            outline: none;
-            background: white;
-            border-radius: 0 0 8px 8px;
-        }
-        
-        .character-count {
-            padding: 8px 15px;
-            background: #f8f9fa;
-            border-top: 1px solid #dee2e6;
-            font-size: 12px;
-            color: #6c757d;
+
+        .modal-header {
             display: flex;
             justify-content: space-between;
-            border-radius: 0 0 8px 8px;
-        }
-        
-        /* Стили для элементов редактора */
-        .editor-h1 { font-size: 2em; font-weight: bold; color: #2c3e50; margin: 0.67em 0; }
-        .editor-h2 { font-size: 1.5em; font-weight: bold; color: #34495e; margin: 0.83em 0; }
-        .editor-h3 { font-size: 1.25em; font-weight: bold; color: #7f8c8d; margin: 1em 0; }
-        .editor-blockquote { 
-            border-left: 4px solid #3498db; 
-            padding: 10px 20px; 
-            margin: 15px 0; 
-            background: #f8f9fa;
-            font-style: italic;
-        }
-        
-        .editor-code {
-            background: #2c3e50;
-            color: #ecf0f1;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            margin: 10px 0;
-            position: relative;
-        }
-        
-        .editor-code:before {
-            content: 'Код';
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            background: #34495e;
-            color: #bdc3c7;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 0.8em;
-        }
-        
-        .editor-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .editor-table th {
-            background: #3498db;
-            color: white;
-            padding: 10px;
-            text-align: left;
-            border: 1px solid #2980b9;
-        }
-        
-        .editor-table td {
-            padding: 8px 10px;
-            border: 1px solid #bdc3c7;
-            background: white;
-        }
-        
-        .editor-table tr:nth-child(even) td {
-            background: #f8f9fa;
-        }
-        
-        /* Модальные окна для расширенного редактора */
-        .advanced-modal {
-            max-width: 800px;
-        }
-        
-        .modal-tabs {
-            display: flex;
-            border-bottom: 1px solid #dee2e6;
+            align-items: center;
             margin-bottom: 15px;
         }
-        
-        .modal-tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s;
-        }
-        
-        .modal-tab.active {
-            border-bottom: 2px solid #007bff;
-            color: #007bff;
-            font-weight: bold;
-        }
-        
-        .template-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 15px 0;
-        }
-        
-        .template-item {
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: white;
-        }
-        
-        .template-item:hover {
-            border-color: #007bff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .template-preview {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            min-height: 80px;
-            font-size: 12px;
-        }
-        
-        .emoji-picker {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 5px;
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
-        }
-        
-        .emoji {
-            font-size: 1.5em;
-            cursor: pointer;
-            text-align: center;
-            padding: 5px;
-            border-radius: 3px;
-            transition: background 0.2s;
-        }
-        
-        .emoji:hover {
-            background: #e9ecef;
-        }
-        
-        .fullscreen-editor {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 10000;
-            padding: 20px;
-        }
-        
-        .fullscreen-toolbar {
-            background: #f8f9fa;
-            padding: 15px;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .word-count-badge {
-            background: #28a745;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.8em;
-        }
-        
-        /* Дополнительные стили для улучшенного редактора */
-        .floating-toolbar {
-            position: absolute;
-            background: #2c3e50;
-            border-radius: 6px;
-            padding: 8px;
-            display: none;
-            flex-wrap: wrap;
-            gap: 4px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 1000;
-        }
-        
-        .floating-toolbar button {
-            background: #34495e;
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        .floating-toolbar button:hover {
-            background: #3498db;
-        }
-        
-        .syntax-highlighter {
-            position: relative;
-        }
-        
-        .syntax-highlighter select {
-            background: #2c3e50;
-            color: white;
-            border: 1px solid #34495e;
-            padding: 4px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-        
-        /* Анимации */
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .tooltip {
-            position: relative;
-        }
-        
-        .tooltip:before {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2c3e50;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        
-        .tooltip:hover:before {
-            opacity: 1;
-        }
     </style>
-    <!-- Подключаем библиотеки для расширенного редактора -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <h1>📚 Technologies Knowledge Base - Enhanced Editor</h1>
+        <h1>📚 Technologies Knowledge Base - Accordion View</h1>
         
         <!-- Секция аутентификации -->
         <div class="auth-section" id="authSection">
@@ -1228,171 +1061,96 @@
             </div>
         </div>
 
-        <!-- НОВЫЕ МОДАЛЬНЫЕ ОКНА ДЛЯ СИСТЕМЫ ЗНАНИЙ -->
+        <!-- УЛУЧШЕННОЕ МОДАЛЬНОЕ ОКНО ДЛЯ СИСТЕМЫ ЗНАНИЙ -->
         <div id="knowledgeModal" class="modal knowledge-modal">
-            <div class="modal-content advanced-modal">
+            <div class="modal-content">
                 <div class="modal-header">
                     <h3 id="knowledgeTitle">База знаний</h3>
                     <button onclick="uiManager.hideModals()">✕</button>
                 </div>
                 
                 <div class="content-tabs">
-                    <div class="content-tab active" onclick="knowledgeManager.switchTab('editor')">
-                        <i class="fas fa-edit"></i> Улучшенный редактор
-                    </div>
-                    <div class="content-tab" onclick="knowledgeManager.switchTab('preview')">
-                        <i class="fas fa-eye"></i> Просмотр
-                    </div>
-                    <div class="content-tab" onclick="knowledgeManager.switchTab('media')">
-                        <i class="fas fa-images"></i> Медиафайлы
-                    </div>
-                    <div class="content-tab" onclick="knowledgeManager.switchTab('links')">
-                        <i class="fas fa-link"></i> Ссылки
-                    </div>
-                    <div class="content-tab" onclick="knowledgeManager.switchTab('templates')">
-                        <i class="fas fa-layer-group"></i> Шаблоны
-                    </div>
+                    <div class="content-tab active" onclick="knowledgeManager.switchTab('editor')">✏️ Редактор</div>
+                    <div class="content-tab" onclick="knowledgeManager.switchTab('preview')">👁️ Просмотр</div>
+                    <div class="content-tab" onclick="knowledgeManager.switchTab('media')">🖼️ Медиафайлы</div>
+                    <div class="content-tab" onclick="knowledgeManager.switchTab('links')">🔗 Ссылки</div>
+                    <div class="content-tab" onclick="knowledgeManager.switchTab('templates')">📋 Шаблоны</div>
                 </div>
                 
-                <!-- Вкладка улучшенного редактора -->
+                <!-- Вкладка редактора -->
                 <div id="editorTab" class="tab-content active">
-                    <div class="enhanced-editor">
-                        <div class="enhanced-toolbar" id="enhancedToolbar">
-                            <!-- Группа форматирования текста -->
+                    <div class="content-editor">
+                        <div class="editor-toolbar">
                             <div class="toolbar-group">
-                                <select id="fontFamily" onchange="enhancedEditor.setFontFamily(this.value)">
-                                    <option value="">Шрифт</option>
-                                    <option value="Arial, sans-serif">Arial</option>
-                                    <option value="'Times New Roman', serif">Times New Roman</option>
-                                    <option value="'Courier New', monospace">Courier New</option>
-                                    <option value="Georgia, serif">Georgia</option>
-                                    <option value="Verdana, sans-serif">Verdana</option>
-                                </select>
-                                
-                                <select id="fontSize" onchange="enhancedEditor.setFontSize(this.value)">
+                                <button onclick="knowledgeEditor.formatText('bold')" title="Жирный"><b>B</b></button>
+                                <button onclick="knowledgeEditor.formatText('italic')" title="Курсив"><i>I</i></button>
+                                <button onclick="knowledgeEditor.formatText('underline')" title="Подчеркивание"><u>U</u></button>
+                                <button onclick="knowledgeEditor.formatText('strikeThrough')" title="Зачеркнутый"><s>S</s></button>
+                            </div>
+                            
+                            <div class="toolbar-group">
+                                <button onclick="knowledgeEditor.insertHeading(1)" title="Заголовок 1">H1</button>
+                                <button onclick="knowledgeEditor.insertHeading(2)" title="Заголовок 2">H2</button>
+                                <button onclick="knowledgeEditor.insertHeading(3)" title="Заголовок 3">H3</button>
+                                <button onclick="knowledgeEditor.insertHeading(4)" title="Заголовок 4">H4</button>
+                            </div>
+                            
+                            <div class="toolbar-group">
+                                <button onclick="knowledgeEditor.insertList('ul')" title="Маркированный список">•</button>
+                                <button onclick="knowledgeEditor.insertList('ol')" title="Нумерованный список">1.</button>
+                                <button onclick="knowledgeEditor.insertBlockquote()" title="Цитата">❝</button>
+                            </div>
+                            
+                            <div class="toolbar-group">
+                                <button onclick="knowledgeEditor.insertLink()" title="Вставить ссылку">🔗</button>
+                                <button onclick="knowledgeEditor.showInternalLinkModal()" title="Внутренняя ссылка">📎</button>
+                                <button onclick="knowledgeEditor.insertCode()" title="Вставить код">{"{}"}</button>
+                            </div>
+                            
+                            <div class="toolbar-group">
+                                <button onclick="knowledgeEditor.insertTable()" title="Вставить таблицу">⧠</button>
+                                <button onclick="knowledgeEditor.insertImage()" title="Вставить изображение">🖼️</button>
+                                <button onclick="knowledgeEditor.insertVideo()" title="Вставить видео">🎬</button>
+                            </div>
+                            
+                            <div class="toolbar-group">
+                                <button onclick="knowledgeEditor.insertTemplate('note')" title="Блок примечания">📝</button>
+                                <button onclick="knowledgeEditor.insertTemplate('warning')" title="Блок предупреждения">⚠️</button>
+                                <button onclick="knowledgeEditor.insertTemplate('tip')" title="Блок совета">💡</button>
+                            </div>
+                            
+                            <div class="toolbar-group">
+                                <select onchange="knowledgeEditor.changeFontSize(this.value)" title="Размер шрифта">
                                     <option value="">Размер</option>
                                     <option value="1">Мелкий</option>
-                                    <option value="2">Обычный</option>
-                                    <option value="3">Средний</option>
-                                    <option value="4">Крупный</option>
-                                    <option value="5">Очень крупный</option>
-                                    <option value="6">Огромный</option>
+                                    <option value="3">Нормальный</option>
+                                    <option value="5">Крупный</option>
+                                    <option value="7">Очень крупный</option>
+                                </select>
+                                
+                                <select onchange="knowledgeEditor.changeFontFamily(this.value)" title="Шрифт">
+                                    <option value="">Шрифт</option>
+                                    <option value="Arial">Arial</option>
+                                    <option value="Georgia">Georgia</option>
+                                    <option value="'Courier New'">Courier New</option>
+                                    <option value="'Times New Roman'">Times New Roman</option>
                                 </select>
                             </div>
                             
-                            <!-- Группа стилей текста -->
                             <div class="toolbar-group">
-                                <button onclick="enhancedEditor.toggleStyle('bold')" data-tooltip="Жирный" class="tooltip">
-                                    <i class="fas fa-bold"></i>
-                                </button>
-                                <button onclick="enhancedEditor.toggleStyle('italic')" data-tooltip="Курсив" class="tooltip">
-                                    <i class="fas fa-italic"></i>
-                                </button>
-                                <button onclick="enhancedEditor.toggleStyle('underline')" data-tooltip="Подчеркивание" class="tooltip">
-                                    <i class="fas fa-underline"></i>
-                                </button>
-                                <button onclick="enhancedEditor.toggleStyle('strikethrough')" data-tooltip="Зачеркнутый" class="tooltip">
-                                    <i class="fas fa-strikethrough"></i>
-                                </button>
-                            </div>
-                            
-                            <!-- Группа выравнивания -->
-                            <div class="toolbar-group">
-                                <button onclick="enhancedEditor.setAlignment('left')" data-tooltip="Выровнять по левому краю" class="tooltip">
-                                    <i class="fas fa-align-left"></i>
-                                </button>
-                                <button onclick="enhancedEditor.setAlignment('center')" data-tooltip="Выровнять по центру" class="tooltip">
-                                    <i class="fas fa-align-center"></i>
-                                </button>
-                                <button onclick="enhancedEditor.setAlignment('right')" data-tooltip="Выровнять по правому краю" class="tooltip">
-                                    <i class="fas fa-align-right"></i>
-                                </button>
-                                <button onclick="enhancedEditor.setAlignment('justify')" data-tooltip="Выровнять по ширине" class="tooltip">
-                                    <i class="fas fa-align-justify"></i>
-                                </button>
-                            </div>
-                            
-                            <!-- Группа цветов -->
-                            <div class="toolbar-group">
-                                <input type="color" id="textColor" onchange="enhancedEditor.setTextColor(this.value)" 
-                                       title="Цвет текста" style="width: 40px; height: 36px; padding: 2px;">
-                                <input type="color" id="bgColor" onchange="enhancedEditor.setBackgroundColor(this.value)" 
-                                       title="Цвет фона" style="width: 40px; height: 36px; padding: 2px;">
-                            </div>
-                            
-                            <!-- Группа списков -->
-                            <div class="toolbar-group">
-                                <button onclick="enhancedEditor.insertList('ul')" data-tooltip="Маркированный список" class="tooltip">
-                                    <i class="fas fa-list-ul"></i>
-                                </button>
-                                <button onclick="enhancedEditor.insertList('ol')" data-tooltip="Нумерованный список" class="tooltip">
-                                    <i class="fas fa-list-ol"></i>
-                                </button>
-                                <button onclick="enhancedEditor.outdent()" data-tooltip="Уменьшить отступ" class="tooltip">
-                                    <i class="fas fa-outdent"></i>
-                                </button>
-                                <button onclick="enhancedEditor.indent()" data-tooltip="Увеличить отступ" class="tooltip">
-                                    <i class="fas fa-indent"></i>
-                                </button>
-                            </div>
-                            
-                            <!-- Группа заголовков -->
-                            <div class="toolbar-group">
-                                <select onchange="enhancedEditor.setHeading(this.value)">
-                                    <option value="p">Обычный текст</option>
-                                    <option value="h1">Заголовок 1</option>
-                                    <option value="h2">Заголовок 2</option>
-                                    <option value="h3">Заголовок 3</option>
-                                    <option value="h4">Заголовок 4</option>
-                                </select>
-                            </div>
-                            
-                            <!-- Группа вставки -->
-                            <div class="toolbar-group">
-                                <button onclick="enhancedEditor.showLinkModal()" data-tooltip="Вставить ссылку" class="tooltip">
-                                    <i class="fas fa-link"></i>
-                                </button>
-                                <button onclick="enhancedEditor.showImageModal()" data-tooltip="Вставить изображение" class="tooltip">
-                                    <i class="fas fa-image"></i>
-                                </button>
-                                <button onclick="enhancedEditor.insertTable()" data-tooltip="Вставить таблицу" class="tooltip">
-                                    <i class="fas fa-table"></i>
-                                </button>
-                                <button onclick="enhancedEditor.insertCode()" data-tooltip="Вставить код" class="tooltip">
-                                    <i class="fas fa-code"></i>
-                                </button>
-                                <button onclick="enhancedEditor.insertHorizontalRule()" data-tooltip="Горизонтальная линия" class="tooltip">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                            </div>
-                            
-                            <!-- Группа специальных функций -->
-                            <div class="toolbar-group">
-                                <button onclick="enhancedEditor.showEmojiPicker()" data-tooltip="Вставить эмодзи" class="tooltip">
-                                    <i class="fas fa-smile"></i>
-                                </button>
-                                <button onclick="enhancedEditor.insertSpecialChar()" data-tooltip="Специальные символы" class="tooltip">
-                                    <i class="fas fa-superscript"></i>
-                                </button>
-                                <button onclick="enhancedEditor.clearFormatting()" data-tooltip="Очистить форматирование" class="tooltip">
-                                    <i class="fas fa-eraser"></i>
-                                </button>
-                                <button onclick="enhancedEditor.toggleFullscreen()" data-tooltip="Полноэкранный режим" class="tooltip">
-                                    <i class="fas fa-expand"></i>
-                                </button>
+                                <button onclick="knowledgeEditor.undo()" title="Отменить">↶</button>
+                                <button onclick="knowledgeEditor.redo()" title="Повторить">↷</button>
+                                <button onclick="knowledgeEditor.clearFormatting()" title="Очистить форматирование">🧹</button>
                             </div>
                         </div>
-                        
-                        <div id="enhancedEditor" class="enhanced-editor-content" contenteditable="true"></div>
-                        
-                        <div class="character-count">
-                            <span id="wordCount">0 слов</span>
-                            <span id="charCount">0 символов</span>
-                        </div>
+                        <div id="knowledgeEditor" class="editor-content" contenteditable="true"></div>
                     </div>
                     
-                    <!-- Плавающая панель инструментов -->
-                    <div id="floatingToolbar" class="floating-toolbar"></div>
+                    <div class="editor-status">
+                        <span id="editorWordCount">Слов: 0</span>
+                        <span id="editorCharCount">Символов: 0</span>
+                        <span id="editorReadTime">Время чтения: 0 мин</span>
+                    </div>
                 </div>
                 
                 <!-- Вкладка просмотра -->
@@ -1406,6 +1164,10 @@
                         📁 Перетащите сюда изображения или видео<br>
                         <small>или нажмите для выбора файлов</small>
                         <input type="file" id="mediaUpload" multiple accept="image/*,video/*" style="display: none;">
+                    </div>
+                    <div class="media-actions">
+                        <button onclick="knowledgeManager.browseMediaLibrary()">📚 Библиотека медиа</button>
+                        <button onclick="knowledgeManager.downloadAllMedia()">📥 Скачать все медиа</button>
                     </div>
                     <div id="mediaGallery" class="media-gallery">
                         <!-- Медиафайлы будут здесь -->
@@ -1421,49 +1183,61 @@
                     <div id="linksList" class="links-panel">
                         <!-- Список технологий для ссылок будет здесь -->
                     </div>
+                    <div class="linked-items">
+                        <h4>Связанные элементы:</h4>
+                        <div id="linkedItemsList">
+                            <!-- Связанные элементы будут здесь -->
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Вкладка шаблонов -->
+                
+                <!-- Новая вкладка шаблонов -->
                 <div id="templatesTab" class="tab-content">
-                    <div class="template-gallery">
-                        <div class="template-item" onclick="enhancedEditor.insertTemplate('code-example')">
-                            <div class="template-preview">
-                                // Пример кода<br>
-                                function example() {<br>
-                                &nbsp;&nbsp;console.log("Hello");<br>
-                                }
-                            </div>
-                            <div>Шаблон кода</div>
+                    <div class="templates-grid">
+                        <div class="template-card" onclick="knowledgeEditor.insertTemplate('cheatsheet')">
+                            <div class="template-icon">📋</div>
+                            <div class="template-title">Шпаргалка</div>
+                            <div class="template-desc">Структура для быстрых заметок и команд</div>
                         </div>
-                        <div class="template-item" onclick="enhancedEditor.insertTemplate('comparison-table')">
-                            <div class="template-preview">
-                                Характеристика | Вариант A | Вариант B<br>
-                                Стоимость | 100$ | 150$
-                            </div>
-                            <div>Сравнительная таблица</div>
+                        
+                        <div class="template-card" onclick="knowledgeEditor.insertTemplate('tutorial')">
+                            <div class="template-icon">📚</div>
+                            <div class="template-title">Обучение</div>
+                            <div class="template-desc">Пошаговое руководство с примерами</div>
                         </div>
-                        <div class="template-item" onclick="enhancedEditor.insertTemplate('step-by-step')">
-                            <div class="template-preview">
-                                1. Шаг 1: Подготовка<br>
-                                2. Шаг 2: Действия<br>
-                                3. Шаг 3: Проверка
-                            </div>
-                            <div>Пошаговое руководство</div>
+                        
+                        <div class="template-card" onclick="knowledgeEditor.insertTemplate('comparison')">
+                            <div class="template-icon">⚖️</div>
+                            <div class="template-title">Сравнение</div>
+                            <div class="template-desc">Таблица для сравнения технологий</div>
+                        </div>
+                        
+                        <div class="template-card" onclick="knowledgeEditor.insertTemplate('faq')">
+                            <div class="template-icon">❓</div>
+                            <div class="template-title">FAQ</div>
+                            <div class="template-desc">Часто задаваемые вопросы</div>
+                        </div>
+                        
+                        <div class="template-card" onclick="knowledgeEditor.insertTemplate('reference')">
+                            <div class="template-icon">📖</div>
+                            <div class="template-title">Справочник</div>
+                            <div class="template-desc">Структура справочной документации</div>
+                        </div>
+                        
+                        <div class="template-card" onclick="knowledgeEditor.insertTemplate('workflow')">
+                            <div class="template-icon">🔧</div>
+                            <div class="template-title">Процесс</div>
+                            <div class="template-desc">Описание рабочего процесса</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="knowledge-actions">
                     <div>
-                        <button onclick="knowledgeManager.saveContent()" class="success">
-                            <i class="fas fa-save"></i> Сохранить
-                        </button>
-                        <button onclick="enhancedEditor.exportAsPDF()">
-                            <i class="fas fa-file-pdf"></i> Экспорт PDF
-                        </button>
-                        <button onclick="enhancedEditor.printContent()">
-                            <i class="fas fa-print"></i> Печать
-                        </button>
+                        <button onclick="knowledgeManager.saveContent()" class="success">💾 Сохранить</button>
+                        <button onclick="knowledgeManager.exportContent()">📥 Экспорт</button>
+                        <button onclick="knowledgeManager.importContent()">📤 Импорт</button>
+                        <button onclick="knowledgeManager.showHistory()" title="История изменений">📜</button>
                     </div>
                     <button onclick="uiManager.hideModals()">Закрыть</button>
                 </div>
@@ -1487,38 +1261,37 @@
             </div>
         </div>
 
-        <!-- Дополнительные модальные окна для улучшенного редактора -->
-        <div id="linkModal" class="modal">
+        <!-- Новое модальное окно для внутренних ссылок -->
+        <div id="internalLinkModal" class="modal">
             <div class="modal-content">
-                <h3>Вставить ссылку</h3>
-                <input type="text" id="linkUrl" placeholder="URL ссылки" style="margin-bottom: 10px;">
-                <input type="text" id="linkText" placeholder="Текст ссылки">
-                <div style="margin-top: 15px;">
-                    <button onclick="enhancedEditor.insertLink()" class="success">Вставить</button>
+                <div class="modal-header">
+                    <h3>🔗 Вставить внутреннюю ссылку</h3>
+                    <button onclick="uiManager.hideModals()">✕</button>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="internalLinkSearch" placeholder="Поиск по базе знаний...">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <div id="internalLinkResults" style="max-height: 400px; overflow-y: auto; margin-top: 15px;">
+                    <!-- Результаты поиска будут здесь -->
+                </div>
+                <div style="margin-top: 15px; text-align: right;">
                     <button onclick="uiManager.hideModals()">Отмена</button>
                 </div>
             </div>
         </div>
-        
-        <div id="imageModal" class="modal">
+
+        <!-- Модальное окно истории изменений -->
+        <div id="historyModal" class="modal">
             <div class="modal-content">
-                <h3>Вставить изображение</h3>
-                <input type="text" id="imageUrl" placeholder="URL изображения" style="margin-bottom: 10px;">
-                <input type="text" id="imageAlt" placeholder="Альтернативный текст">
-                <div style="margin-top: 15px;">
-                    <button onclick="enhancedEditor.insertImage()" class="success">Вставить</button>
-                    <button onclick="uiManager.hideModals()">Отмена</button>
+                <div class="modal-header">
+                    <h3>📜 История изменений</h3>
+                    <button onclick="uiManager.hideModals()">✕</button>
                 </div>
-            </div>
-        </div>
-        
-        <div id="emojiModal" class="modal">
-            <div class="modal-content">
-                <h3>Выберите эмодзи</h3>
-                <div class="emoji-picker" id="emojiPicker">
-                    <!-- Эмодзи будут добавлены динамически -->
+                <div id="historyList" style="max-height: 400px; overflow-y: auto;">
+                    <!-- История будет здесь -->
                 </div>
-                <div style="margin-top: 15px;">
+                <div style="margin-top: 15px; text-align: right;">
                     <button onclick="uiManager.hideModals()">Закрыть</button>
                 </div>
             </div>
@@ -1536,7 +1309,8 @@
         </div>
     </div>
 
-    <script>
+    <!-- Продолжение кода в следующем сообщении -->
+        <script>
         // Глобальная структура данных с рекурсивной вложенностью
         const techData = {
             categories: []
@@ -1552,7 +1326,7 @@
         // Текущий редактируемый элемент для системы знаний
         let currentKnowledgeItem = null;
 
-        // Менеджер аккордеона
+        // === МЕНЕДЖЕР АККОРДЕОНА ===
         const accordionManager = {
             init() {
                 this.accordionContainer = document.getElementById('accordion');
@@ -1916,7 +1690,7 @@
             }
         };
 
-        // Data Manager
+        // === МЕНЕДЖЕР ДАННЫХ ===
         const dataManager = {
             // Вспомогательные функции для работы с путями
             getNodeByPath(path) {
@@ -2154,7 +1928,7 @@
             }
         };
 
-        // UI Manager
+        // === МЕНЕДЖЕР ИНТЕРФЕЙСА ===
         const uiManager = {
             showModal(modalId) {
                 document.getElementById(modalId).style.display = 'block';
@@ -2225,7 +1999,7 @@
             }
         };
 
-        // Checklist Manager
+        // === МЕНЕДЖЕР ЧЕК-ЛИСТОВ ===
         const checklistManager = {
             currentChecklist: {
                 path: [],
@@ -2433,7 +2207,7 @@
             }
         };
 
-        // Auth Manager
+        // === МЕНЕДЖЕР АУТЕНТИФИКАЦИИ И СИНХРОНИЗАЦИИ ===
         const authManager = {
             autoSaveEnabled: false,
             autoSaveInterval: null,
@@ -3006,7 +2780,362 @@
             }
         };
 
-        // Knowledge Manager
+        // === УЛУЧШЕННЫЙ РЕДАКТОР БАЗЫ ЗНАНИЙ ===
+        const knowledgeEditor = {
+            undoStack: [],
+            redoStack: [],
+            maxHistory: 50,
+            
+            init() {
+                const editor = document.getElementById('knowledgeEditor');
+                if (!editor) return;
+                
+                // Отслеживание изменений для истории и статистики
+                editor.addEventListener('input', () => {
+                    this.saveToHistory();
+                    this.updateStats();
+                });
+                
+                // Инициализация статистики
+                this.updateStats();
+            },
+            
+            // Форматирование текста
+            formatText(command, value = null) {
+                document.execCommand(command, false, value);
+                document.getElementById('knowledgeEditor').focus();
+                this.saveToHistory();
+            },
+            
+            // Вставка заголовка
+            insertHeading(level) {
+                this.formatText('formatBlock', `<h${level}>`);
+            },
+            
+            // Вставка списка
+            insertList(type) {
+                this.formatText(type === 'ul' ? 'insertUnorderedList' : 'insertOrderedList');
+            },
+            
+            // Вставка цитаты
+            insertBlockquote() {
+                this.formatText('formatBlock', '<blockquote>');
+            },
+            
+            // Вставка ссылки
+            insertLink() {
+                const url = prompt('Введите URL:');
+                if (url) {
+                    this.formatText('createLink', url);
+                }
+            },
+            
+            // Показать модальное окно для внутренних ссылок
+            showInternalLinkModal() {
+                knowledgeManager.showInternalLinkModal();
+            },
+            
+            // Вставить внутреннюю ссылку
+            insertInternalLink(item) {
+                const linkHtml = `<a href="#" class="internal-link" data-item-id="${item.id}" data-item-type="${item.type}">${item.name}</a>`;
+                this.insertHtml(linkHtml);
+                uiManager.hideModals();
+            },
+            
+            // Вставка кода
+            insertCode() {
+                const code = prompt('Введите код:');
+                if (code) {
+                    this.insertHtml(`<pre><code>${code}</code></pre>`);
+                }
+            },
+            
+            // Вставка таблицы
+            insertTable() {
+                const rows = parseInt(prompt('Количество строк:', '3')) || 3;
+                const cols = parseInt(prompt('Количество столбцов:', '3')) || 3;
+                
+                let tableHtml = '<table style="width: 100%; border-collapse: collapse; margin: 10px 0;">';
+                tableHtml += '<thead><tr>';
+                
+                for (let j = 0; j < cols; j++) {
+                    tableHtml += `<th style="border: 1px solid #ddd; padding: 8px; background: #f8f9fa;">Заголовок ${j+1}</th>`;
+                }
+                tableHtml += '</tr></thead><tbody>';
+                
+                for (let i = 0; i < rows; i++) {
+                    tableHtml += '<tr>';
+                    for (let j = 0; j < cols; j++) {
+                        tableHtml += `<td style="border: 1px solid #ddd; padding: 8px;">Ячейка ${i+1}-${j+1}</td>`;
+                    }
+                    tableHtml += '</tr>';
+                }
+                
+                tableHtml += '</tbody></table>';
+                this.insertHtml(tableHtml);
+            },
+            
+            // Вставка изображения
+            insertImage() {
+                const url = prompt('Введите URL изображения:');
+                if (url) {
+                    this.insertHtml(`<img src="${url}" alt="Изображение" style="max-width: 100%; border-radius: 5px; margin: 10px 0;">`);
+                }
+            },
+            
+            // Вставка видео
+            insertVideo() {
+                const url = prompt('Введите URL видео:');
+                if (url) {
+                    this.insertHtml(`<div style="margin: 10px 0;"><video controls style="max-width: 100%;"><source src="${url}"></video></div>`);
+                }
+            },
+            
+            // Изменение размера шрифта
+            changeFontSize(size) {
+                if (size) {
+                    this.formatText('fontSize', size);
+                }
+            },
+            
+            // Изменение шрифта
+            changeFontFamily(font) {
+                if (font) {
+                    this.formatText('fontName', font);
+                }
+            },
+            
+            // Отмена действия
+            undo() {
+                if (this.undoStack.length > 0) {
+                    const state = this.undoStack.pop();
+                    this.redoStack.push(document.getElementById('knowledgeEditor').innerHTML);
+                    document.getElementById('knowledgeEditor').innerHTML = state;
+                    this.updateStats();
+                }
+            },
+            
+            // Повтор действия
+            redo() {
+                if (this.redoStack.length > 0) {
+                    const state = this.redoStack.pop();
+                    this.undoStack.push(document.getElementById('knowledgeEditor').innerHTML);
+                    document.getElementById('knowledgeEditor').innerHTML = state;
+                    this.updateStats();
+                }
+            },
+            
+            // Очистка форматирования
+            clearFormatting() {
+                this.formatText('removeFormat');
+                this.formatText('unlink');
+            },
+            
+            // Сохранение в историю
+            saveToHistory() {
+                const editor = document.getElementById('knowledgeEditor');
+                this.undoStack.push(editor.innerHTML);
+                
+                if (this.undoStack.length > this.maxHistory) {
+                    this.undoStack.shift();
+                }
+                
+                this.redoStack = [];
+            },
+            
+            // Обновление статистики
+            updateStats() {
+                const editor = document.getElementById('knowledgeEditor');
+                const text = editor.innerText || editor.textContent;
+                const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+                const charCount = text.length;
+                const readTime = Math.ceil(wordCount / 200);
+                
+                document.getElementById('editorWordCount').textContent = `Слов: ${wordCount}`;
+                document.getElementById('editorCharCount').textContent = `Символов: ${charCount}`;
+                document.getElementById('editorReadTime').textContent = `Время чтения: ${readTime} мин`;
+            },
+            
+            // Вставка HTML
+            insertHtml(html) {
+                const editor = document.getElementById('knowledgeEditor');
+                const selection = window.getSelection();
+                
+                if (selection.rangeCount) {
+                    const range = selection.getRangeAt(0);
+                    range.deleteContents();
+                    
+                    const div = document.createElement('div');
+                    div.innerHTML = html;
+                    const fragment = document.createDocumentFragment();
+                    
+                    while (div.firstChild) {
+                        fragment.appendChild(div.firstChild);
+                    }
+                    
+                    range.insertNode(fragment);
+                } else {
+                    editor.innerHTML += html;
+                }
+                
+                editor.focus();
+                this.saveToHistory();
+                this.updateStats();
+            },
+            
+            // Вставка шаблонов
+            insertTemplate(templateType) {
+                let html = '';
+                
+                switch(templateType) {
+                    case 'note':
+                        html = `<div class="content-block block-note">
+                            <strong>📝 Примечание:</strong>
+                            <div contenteditable="true">Ваше примечание здесь...</div>
+                        </div>`;
+                        break;
+                        
+                    case 'warning':
+                        html = `<div class="content-block block-warning">
+                            <strong>⚠️ Внимание:</strong>
+                            <div contenteditable="true">Важное предупреждение...</div>
+                        </div>`;
+                        break;
+                        
+                    case 'tip':
+                        html = `<div class="content-block block-tip">
+                            <strong>💡 Совет:</strong>
+                            <div contenteditable="true">Полезный совет...</div>
+                        </div>`;
+                        break;
+                        
+                    case 'cheatsheet':
+                        html = `<h2>📋 Шпаргалка</h2>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1px solid #ddd; padding: 8px; background: #f8f9fa;">Команда</th>
+                                    <th style="border: 1px solid #ddd; padding: 8px; background: #f8f9fa;">Описание</th>
+                                    <th style="border: 1px solid #ddd; padding: 8px; background: #f8f9fa;">Пример</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;" contenteditable="true">команда 1</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;" contenteditable="true">описание 1</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;" contenteditable="true">пример 1</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;" contenteditable="true">команда 2</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;" contenteditable="true">описание 2</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;" contenteditable="true">пример 2</td>
+                                </tr>
+                            </tbody>
+                        </table>`;
+                        break;
+                        
+                    case 'tutorial':
+                        html = `<h2>📚 Пошаговое руководство</h2>
+                        <div class="content-block block-note">
+                            <strong>Цель:</strong>
+                            <div contenteditable="true">Опишите цель этого руководства...</div>
+                        </div>
+                        
+                        <h3>Шаг 1: Подготовка</h3>
+                        <div contenteditable="true">Опишите первый шаг...</div>
+                        
+                        <h3>Шаг 2: Выполнение</h3>
+                        <div contenteditable="true">Опишите второй шаг...</div>
+                        
+                        <div class="content-block block-tip">
+                            <strong>💡 Совет:</strong>
+                            <div contenteditable="true">Полезный совет для этого руководства...</div>
+                        </div>`;
+                        break;
+                        
+                    case 'comparison':
+                        html = `<h2>⚖️ Сравнение технологий</h2>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1px solid #ddd; padding: 8px; background: #f8f9fa;">Критерий</th>
+                                    <th style="border: 1px solid #ddd; padding: 8px; background: #f8f9fa;">Технология A</th>
+                                    <th style="border: 1px solid #ddd; padding: 8px; background: #f8f9fa;">Технология B</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;" contenteditable="true">Производительность</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;" contenteditable="true"></td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;" contenteditable="true"></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;" contenteditable="true">Сложность</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;" contenteditable="true"></td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;" contenteditable="true"></td>
+                                </tr>
+                            </tbody>
+                        </table>`;
+                        break;
+                        
+                    case 'faq':
+                        html = `<h2>❓ Часто задаваемые вопросы</h2>
+                        <div class="content-block block-note">
+                            <strong>Вопрос 1:</strong>
+                            <div contenteditable="true">Какой-то вопрос...</div>
+                            <strong>Ответ:</strong>
+                            <div contenteditable="true">Ответ на вопрос...</div>
+                        </div>
+                        <div class="content-block block-note">
+                            <strong>Вопрос 2:</strong>
+                            <div contenteditable="true">Другой вопрос...</div>
+                            <strong>Ответ:</strong>
+                            <div contenteditable="true">Ответ на другой вопрос...</div>
+                        </div>`;
+                        break;
+                        
+                    case 'reference':
+                        html = `<h2>📖 Справочник</h2>
+                        <div class="content-block block-tip">
+                            <strong>Описание:</strong>
+                            <div contenteditable="true">Краткое описание технологии...</div>
+                        </div>
+                        
+                        <h3>Синтаксис</h3>
+                        <pre contenteditable="true"><code>// Пример кода</code></pre>
+                        
+                        <h3>Параметры</h3>
+                        <ul contenteditable="true">
+                            <li>Параметр 1: описание</li>
+                            <li>Параметр 2: описание</li>
+                        </ul>`;
+                        break;
+                        
+                    case 'workflow':
+                        html = `<h2>🔧 Рабочий процесс</h2>
+                        <div class="content-block block-note">
+                            <strong>Цель процесса:</strong>
+                            <div contenteditable="true">Опишите цель этого рабочего процесса...</div>
+                        </div>
+                        
+                        <h3>Шаг 1: Подготовка</h3>
+                        <div contenteditable="true">Опишите первый шаг процесса...</div>
+                        
+                        <h3>Шаг 2: Выполнение</h3>
+                        <div contenteditable="true">Опишите второй шаг процесса...</div>
+                        
+                        <h3>Шаг 3: Завершение</h3>
+                        <div contenteditable="true">Опишите завершающий шаг...</div>`;
+                        break;
+                }
+                
+                if (html) {
+                    this.insertHtml(html);
+                }
+            }
+        };
+
+        // === МЕНЕДЖЕР БАЗЫ ЗНАНИЙ ===
         const knowledgeManager = {
             currentItem: null,
             
@@ -3038,12 +3167,18 @@
                     item.links = [];
                 }
                 
+                // Инициализируем ID, если его нет
+                if (!item.id) {
+                    item.id = 'item_' + Math.random().toString(36).substr(2, 9);
+                }
+                
                 document.getElementById('knowledgeTitle').textContent = `База знаний: ${item.name}`;
-                document.getElementById('enhancedEditor').innerHTML = item.content || '';
-                enhancedEditor.updateCharacterCount();
+                document.getElementById('knowledgeEditor').innerHTML = item.content || '';
+                knowledgeEditor.updateStats();
                 this.renderPreview();
                 this.renderMedia();
                 this.renderLinks();
+                this.renderLinkedItems();
                 
                 uiManager.showModal('knowledgeModal');
             },
@@ -3089,7 +3224,7 @@
             
             // Рендер превью контента
             renderPreview() {
-                const content = document.getElementById('enhancedEditor').innerHTML;
+                const content = document.getElementById('knowledgeEditor').innerHTML;
                 document.getElementById('knowledgePreview').innerHTML = content;
                 
                 // Обрабатываем внутренние ссылки
@@ -3102,7 +3237,7 @@
                 internalLinks.forEach(link => {
                     link.onclick = (e) => {
                         e.preventDefault();
-                        const targetId = link.getAttribute('data-target');
+                        const targetId = link.getAttribute('data-item-id');
                         this.navigateToInternalLink(targetId);
                     };
                 });
@@ -3110,9 +3245,22 @@
             
             // Навигация по внутренним ссылкам
             navigateToInternalLink(targetId) {
-                // Здесь должна быть логика поиска элемента по ID и открытия его базы знаний
-                uiManager.showNotification(`Переход к: ${targetId}`, 'warning');
-                // В реальной реализации здесь будет поиск элемента и открытие его базы знаний
+                const targetItem = this.findItemById(targetId);
+                if (targetItem) {
+                    // Закрываем текущее модальное окно
+                    uiManager.hideModals();
+                    
+                    // Ищем путь к целевому элементу
+                    const pathInfo = this.findPathToItem(targetId);
+                    if (pathInfo) {
+                        // Открываем базу знаний для целевого элемента
+                        setTimeout(() => {
+                            this.openKnowledgeBase(JSON.stringify(pathInfo.path), pathInfo.index);
+                        }, 100);
+                    }
+                } else {
+                    uiManager.showNotification('Элемент не найден', 'error');
+                }
             },
             
             // Рендер медиафайлов
@@ -3177,7 +3325,7 @@
                     const linkItem = document.createElement('div');
                     linkItem.className = 'link-item';
                     linkItem.innerHTML = `
-                        <span>${tech.name}</span>
+                        <span>${tech.type === 'technology' ? '⚙️' : '📁'} ${tech.name}</span>
                         <button onclick="knowledgeManager.toggleLink('${tech.id}')" 
                                 class="${isLinked ? 'success' : ''}">
                             ${isLinked ? '✅' : '🔗'}
@@ -3188,16 +3336,43 @@
                 });
             },
             
+            // Рендер связанных элементов
+            renderLinkedItems() {
+                const linkedItemsList = document.getElementById('linkedItemsList');
+                linkedItemsList.innerHTML = '';
+                
+                if (!this.currentItem.links || this.currentItem.links.length === 0) {
+                    linkedItemsList.innerHTML = '<p style="text-align: center; color: #6c757d;">Нет связанных элементов</p>';
+                    return;
+                }
+                
+                this.currentItem.links.forEach(link => {
+                    const targetItem = this.findItemById(link.id);
+                    if (targetItem) {
+                        const linkedItem = document.createElement('div');
+                        linkedItem.className = 'linked-item';
+                        linkedItem.innerHTML = `
+                            <span>${targetItem.type === 'technology' ? '⚙️' : '📁'} ${targetItem.name}</span>
+                            <div>
+                                <button onclick="knowledgeManager.openLinkedItem('${link.id}')" title="Открыть">👁️</button>
+                                <button onclick="knowledgeManager.removeLink('${link.id}')" class="delete" title="Удалить связь">🗑️</button>
+                            </div>
+                        `;
+                        linkedItemsList.appendChild(linkedItem);
+                    }
+                });
+            },
+            
             // Получение всех технологий
             getAllTechnologies() {
                 const technologies = [];
                 
                 function traverse(nodes) {
                     nodes.forEach(node => {
-                        if (node.type === 'technology') {
+                        if (node.type === 'technology' || node.type === 'category' || node.type === 'node') {
                             // Генерируем уникальный ID, если его нет
                             if (!node.id) {
-                                node.id = 'tech_' + Math.random().toString(36).substr(2, 9);
+                                node.id = 'item_' + Math.random().toString(36).substr(2, 9);
                             }
                             technologies.push(node);
                         }
@@ -3225,22 +3400,51 @@
                     this.currentItem.links.splice(existingIndex, 1);
                 } else {
                     // Добавляем ссылку
-                    const targetTech = this.findTechnologyById(techId);
+                    const targetTech = this.findItemById(techId);
                     if (targetTech) {
                         this.currentItem.links.push({
                             id: techId,
                             name: targetTech.name,
-                            path: this.getPathToTechnology(targetTech)
+                            type: targetTech.type
                         });
                     }
                 }
                 
                 this.renderLinks();
+                this.renderLinkedItems();
                 this.scheduleSave();
             },
             
-            // Поиск технологии по ID
-            findTechnologyById(id) {
+            // Удаление связи
+            removeLink(techId) {
+                if (!this.currentItem.links) return;
+                
+                const existingIndex = this.currentItem.links.findIndex(link => link.id === techId);
+                if (existingIndex >= 0) {
+                    this.currentItem.links.splice(existingIndex, 1);
+                    this.renderLinks();
+                    this.renderLinkedItems();
+                    this.scheduleSave();
+                }
+            },
+            
+            // Открытие связанного элемента
+            openLinkedItem(itemId) {
+                const targetItem = this.findItemById(itemId);
+                if (targetItem) {
+                    uiManager.hideModals();
+                    
+                    const pathInfo = this.findPathToItem(itemId);
+                    if (pathInfo) {
+                        setTimeout(() => {
+                            this.openKnowledgeBase(JSON.stringify(pathInfo.path), pathInfo.index);
+                        }, 100);
+                    }
+                }
+            },
+            
+            // Поиск элемента по ID
+            findItemById(id) {
                 function findInNodes(nodes) {
                     for (const node of nodes) {
                         if (node.id === id) {
@@ -3258,11 +3462,20 @@
                 return findInNodes(techData.categories);
             },
             
-            // Получение пути к технологии
-            getPathToTechnology(tech) {
-                // Эта функция должна возвращать путь к технологии в структуре данных
-                // В реальной реализации нужно пройти по всей структуре и найти путь
-                return [];
+            // Получение пути к элементу
+            findPathToItem(targetId, nodes = techData.categories, path = []) {
+                for (let i = 0; i < nodes.length; i++) {
+                    const node = nodes[i];
+                    if (node.id === targetId) {
+                        return { path, index: i };
+                    }
+                    
+                    if (node.children && node.children.length > 0) {
+                        const result = this.findPathToItem(targetId, node.children, [...path, i]);
+                        if (result) return result;
+                    }
+                }
+                return null;
             },
             
             // Удаление медиафайла
@@ -3284,7 +3497,7 @@
                     insertHtml = `<video controls style="max-width: 100%;"><source src="${data}"></video>`;
                 }
                 
-                enhancedEditor.insertHTML(insertHtml);
+                knowledgeEditor.insertHtml(insertHtml);
                 this.switchTab('editor');
             },
             
@@ -3292,9 +3505,132 @@
             saveContent() {
                 if (!this.currentItem) return;
                 
-                this.currentItem.content = document.getElementById('enhancedEditor').innerHTML;
+                this.currentItem.content = document.getElementById('knowledgeEditor').innerHTML;
                 this.scheduleSave();
                 uiManager.showNotification('Контент сохранен!', 'success');
+            },
+            
+            // Экспорт контента
+            exportContent() {
+                const content = this.currentItem.content;
+                const blob = new Blob([content], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${this.currentItem.name}.html`;
+                a.click();
+                URL.revokeObjectURL(url);
+            },
+            
+            // Импорт контента
+            importContent() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.html,.txt';
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        document.getElementById('knowledgeEditor').innerHTML = e.target.result;
+                        this.renderPreview();
+                        uiManager.showNotification('Контент импортирован!', 'success');
+                    };
+                    reader.readAsText(file);
+                };
+                input.click();
+            },
+            
+            // Показать историю изменений
+            showHistory() {
+                uiManager.showModal('historyModal');
+                this.renderHistory();
+            },
+            
+            // Рендер истории
+            renderHistory() {
+                const historyList = document.getElementById('historyList');
+                historyList.innerHTML = '';
+                
+                // Здесь должна быть логика получения реальной истории
+                // Покажем заглушку
+                historyList.innerHTML = `
+                    <div class="history-item">
+                        <div>
+                            <strong>Текущая версия</strong>
+                            <div style="font-size: 0.8em; color: #6c757d;">Только что</div>
+                        </div>
+                        <button onclick="knowledgeManager.restoreVersion('current')">Восстановить</button>
+                    </div>
+                    <div class="history-item">
+                        <div>
+                            <strong>Версия 1</strong>
+                            <div style="font-size: 0.8em; color: #6c757d;">2 часа назад</div>
+                        </div>
+                        <button onclick="knowledgeManager.restoreVersion('1')">Восстановить</button>
+                    </div>
+                `;
+            },
+            
+            // Восстановление версии
+            restoreVersion(version) {
+                // Заглушка для восстановления версии
+                uiManager.showNotification(`Версия ${version} восстановлена`, 'success');
+                uiManager.hideModals();
+            },
+            
+            // Показать модальное окно для внутренних ссылок
+            showInternalLinkModal() {
+                uiManager.showModal('internalLinkModal');
+                this.loadInternalLinkItems();
+            },
+            
+            // Загрузка элементов для внутренних ссылок
+            loadInternalLinkItems() {
+                const results = document.getElementById('internalLinkResults');
+                results.innerHTML = '';
+                
+                const allItems = this.getAllKnowledgeItems();
+                
+                if (allItems.length === 0) {
+                    results.innerHTML = '<p style="text-align: center; color: #6c757d;">Элементы не найдены</p>';
+                    return;
+                }
+                
+                allItems.forEach(item => {
+                    // Пропускаем текущий элемент
+                    if (item === this.currentItem) return;
+                    
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'internal-link-item';
+                    itemElement.innerHTML = `
+                        <div>
+                            <strong>${item.type === 'technology' ? '⚙️' : '📁'} ${item.name}</strong>
+                            <div style="font-size: 0.8em; color: #6c757d;">${this.getTypeDisplay(item.type)}</div>
+                        </div>
+                    `;
+                    
+                    itemElement.onclick = () => {
+                        knowledgeEditor.insertInternalLink(item);
+                    };
+                    
+                    results.appendChild(itemElement);
+                });
+            },
+            
+            // Получение всех элементов базы знаний
+            getAllKnowledgeItems() {
+                return this.getAllTechnologies(); // Используем ту же функцию
+            },
+            
+            // Отображение типа элемента
+            getTypeDisplay(type) {
+                const typeNames = {
+                    'category': 'Категория',
+                    'node': 'Подкатегория', 
+                    'technology': 'Технология'
+                };
+                
+                return typeNames[type] || 'Элемент';
             },
             
             // Глобальный поиск
@@ -3329,7 +3665,7 @@
                     resultItem.style.cursor = 'pointer';
                     
                     resultItem.innerHTML = `
-                        <div style="font-weight: bold;">${result.item.name}</div>
+                        <div style="font-weight: bold;">${result.item.type === 'technology' ? '⚙️' : '📁'} ${result.item.name}</div>
                         <div style="font-size: 0.9em; color: #6c757d;">${result.context}</div>
                     `;
                     
@@ -3380,6 +3716,15 @@
                 return results;
             },
             
+            // Заглушки для дополнительных функций
+            browseMediaLibrary() {
+                uiManager.showNotification('Функция библиотеки медиа в разработке', 'warning');
+            },
+            
+            downloadAllMedia() {
+                uiManager.showNotification('Функция скачивания медиа в разработке', 'warning');
+            },
+            
             // Планирование сохранения
             scheduleSave() {
                 dataManager.saveToLocalStorage();
@@ -3388,311 +3733,130 @@
             }
         };
 
-        // Enhanced Editor
-        const enhancedEditor = {
-            isFullscreen: false,
-            originalStyles: null,
+        // === ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ===
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация редактора
+            knowledgeEditor.init();
             
-            init() {
-                this.setupEventListeners();
-                this.setupFloatingToolbar();
-                this.populateEmojiPicker();
-                this.updateCharacterCount();
-            },
+            // Инициализация аутентификации и данных
+            authManager.loadAuth();
+            dataManager.loadFromLocalStorage();
+            accordionManager.init();
+            authManager.updateSyncStatus();
             
-            setupEventListeners() {
-                const editor = document.getElementById('enhancedEditor');
-                
-                // Обновление счетчика символов
-                editor.addEventListener('input', () => {
-                    this.updateCharacterCount();
+            // Инициализация drag & drop для медиа
+            const dropZone = document.getElementById('mediaDropZone');
+            const fileInput = document.getElementById('mediaUpload');
+            
+            if (dropZone && fileInput) {
+                dropZone.addEventListener('click', () => {
+                    fileInput.click();
                 });
                 
-                // Плавающая панель инструментов при выделении текста
-                editor.addEventListener('mouseup', (e) => {
-                    const selection = window.getSelection();
-                    if (selection.toString().length > 0) {
-                        this.showFloatingToolbar(e);
-                    }
+                fileInput.addEventListener('change', (e) => {
+                    knowledgeManager.handleFiles(e.target.files);
                 });
                 
-                // Горячие клавиши
-                editor.addEventListener('keydown', (e) => {
-                    // Ctrl+B - жирный
-                    if (e.ctrlKey && e.key === 'b') {
-                        e.preventDefault();
-                        this.toggleStyle('bold');
-                    }
-                    // Ctrl+I - курсив
-                    if (e.ctrlKey && e.key === 'i') {
-                        e.preventDefault();
-                        this.toggleStyle('italic');
-                    }
-                    // Ctrl+U - подчеркивание
-                    if (e.ctrlKey && e.key === 'u') {
-                        e.preventDefault();
-                        this.toggleStyle('underline');
-                    }
-                    // Ctrl+K - вставить ссылку
-                    if (e.ctrlKey && e.key === 'k') {
-                        e.preventDefault();
-                        this.showLinkModal();
-                    }
+                dropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('dragover');
                 });
-            },
-            
-            setupFloatingToolbar() {
-                const toolbar = document.getElementById('floatingToolbar');
-                toolbar.innerHTML = `
-                    <button onclick="enhancedEditor.toggleStyle('bold')"><i class="fas fa-bold"></i></button>
-                    <button onclick="enhancedEditor.toggleStyle('italic')"><i class="fas fa-italic"></i></button>
-                    <button onclick="enhancedEditor.toggleStyle('underline')"><i class="fas fa-underline"></i></button>
-                    <button onclick="enhancedEditor.showLinkModal()"><i class="fas fa-link"></i></button>
-                    <button onclick="enhancedEditor.setHeading('h2')"><i class="fas fa-heading"></i></button>
-                    <button onclick="enhancedEditor.insertList('ul')"><i class="fas fa-list-ul"></i></button>
-                `;
-            },
-            
-            showFloatingToolbar(e) {
-                const toolbar = document.getElementById('floatingToolbar');
-                const rect = e.target.getBoundingClientRect();
                 
-                toolbar.style.display = 'flex';
-                toolbar.style.top = (e.clientY - rect.top - 50) + 'px';
-                toolbar.style.left = (e.clientX - rect.left) + 'px';
+                dropZone.addEventListener('dragleave', () => {
+                    dropZone.classList.remove('dragover');
+                });
                 
-                // Скрыть плавающую панель через 3 секунды
-                setTimeout(() => {
-                    toolbar.style.display = 'none';
-                }, 3000);
-            },
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                    knowledgeManager.handleFiles(e.dataTransfer.files);
+                });
+            }
             
-            // Форматирование текста
-            toggleStyle(style) {
-                document.execCommand(style, false, null);
-                this.updateCharacterCount();
-            },
+            // Инициализация поиска
+            const globalSearch = document.getElementById('globalSearch');
+            if (globalSearch) {
+                globalSearch.addEventListener('input', () => {
+                    knowledgeManager.performSearch();
+                });
+            }
             
-            setAlignment(alignment) {
-                document.execCommand('justify' + alignment.charAt(0).toUpperCase() + alignment.slice(1), false, null);
-            },
+            const linkSearch = document.getElementById('linkSearch');
+            if (linkSearch) {
+                linkSearch.addEventListener('input', () => {
+                    knowledgeManager.filterLinks();
+                });
+            }
             
-            setFontFamily(font) {
-                if (font) {
-                    document.execCommand('fontName', false, font);
-                }
-            },
-            
-            setFontSize(size) {
-                if (size) {
-                    document.execCommand('fontSize', false, size);
-                }
-            },
-            
-            setTextColor(color) {
-                document.execCommand('foreColor', false, color);
-            },
-            
-            setBackgroundColor(color) {
-                document.execCommand('backColor', false, color);
-            },
-            
-            setHeading(level) {
-                if (level === 'p') {
-                    document.execCommand('formatBlock', false, '<p>');
-                } else {
-                    document.execCommand('formatBlock', false, '<' + level + '>');
-                }
-            },
-            
-            // Вставка элементов
-            insertList(type) {
-                document.execCommand(type === 'ul' ? 'insertUnorderedList' : 'insertOrderedList');
-            },
-            
-            indent() {
-                document.execCommand('indent', false, null);
-            },
-            
-            outdent() {
-                document.execCommand('outdent', false, null);
-            },
-            
-            showLinkModal() {
-                const selection = window.getSelection();
-                const selectedText = selection.toString();
+            const internalLinkSearch = document.getElementById('internalLinkSearch');
+            if (internalLinkSearch) {
+                internalLinkSearch.addEventListener('input', () => {
+                    knowledgeManager.filterInternalLinks();
+                });
+            }
+        });
+
+        // Расширяем knowledgeManager методами для работы с файлами
+        knowledgeManager.handleFiles = function(files) {
+            for (const file of files) {
+                const reader = new FileReader();
                 
-                if (selectedText) {
-                    document.getElementById('linkText').value = selectedText;
-                }
+                reader.onload = (e) => {
+                    const mediaType = file.type.startsWith('image/') ? 'image' : 
+                                    file.type.startsWith('video/') ? 'video' : 'other';
+                    
+                    if (mediaType === 'other') {
+                        uiManager.showNotification('Неподдерживаемый тип файла', 'error');
+                        return;
+                    }
+                    
+                    if (!this.currentItem.media) {
+                        this.currentItem.media = [];
+                    }
+                    
+                    this.currentItem.media.push({
+                        name: file.name,
+                        type: mediaType,
+                        data: e.target.result,
+                        mimeType: file.type,
+                        size: file.size
+                    });
+                    
+                    this.renderMedia();
+                    this.scheduleSave();
+                    uiManager.showNotification(`Файл "${file.name}" загружен`, 'success');
+                };
                 
-                uiManager.showModal('linkModal');
-            },
+                reader.readAsDataURL(file);
+            }
+        };
+
+        knowledgeManager.filterLinks = function() {
+            const query = document.getElementById('linkSearch').value.toLowerCase();
+            const linkItems = document.querySelectorAll('.link-item');
             
-            insertLink() {
-                const url = document.getElementById('linkUrl').value;
-                const text = document.getElementById('linkText').value || url;
-                
-                if (url) {
-                    const html = `<a href="${url}" target="_blank" rel="noopener">${text}</a>`;
-                    this.insertHTML(html);
-                }
-                
+            linkItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(query) ? 'flex' : 'none';
+            });
+        };
+
+        knowledgeManager.filterInternalLinks = function() {
+            const query = document.getElementById('internalLinkSearch').value.toLowerCase();
+            const linkItems = document.querySelectorAll('.internal-link-item');
+            
+            linkItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(query) ? 'block' : 'none';
+            });
+        };
+
+        // Закрытие модальных окон при клике вне их
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
                 uiManager.hideModals();
-            },
-            
-            showImageModal() {
-                uiManager.showModal('imageModal');
-            },
-            
-            insertImage() {
-                const url = document.getElementById('imageUrl').value;
-                const alt = document.getElementById('imageAlt').value || 'Изображение';
-                
-                if (url) {
-                    const html = `<img src="${url}" alt="${alt}" style="max-width: 100%; border-radius: 5px; margin: 10px 0;">`;
-                    this.insertHTML(html);
-                }
-                
-                uiManager.hideModals();
-            },
-            
-            insertTable() {
-                const rows = prompt('Количество строк:', '3');
-                const cols = prompt('Количество столбцов:', '3');
-                
-                if (rows && cols) {
-                    let tableHTML = '<table class="editor-table"><thead><tr>';
-                    
-                    // Заголовки таблицы
-                    for (let i = 0; i < cols; i++) {
-                        tableHTML += `<th>Заголовок ${i + 1}</th>`;
-                    }
-                    tableHTML += '</tr></thead><tbody>';
-                    
-                    // Тело таблицы
-                    for (let i = 0; i < rows; i++) {
-                        tableHTML += '<tr>';
-                        for (let j = 0; j < cols; j++) {
-                            tableHTML += `<td>Ячейка ${i + 1}-${j + 1}</td>`;
-                        }
-                        tableHTML += '</tr>';
-                    }
-                    
-                    tableHTML += '</tbody></table>';
-                    this.insertHTML(tableHTML);
-                }
-            },
-            
-            insertCode() {
-                const language = prompt('Язык программирования (опционально):', 'javascript');
-                const code = prompt('Введите код:');
-                
-                if (code) {
-                    const langAttr = language ? ` data-language="${language}"` : '';
-                    const html = `<div class="editor-code"${langAttr}><pre><code>${this.escapeHTML(code)}</code></pre></div>`;
-                    this.insertHTML(html);
-                }
-            },
-            
-            insertHorizontalRule() {
-                this.insertHTML('<hr style="border: 1px solid #ddd; margin: 20px 0;">');
-            },
-            
-            insertSpecialChar() {
-                const char = prompt('Введите специальный символ или HTML entity:');
-                if (char) {
-                    this.insertHTML(char);
-                }
-            },
-            
-            showEmojiPicker() {
-                uiManager.showModal('emojiModal');
-            },
-            
-            populateEmojiPicker() {
-                const emojis = ['😀', '😂', '🥰', '😎', '🤔', '🙂', '😊', '🤩', '😍', '🤗', 
-                               '👍', '👎', '❤️', '🔥', '⭐', '🎉', '💡', '📚', '⚡', '🔧',
-                               '📝', '🔍', '💻', '📱', '🌐', '🚀', '💾', '📊', '🔒', '📅'];
-                
-                const picker = document.getElementById('emojiPicker');
-                picker.innerHTML = '';
-                
-                emojis.forEach(emoji => {
-                    const emojiElement = document.createElement('div');
-                    emojiElement.className = 'emoji';
-                    emojiElement.textContent = emoji;
-                    emojiElement.onclick = () => {
-                        this.insertHTML(emoji);
-                        uiManager.hideModals();
-                    };
-                    picker.appendChild(emojiElement);
-                });
-            },
-            
-            // Утилиты
-            insertHTML(html) {
-                const selection = window.getSelection();
-                
-                if (selection.rangeCount) {
-                    const range = selection.getRangeAt(0);
-                    range.deleteContents();
-                    
-                    const div = document.createElement('div');
-                    div.innerHTML = html;
-                    const fragment = document.createDocumentFragment();
-                    
-                    while (div.firstChild) {
-                        fragment.appendChild(div.firstChild);
-                    }
-                    
-                    range.insertNode(fragment);
-                } else {
-                    document.getElementById('enhancedEditor').innerHTML += html;
-                }
-                
-                this.updateCharacterCount();
-            },
-            
-            escapeHTML(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            },
-            
-            clearFormatting() {
-                document.execCommand('removeFormat', false, null);
-                document.execCommand('unlink', false, null);
-            },
-            
-            updateCharacterCount() {
-                const editor = document.getElementById('enhancedEditor');
-                const text = editor.innerText || '';
-                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-                const characters = text.length;
-                
-                document.getElementById('wordCount').textContent = words + ' слов';
-                document.getElementById('charCount').textContent = characters + ' символов';
-            },
-            
-            // Расширенные функции
-            toggleFullscreen() {
-                const editor = document.getElementById('enhancedEditor');
-                const toolbar = document.getElementById('enhancedToolbar');
-                
-                if (!this.isFullscreen) {
-                    // Вход в полноэкранный режим
-                    this.originalStyles = {
-                        height: editor.style.height,
-                        overflow: editor.style.overflow
-                    };
-                    
-                    editor.style.height = 'calc(100vh - 150px)';
-                    editor.style.overflow = 'auto';
-                    toolbar.style.position = 'sticky';
-                    toolbar.style.top = '0';
-                    toolbar.style.zIndex = '1000';
-                    
-                    this.isFullscreen = true;
-                } else {
-                    // Выход из полноэкранного режим
+            }
+        };
+    </script>
+</body>
+</html>
