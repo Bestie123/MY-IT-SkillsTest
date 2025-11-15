@@ -13,7 +13,10 @@
               "type": "technology",
               "checklist": [],
               "completed": false,
-              "id": "tech_mh7t656c8"
+              "id": "tech_mh7t656c8",
+              "content": "",
+              "media": [],
+              "links": []
             },
             {
               "name": "Глубокое изучение Collections (HashMap, ArrayList)",
@@ -78,7 +81,8 @@
               "completed": false,
               "id": "tech_rctfnz1b7"
             }
-          ]
+          ],
+          "id": "tech_dgk0bcxjo"
         },
         {
           "name": "Spring Framework",
@@ -326,7 +330,8 @@
             }
           ]
         }
-      ]
+      ],
+      "id": "tech_s1kb0u24b"
     },
     {
       "name": "Infrastructure & DevOps",
@@ -472,7 +477,13 @@
           "completed": false,
           "content": "<br>",
           "media": [],
-          "links": [],
+          "links": [
+            {
+              "id": "tech_mh7t656c8",
+              "name": "Многопоточность и Concurrent Collections",
+              "path": []
+            }
+          ],
           "id": "tech_whlcue108"
         },
         {
@@ -480,14 +491,20 @@
           "type": "technology",
           "checklist": [],
           "completed": false,
-          "id": "tech_e214zxitt"
+          "id": "tech_e214zxitt",
+          "content": "",
+          "media": [],
+          "links": []
         },
         {
           "name": "Swagger",
           "type": "technology",
           "checklist": [],
           "completed": false,
-          "id": "tech_zpuvvb0h1"
+          "id": "tech_zpuvvb0h1",
+          "content": "",
+          "media": [],
+          "links": []
         },
         {
           "name": "OpenAPI",
