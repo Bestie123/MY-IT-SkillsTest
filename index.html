@@ -479,6 +479,15 @@
             width: auto;
             margin-right: 5px;
         }
+
+        .sync-status {
+            margin-top: 10px;
+            padding: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
     </style>
 </head>
 <body>
@@ -495,6 +504,9 @@
                 <button onclick="authManager.saveAuth()">💾 Сохранить настройки</button>
                 <button onclick="authManager.testAuth()" class="success">🔍 Проверить подключение</button>
             </div>
+            <div id="syncStatus" class="sync-status">
+                <!-- Статус синхронизации будет здесь -->
+            </div>
             <div id="authStatus" class="auth-status"></div>
             <p><small>Токен хранится только в вашем браузере. Создайте токен в GitHub с правами repo</small></p>
         </div>
@@ -507,6 +519,7 @@
                 <button onclick="uiManager.showAddTechModal()">+ Добавить технологию</button>
                 <button onclick="authManager.loadFromGitHub()">🔄 Загрузить с GitHub</button>
                 <button onclick="authManager.saveToGitHub()">💾 Сохранить на GitHub</button>
+                <button onclick="authManager.forceSync()">🔄 Принудительная синхронизация</button>
                 <button onclick="authManager.toggleAutoSave()" id="autoSaveBtn">🚫 Автосохранение</button>
                 <button onclick="dataManager.exportToJSON()">📥 Экспорт в JSON</button>
                 <button onclick="dataManager.importFromJSON()">📤 Импорт из JSON</button>
@@ -606,6 +619,10 @@
 
         // Текущий выбранный путь для модальных окон
         let currentModalPath = [];
+
+        // Переменные для отслеживания состояния синхронизации
+        let lastKnownRemoteSha = null;
+        let lastSyncTime = null;
 
         // Менеджер аккордеона
         const accordionManager = {
@@ -966,6 +983,7 @@
             authManager.loadAuth();
             dataManager.loadFromLocalStorage();
             accordionManager.init();
+            authManager.updateSyncStatus();
             
             // Включить автосохранение по умолчанию, если настроен GitHub
             const token = localStorage.getItem('githubToken');
@@ -1586,7 +1604,7 @@
                 authStatus.style.display = 'block';
             },
 
-            // === АВТОСОХРАНЕНИЕ ===
+            // === АВТОСОХРАНЕНИЕ С ПРЕДОТВРАЩЕНИЕМ ПЕРЕЗАПИСИ ===
             enableAutoSave() {
                 if (this.autoSaveEnabled) return;
                 
@@ -1651,8 +1669,10 @@
                 try {
                     console.log('🔄 Автосохранение на GitHub...');
                     
-                    let sha = null;
+                    let currentRemoteSha = null;
+                    let remoteData = null;
                     
+                    // Получаем текущее состояние файла на GitHub
                     try {
                         const getResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
                             headers: {
@@ -1664,7 +1684,22 @@
                         
                         if (getResponse.status === 200) {
                             const data = await getResponse.json();
-                            sha = data.sha;
+                            currentRemoteSha = data.sha;
+                            
+                            // Если файл изменился с момента последней синхронизации
+                            if (lastKnownRemoteSha && currentRemoteSha !== lastKnownRemoteSha) {
+                                console.log('⚠️ Обнаружены изменения на сервере, загружаем для слияния...');
+                                const remoteContent = decodeURIComponent(escape(atob(data.content)));
+                                remoteData = JSON.parse(remoteContent);
+                                
+                                // Сливаем изменения
+                                this.mergeData(remoteData);
+                            }
+                            
+                            lastKnownRemoteSha = currentRemoteSha;
+                        } else if (getResponse.status === 404) {
+                            // Файл не существует, это нормально для первого сохранения
+                            console.log('📝 Файл не найден, будет создан новый');
                         }
                     } catch (e) {
                         console.error('Ошибка при проверке файла для автосохранения:', e);
@@ -1680,8 +1715,8 @@
                         content: contentBase64
                     };
 
-                    if (sha) {
-                        requestBody.sha = sha;
+                    if (currentRemoteSha) {
+                        requestBody.sha = currentRemoteSha;
                     }
 
                     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
@@ -1697,6 +1732,8 @@
 
                     if (response.status === 200 || response.status === 201) {
                         this.lastSaveTime = Date.now();
+                        lastSyncTime = Date.now();
+                        this.updateSyncStatus();
                         console.log('✅ Автосохранение выполнено успешно');
                         
                         if (!document.hidden) {
@@ -1704,12 +1741,159 @@
                         }
                     } else {
                         console.warn('⚠️ Автосохранение не удалось:', response.status);
+                        
+                        // Если возник конфликт, предлагаем пользователю разрешить его
+                        if (response.status === 409) {
+                            this.handleSyncConflict();
+                        }
                     }
                 } catch (error) {
                     console.error('❌ Ошибка автосохранения:', error);
                 }
             },
             
+            // Функция для слияния данных
+            mergeData(remoteData) {
+                if (!remoteData || !remoteData.categories) return;
+                
+                console.log('🔄 Начинаем слияние данных...');
+                
+                // Простое слияние: добавляем отсутствующие категории и технологии
+                // В реальном приложении здесь должна быть более сложная логика
+                remoteData.categories.forEach(remoteCategory => {
+                    const localCategory = techData.categories.find(cat => cat.name === remoteCategory.name);
+                    
+                    if (!localCategory) {
+                        // Категории нет в локальных данных, добавляем её
+                        techData.categories.push(JSON.parse(JSON.stringify(remoteCategory)));
+                        console.log(`✅ Добавлена категория: ${remoteCategory.name}`);
+                    } else {
+                        // Сливаем технологии внутри категории
+                        this.mergeTechnologies(localCategory, remoteCategory);
+                    }
+                });
+                
+                // Сохраняем объединенные данные
+                dataManager.saveToLocalStorage();
+                dataManager.renderCurrentView();
+                
+                uiManager.showNotification('✅ Данные синхронизированы с сервером', 'success');
+            },
+
+            // Функция для слияния технологий
+            mergeTechnologies(localCategory, remoteCategory) {
+                if (!remoteCategory.children) return;
+                
+                remoteCategory.children.forEach(remoteItem => {
+                    // Проверяем, есть ли уже такая технология/подкатегория
+                    const exists = localCategory.children.some(localItem => 
+                        localItem.name === remoteItem.name && localItem.type === remoteItem.type
+                    );
+                    
+                    if (!exists) {
+                        // Добавляем отсутствующий элемент
+                        localCategory.children.push(JSON.parse(JSON.stringify(remoteItem)));
+                        console.log(`✅ Добавлен ${remoteItem.type === 'technology' ? 'технология' : 'подкатегория'}: ${remoteItem.name}`);
+                    } else if (remoteItem.type === 'technology') {
+                        // Для технологий можно также сливать чек-листы
+                        this.mergeChecklists(localCategory, remoteItem);
+                    }
+                });
+            },
+
+            // Функция для слияния чек-листов
+            mergeChecklists(localCategory, remoteTech) {
+                const localTech = localCategory.children.find(item => 
+                    item.name === remoteTech.name && item.type === 'technology'
+                );
+                
+                if (!localTech || !remoteTech.checklist) return;
+                
+                if (!localTech.checklist) {
+                    localTech.checklist = [];
+                }
+                
+                // Добавляем отсутствующие пункты чек-листа
+                remoteTech.checklist.forEach(remoteItem => {
+                    const exists = localTech.checklist.some(localItem => 
+                        localItem.text === remoteItem.text
+                    );
+                    
+                    if (!exists) {
+                        localTech.checklist.push(JSON.parse(JSON.stringify(remoteItem)));
+                        console.log(`✅ Добавлен пункт чек-листа: ${remoteItem.text}`);
+                    }
+                });
+            },
+
+            // Функция для обработки конфликтов синхронизации
+            handleSyncConflict() {
+                if (confirm('Обнаружен конфликт версий. Хотите загрузить данные с сервера и объединить с вашими изменениями?')) {
+                    this.loadFromGitHubWithMerge();
+                } else {
+                    uiManager.showNotification('⚠️ Автосохранение отключено из-за конфликта', 'warning');
+                    this.disableAutoSave();
+                }
+            },
+
+            // Модифицированная функция загрузки с GitHub для слияния
+            async loadFromGitHubWithMerge() {
+                const token = localStorage.getItem('githubToken');
+                const owner = localStorage.getItem('repoOwner');
+                const repo = localStorage.getItem('repoName');
+                
+                if (!token || !owner || !repo) {
+                    uiManager.showNotification('Сначала настройте доступ к GitHub!', 'error');
+                    return;
+                }
+
+                try {
+                    uiManager.showNotification('Загрузка и слияние данных с GitHub...', 'warning');
+                    
+                    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/tech-data.json`, {
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'User-Agent': 'TechDocs-App'
+                        }
+                    });
+
+                    if (response.status === 200) {
+                        const data = await response.json();
+                        const content = decodeURIComponent(escape(atob(data.content)));
+                        const remoteData = JSON.parse(content);
+                        
+                        // Сохраняем текущие локальные данные перед слиянием
+                        const localDataBackup = JSON.parse(JSON.stringify(techData));
+                        
+                        // Сливаем данные
+                        this.mergeData(remoteData);
+                        
+                        // Обновляем SHA
+                        lastKnownRemoteSha = data.sha;
+                        lastSyncTime = Date.now();
+                        this.updateSyncStatus();
+                        
+                        uiManager.showNotification('✅ Данные успешно загружены и объединены!', 'success');
+                        
+                        // Включаем автосохранение обратно
+                        this.enableAutoSave();
+                    } else {
+                        throw new Error(`GitHub API error: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error('GitHub load error:', error);
+                    uiManager.showNotification('❌ Ошибка загрузки: ' + error.message, 'error');
+                }
+            },
+
+            // Функция для принудительной синхронизации
+            async forceSync() {
+                if (confirm('Это загрузит последнюю версию с GitHub и объединит с вашими изменениями. Продолжить?')) {
+                    await this.loadFromGitHubWithMerge();
+                }
+            },
+
             showAutoSaveNotification() {
                 const notification = document.createElement('div');
                 notification.innerHTML = '💾 Автосохранено';
@@ -1744,6 +1928,19 @@
                 }, 10000);
             },
 
+            // Обновление статуса синхронизации
+            updateSyncStatus() {
+                const syncStatus = document.getElementById('syncStatus');
+                if (!syncStatus) return;
+                
+                if (lastSyncTime) {
+                    const lastSync = new Date(lastSyncTime).toLocaleString();
+                    syncStatus.innerHTML = `🔄 Последняя синхронизация: ${lastSync}`;
+                } else {
+                    syncStatus.innerHTML = '⏳ Синхронизация не выполнялась';
+                }
+            },
+
             // === РАБОТА С GITHUB API ===
             async loadFromGitHub() {
                 const token = localStorage.getItem('githubToken');
@@ -1774,6 +1971,12 @@
                         techData.categories = parsedData.categories || [];
                         dataManager.renderCurrentView();
                         dataManager.saveToLocalStorage();
+                        
+                        // Обновляем информацию о последней синхронизации
+                        lastKnownRemoteSha = data.sha;
+                        lastSyncTime = Date.now();
+                        this.updateSyncStatus();
+                        
                         uiManager.showNotification('✅ Данные загружены с GitHub!', 'success');
                     } else if (response.status === 404) {
                         uiManager.showNotification('📝 Файл не найден. Создан новый пустой файл.', 'warning');
@@ -1854,6 +2057,8 @@
                     const responseData = await response.json();
 
                     if (response.status === 200 || response.status === 201) {
+                        lastSyncTime = Date.now();
+                        this.updateSyncStatus();
                         uiManager.showNotification('✅ Данные успешно сохранены на GitHub!', 'success');
                     } else {
                         let errorMessage = `Ошибка сохранения: ${response.status}`;
