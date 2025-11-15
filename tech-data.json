@@ -540,6 +540,12 @@
           "type": "technology",
           "checklist": [],
           "completed": false
+        },
+        {
+          "name": "Microsoft Copilot",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
         }
       ]
     }
