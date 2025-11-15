@@ -138,7 +138,10 @@
               "type": "technology",
               "checklist": [],
               "completed": false,
-              "id": "tech_2ylv3zlto"
+              "id": "tech_2ylv3zlto",
+              "content": "",
+              "media": [],
+              "links": []
             }
           ],
           "id": "item_tfjbpw9um"
