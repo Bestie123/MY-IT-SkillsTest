@@ -12,77 +12,63 @@
               "name": "Многопоточность и Concurrent Collections",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_fep9a4kzr",
-              "content": "",
-              "media": [],
-              "links": []
+              "completed": false
             },
             {
               "name": "Глубокое изучение Collections (HashMap, ArrayList)",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_6k7k4ke1x"
+              "completed": false
             },
             {
               "name": "Паттерны проектирования (Singleton, Factory, Builder)",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_asehcmkpx"
+              "completed": false
             },
             {
               "name": "Garbage Collection (основы)",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_hpotcq51q"
+              "completed": false
             },
             {
               "name": "Логирование (SLF4J/Logback)",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_pyzcspsvk"
+              "completed": false
             },
             {
               "name": "Функциональный интерфейс",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_g6ndf0x6n"
+              "completed": false
             },
             {
               "name": "Модули JPMS (Java Platform Module System)",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_5lxvrmznj"
+              "completed": false
             },
             {
               "name": "Сериализация (JSON, XML, Jackson/Gson)",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_b2j5kds8t"
+              "completed": false
             },
             {
               "name": "Работа с датой и временем (java.time)",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_6nt3l7sfk"
+              "completed": false
             },
             {
               "name": "Аннотации & Reflection — понимание того, как работают фреймворки",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_g7ld9pq5y"
+              "completed": false
             }
-          ],
-          "id": "item_mmvl1uh6i"
+          ]
         },
         {
           "name": "Spring Framework",
@@ -92,56 +78,39 @@
               "name": "Spring Boot",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_c5wmiaqtg"
+              "completed": false
             },
             {
               "name": "Spring Core & Context (DI/IoC)",
               "type": "technology",
-              "checklist": [
-                {
-                  "text": "Атов",
-                  "completed": false
-                }
-              ],
-              "completed": true,
-              "id": "tech_wurynot8h"
+              "checklist": [],
+              "completed": true
             },
             {
               "name": "Spring MVC",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_2slrzpxql"
+              "completed": false
             },
             {
               "name": "Spring Data JPA",
               "type": "technology",
               "checklist": [],
-              "completed": true,
-              "id": "tech_dx8nzx2kf"
+              "completed": true
             },
             {
               "name": "Spring Security (+ JWT, OAuth2,HTTPS/SSL)",
               "type": "technology",
-              "checklist": [
-                {
-                  "text": "Ао",
-                  "completed": false
-                }
-              ],
-              "completed": false,
-              "id": "tech_29pe3udqd"
+              "checklist": [],
+              "completed": false
             },
             {
               "name": "Spring Actuator",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_2ylv3zlto"
+              "completed": false
             }
-          ],
-          "id": "item_tfjbpw9um"
+          ]
         },
         {
           "name": "Базы данных  & Хранилища",
@@ -151,88 +120,75 @@
               "name": "JPA/Hibernate",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_7hwp65028"
+              "completed": false
             },
             {
               "name": "JDBC",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_owukgoo6v"
+              "completed": false
             },
             {
               "name": "Redis",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_b2cd886m5"
+              "completed": false
             },
             {
               "name": "MongoDB",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_ot57spsu9"
+              "completed": false
             },
             {
               "name": "Транзакции (ACID)",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_tiguvke6h"
+              "completed": false
             },
             {
               "name": "Уровни изоляции в SQL БД",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_q10ofph2p"
+              "completed": false
             },
             {
               "name": "Индексы — как они работают и зачем нужны",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_zcnulojxy"
+              "completed": false
             },
             {
               "name": "JdbcTemplate",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_mmy8tbfg6"
+              "completed": false
             },
             {
               "name": "SQL",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_loewpdhcg"
+              "completed": false
             },
             {
               "name": "MySQL",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_f4tbu1mfd"
+              "completed": false
             },
             {
               "name": "SQLite",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_9ncg9luqr"
+              "completed": false
             },
             {
               "name": "PostgreSQL",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_brkv97ju9"
+              "completed": false
             }
-          ],
-          "id": "item_s6ygc4b2x"
+          ]
         },
         {
           "name": "Тестирование",
@@ -242,18 +198,15 @@
               "name": "JUnit 5/4",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_1z96kpgt2"
+              "completed": false
             },
             {
               "name": "Mockito",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_1a7wmk3rf"
+              "completed": false
             }
-          ],
-          "id": "item_u603eigtu"
+          ]
         },
         {
           "name": "Архитектура",
@@ -263,53 +216,45 @@
               "name": "REST API",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_dsyjp5wpa"
+              "completed": false
             },
             {
               "name": "Основы HTTP",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_mrcfma24w"
+              "completed": false
             },
             {
               "name": "CRUD",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_qn8r92iy3"
+              "completed": false
             },
             {
               "name": "Микросервисная архитектура",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_xiez1ipey"
+              "completed": false
             },
             {
               "name": "GraphQL",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_wnycvelyd"
+              "completed": false
             },
             {
               "name": "Веб-сокеты (WebSockets) для real-time коммуникации.",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_lp686njgk"
+              "completed": false
             },
             {
               "name": "Кэширование (например, Caffeine или Ehcache).",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_h9yur72zq"
+              "completed": false
             }
-          ],
-          "id": "item_vryby5o5v"
+          ]
         },
         {
           "name": "Message Brokers",
@@ -319,18 +264,15 @@
               "name": "RabbitMQ",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_07q7vervh"
+              "completed": false
             },
             {
               "name": "Kafka",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_thvwblodx"
+              "completed": false
             }
-          ],
-          "id": "item_cykfog255"
+          ]
         },
         {
           "name": "Инструменты сборки",
@@ -340,14 +282,11 @@
               "name": "Maven/Gradle",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_v1o8jlool"
+              "completed": false
             }
-          ],
-          "id": "item_hx6q8n7k8"
+          ]
         }
-      ],
-      "id": "item_n22lb1ust"
+      ]
     },
     {
       "name": "Infrastructure & DevOps",
@@ -357,22 +296,19 @@
           "name": "Docker",
           "type": "technology",
           "checklist": [],
-          "completed": false,
-          "id": "tech_h9mjxxqmf"
+          "completed": false
         },
         {
           "name": "DockerCompose",
           "type": "technology",
           "checklist": [],
-          "completed": false,
-          "id": "tech_utg309vpc"
+          "completed": false
         },
         {
           "name": "Kubernetes",
           "type": "technology",
           "checklist": [],
-          "completed": false,
-          "id": "tech_4yx18bhx2"
+          "completed": false
         },
         {
           "name": "CI/CD",
@@ -382,18 +318,15 @@
               "name": "GitHub Actions",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_9q035mpfu"
+              "completed": false
             },
             {
               "name": "GitLab CI",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_r429gvw3r"
+              "completed": false
             }
-          ],
-          "id": "item_fiz72pn8q"
+          ]
         },
         {
           "name": "Мониторинг",
@@ -403,18 +336,15 @@
               "name": "Prometheus + Grafana (основы)",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_mbpuu7cng"
+              "completed": false
             },
             {
               "name": "ELK Stack (Elasticsearch, Logstash, Kibana) - основы",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_zhc61qb4o"
+              "completed": false
             }
-          ],
-          "id": "item_t0oldsmtq"
+          ]
         },
         {
           "name": "Веб-серверы / Reverse Proxy",
@@ -424,11 +354,9 @@
               "name": "Nginx",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_rkxiix6nr"
+              "completed": false
             }
-          ],
-          "id": "item_w5liy3tbg"
+          ]
         },
         {
           "name": "Облачные платформы",
@@ -438,25 +366,21 @@
               "name": "AWS",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_v9t87leed"
+              "completed": false
             },
             {
               "name": "Google Cloud (GCP)",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_fgh4b58ax"
+              "completed": false
             },
             {
               "name": "Azure",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_ztp1g0q7s"
+              "completed": false
             }
-          ],
-          "id": "item_fpp1jpkxs"
+          ]
         },
         {
           "name": "Инфраструктура как код (IaC)",
@@ -466,11 +390,9 @@
               "name": "Terraform",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_8wm1dryih"
+              "completed": false
             }
-          ],
-          "id": "item_dije65q09"
+          ]
         },
         {
           "name": "Базовая администрация Linux",
@@ -480,14 +402,11 @@
               "name": "Основные команды, работа с процессами, правами, сетевыми утилитами.",
               "type": "technology",
               "checklist": [],
-              "completed": false,
-              "id": "tech_6p3y0tl37"
+              "completed": false
             }
-          ],
-          "id": "item_eyhwtelr4"
+          ]
         }
-      ],
-      "id": "item_2pxarzche"
+      ]
     },
     {
       "name": "QA & инструменты разработки",
@@ -497,42 +416,33 @@
           "name": "Postman",
           "type": "technology",
           "checklist": [],
-          "completed": false,
-          "content": "",
-          "media": [],
-          "links": [],
-          "id": "tech_loii0a3oz"
+          "completed": false
         },
         {
           "name": "Insomnia",
           "type": "technology",
           "checklist": [],
-          "completed": false,
-          "id": "tech_63may508l"
+          "completed": false
         },
         {
           "name": "Swagger",
           "type": "technology",
           "checklist": [],
-          "completed": false,
-          "id": "tech_8n77ssx4i"
+          "completed": false
         },
         {
           "name": "OpenAPI",
           "type": "technology",
           "checklist": [],
-          "completed": false,
-          "id": "tech_3qm16c4d9"
+          "completed": false
         },
         {
           "name": "Utest",
           "type": "technology",
           "checklist": [],
-          "completed": false,
-          "id": "tech_s645jqxud"
+          "completed": false
         }
-      ],
-      "id": "item_op8r5tftl"
+      ]
     },
     {
       "name": "Управление проектами",
@@ -542,18 +452,15 @@
           "name": "Jira",
           "type": "technology",
           "checklist": [],
-          "completed": false,
-          "id": "tech_k1yadc8er"
+          "completed": false
         },
         {
           "name": "Kanban",
           "type": "technology",
           "checklist": [],
-          "completed": false,
-          "id": "tech_2cmo68lfs"
+          "completed": false
         }
-      ],
-      "id": "item_j3rlkvb2d"
+      ]
     }
   ]
 }
