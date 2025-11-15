@@ -118,7 +118,12 @@
             {
               "name": "Spring Security (+ JWT, OAuth2,HTTPS/SSL)",
               "type": "technology",
-              "checklist": [],
+              "checklist": [
+                {
+                  "text": "Ао",
+                  "completed": false
+                }
+              ],
               "completed": false,
               "id": "tech_29pe3udqd"
             },
