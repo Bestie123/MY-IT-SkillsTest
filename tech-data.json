@@ -16,7 +16,13 @@
               "id": "tech_fep9a4kzr",
               "content": "",
               "media": [],
-              "links": []
+              "links": [
+                {
+                  "id": "tech_6k7k4ke1x",
+                  "name": "Глубокое изучение Collections (HashMap, ArrayList)",
+                  "path": []
+                }
+              ]
             },
             {
               "name": "Глубокое изучение Collections (HashMap, ArrayList)",
@@ -141,7 +147,13 @@
               "id": "tech_2ylv3zlto",
               "content": "",
               "media": [],
-              "links": []
+              "links": [
+                {
+                  "id": "tech_fep9a4kzr",
+                  "name": "Многопоточность и Concurrent Collections",
+                  "path": []
+                }
+              ]
             }
           ],
           "id": "item_tfjbpw9um"
