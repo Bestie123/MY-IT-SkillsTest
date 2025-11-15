@@ -435,6 +435,12 @@
           "type": "technology",
           "checklist": [],
           "completed": false
+        },
+        {
+          "name": "Utest",
+          "type": "technology",
+          "checklist": [],
+          "completed": false
         }
       ]
     },
