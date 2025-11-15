@@ -13,7 +13,10 @@
               "type": "technology",
               "checklist": [],
               "completed": false,
-              "id": "tech_fep9a4kzr"
+              "id": "tech_fep9a4kzr",
+              "content": "",
+              "media": [],
+              "links": []
             },
             {
               "name": "Глубокое изучение Collections (HashMap, ArrayList)",
