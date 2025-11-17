@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technologies Knowledge Base - Accordion View</title>
+    <style>
+        /* Все ваши существующие стили остаются без изменений */
+        /* ... ваш существующий CSS ... */
+
+        /* НОВЫЕ СТИЛИ ДЛЯ TIPTAP */
+        .tiptap-editor {
+            min-height: 400px;
+            padding: 15px;
+            border: 1px solid #e1e5e9;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .tiptap-editor:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        /* Стили для контента TipTap */
+        .tiptap-editor h1 {
+            font-size: 2em;
+            margin: 0.67em 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.3em;
+        }
+
+        .tiptap-editor h2 {
+            font-size: 1.5em;
+            margin: 0.83em 0;
+            color: #2c3e50;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 0.3em;
+        }
+
+        .tiptap-editor h3 {
+            font-size: 1.17em;
+            margin: 1em 0;
+            color: #2c3e50;
+        }
+
+        .tiptap-editor ul, .tiptap-editor ol {
+            padding-left: 2em;
+            margin: 1em 0;
+        }
+
+        .tiptap-editor blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 1em;
+            margin: 1em 0;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+
+        .tiptap-editor code {
+            background: #f8f9fa;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .tiptap-editor pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1em;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1em 0;
+        }
+
+        .tiptap-editor pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .tiptap-editor table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+        }
+
+        .tiptap-editor table, 
+        .tiptap-editor th, 
+        .tiptap-editor td {
+            border: 1px solid #bdc3c7;
+        }
+
+        .tiptap-editor th, 
+        .tiptap-editor td {
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .tiptap-editor th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .tiptap-editor img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .tiptap-editor .ProseMirror {
+            outline: none;
+        }
+
+        .tiptap-editor .ProseMirror p.is-editor-empty:first-child::before {
+            color: #adb5bd;
+            content: attr(data-placeholder);
+            float: left;
+            height: 0;
+            pointer-events: none;
+        }
+
+        /* Обновленные стили для тулбара */
+        .editor-toolbar {
+            background: #f8f9fa;
+            padding: 10px;
+            border: 1px solid #e1e5e9;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .editor-toolbar button {
+            background: white;
+            color: #495057;
+            border: 1px solid #dee2e6;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .editor-toolbar button:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .editor-toolbar button.is-active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .editor-toolbar select {
+            padding: 6px 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background: white;
+            color: #495057;
+        }
+
+        .editor-toolbar .separator {
+            width: 1px;
+            height: 20px;
+            background: #dee2e6;
+            margin: 0 8px;
+        }
+
+        /* Остальные ваши существующие стили остаются */
+        /* ... ваш существующий CSS ... */
+    </style>
+    
+    <!-- TipTap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tiptap/core@2.1.13/dist/tiptap.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Ваш существующий HTML остается без изменений -->
+        <!-- ... ваш существующий HTML ... -->
+
+        <!-- Модальное окно для системы знаний (ОБНОВЛЕНО) -->
+        <div id="knowledgeModal" class="modal knowledge-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="knowledgeTitle">База знаний</h3>
+                    <button onclick="uiManager.hideModals()">✕</button>
+                </div>
+                
+                <div class="content-tabs">
+                    <div class="content-tab active" onclick="knowledgeManager.switchTab('editor')">✏️ Редактор</div>
+                    <div class="content-tab" onclick="knowledgeManager.switchTab('preview')">👁️ Просмотр</div>
+                    <div class="content-tab" onclick="knowledgeManager.switchTab('media')">🖼️ Медиафайлы</div>
+                    <div class="content-tab" onclick="knowledgeManager.switchTab('links')">🔗 Ссылки</div>
+                </div>
+                
+                <!-- Вкладка редактора (ОБНОВЛЕНА) -->
+                <div id="editorTab" class="tab-content active">
+                    <div class="content-editor">
+                        <div class="editor-toolbar" id="tiptapToolbar">
+                            <!-- Кнопки будут добавлены через JavaScript -->
+                        </div>
+                        <div id="knowledgeEditor" class="tiptap-editor"></div>
+                    </div>
+                </div>
+                
+                <!-- Остальные вкладки остаются без изменений -->
+                <!-- ... ваш существующий HTML ... -->
+            </div>
+        </div>
+
+        <!-- Остальной ваш HTML остается без изменений -->
+        <!-- ... ваш существующий HTML ... -->
+    </div>
+
+    <!-- TipTap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/core@2.1.13/dist/tiptap.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/starter-kit@2.1.13/dist/starter-kit.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-image@2.1.13/dist/image.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-link@2.1.13/dist/link.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-table@2.1.13/dist/table.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-table-row@2.1.13/dist/table-row.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-table-header@2.1.13/dist/table-header.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-table-cell@2.1.13/dist/table-cell.umd.min.js"></script>
+
+    <script>
+        // === ОБНОВЛЕННЫЙ КОД ДЛЯ РЕДАКТОРА ЗНАНИЙ ===
+        
+        let tiptapEditor = null;
+
+        const knowledgeEditor = {
+            // Инициализация TipTap редактора
+            init(element, content) {
+                if (tiptapEditor) {
+                    tiptapEditor.destroy();
+                }
+
+                tiptapEditor = new tiptap.Editor({
+                    element: element,
+                    extensions: [
+                        tiptap.StarterKit.configure({
+                            heading: {
+                                levels: [1, 2, 3, 4]
+                            }
+                        }),
+                        tiptap.Image.configure({
+                            HTMLAttributes: {
+                                class: 'embedded-image',
+                            },
+                        }),
+                        tiptap.Link.configure({
+                            HTMLAttributes: {
+                                class: 'internal-link',
+                            },
+                            openOnClick: false,
+                        }),
+                        tiptap.Table.configure({
+                            resizable: true,
+                        }),
+                        tiptap.TableRow,
+                        tiptap.TableHeader,
+                        tiptap.TableCell,
+                    ],
+                    content: content || '',
+                    onUpdate: () => {
+                        this.onContentUpdate();
+                    },
+                    editorProps: {
+                        attributes: {
+                            class: 'ProseMirror',
+                            'data-placeholder': 'Начните писать здесь...',
+                        },
+                    },
+                });
+
+                this.setupToolbar();
+                return tiptapEditor;
+            },
+
+            // Настройка панели инструментов
+            setupToolbar() {
+                const toolbar = document.getElementById('tiptapToolbar');
+                if (!toolbar) return;
+
+                toolbar.innerHTML = `
+                    <select onchange="knowledgeEditor.formatHeading(this.value)">
+                        <option value="">Текст</option>
+                        <option value="1">Заголовок 1</option>
+                        <option value="2">Заголовок 2</option>
+                        <option value="3">Заголовок 3</option>
+                        <option value="4">Заголовок 4</option>
+                    </select>
+
+                    <div class="separator"></div>
+
+                    <button onclick="knowledgeEditor.formatText('bold')" title="Жирный">
+                        <b>B</b>
+                    </button>
+                    <button onclick="knowledgeEditor.formatText('italic')" title="Курсив">
+                        <i>I</i>
+                    </button>
+                    <button onclick="knowledgeEditor.formatText('underline')" title="Подчеркивание">
+                        <u>U</u>
+                    </button>
+
+                    <div class="separator"></div>
+
+                    <button onclick="knowledgeEditor.formatText('bulletList')" title="Маркированный список">
+                        •
+                    </button>
+                    <button onclick="knowledgeEditor.formatText('orderedList')" title="Нумерованный список">
+                        1.
+                    </button>
+                    <button onclick="knowledgeEditor.formatText('blockquote')" title="Цитата">
+                        "
+                    </button>
+                    <button onclick="knowledgeEditor.formatText('codeBlock')" title="Блок кода">
+                        {"{}"}
+                    </button>
+
+                    <div class="separator"></div>
+
+                    <button onclick="knowledgeEditor.insertLink()" title="Вставить ссылку">
+                        🔗
+                    </button>
+                    <button onclick="knowledgeEditor.insertImage()" title="Вставить изображение">
+                        🖼️
+                    </button>
+                    <button onclick="knowledgeEditor.insertTable()" title="Вставить таблицу">
+                        ⧠
+                    </button>
+
+                    <div class="separator"></div>
+
+                    <button onclick="knowledgeEditor.insertInternalLink()" title="Внутренняя ссылка">
+                        📎
+                    </button>
+                    <button onclick="knowledgeEditor.clearFormat()" title="Очистить форматирование">
+                        🧹
+                    </button>
+                    <button onclick="knowledgeEditor.undo()" title="Отменить">
+                        ↩️
+                    </button>
+                    <button onclick="knowledgeEditor.redo()" title="Повторить">
+                        ↪️
+                    </button>
+                `;
+
+                // Обновление состояния кнопок
+                this.updateToolbarState();
+            },
+
+            // Обновление состояния кнопок тулбара
+            updateToolbarState() {
+                if (!tiptapEditor) return;
+
+                // Обновляем активные кнопки
+                const buttons = document.querySelectorAll('#tiptapToolbar button');
+                buttons.forEach(button => {
+                    const command = button.onclick?.toString().match(/knowledgeEditor\.(\w+)/)?.[1];
+                    if (command) {
+                        const isActive = this.isCommandActive(command);
+                        button.classList.toggle('is-active', isActive);
+                    }
+                });
+            },
+
+            // Проверка активности команды
+            isCommandActive(command) {
+                if (!tiptapEditor) return false;
+
+                switch (command) {
+                    case 'bold':
+                        return tiptapEditor.isActive('bold');
+                    case 'italic':
+                        return tiptapEditor.isActive('italic');
+                    case 'underline':
+                        return tiptapEditor.isActive('underline');
+                    case 'bulletList':
+                        return tiptapEditor.isActive('bulletList');
+                    case 'orderedList':
+                        return tiptapEditor.isActive('orderedList');
+                    case 'blockquote':
+                        return tiptapEditor.isActive('blockquote');
+                    case 'codeBlock':
+                        return tiptapEditor.isActive('codeBlock');
+                    default:
+                        return false;
+                }
+            },
+
+            // Форматирование текста
+            formatText(command) {
+                if (!tiptapEditor) return;
+
+                switch (command) {
+                    case 'bold':
+                        tiptapEditor.chain().focus().toggleBold().run();
+                        break;
+                    case 'italic':
+                        tiptapEditor.chain().focus().toggleItalic().run();
+                        break;
+                    case 'underline':
+                        // Для подчеркивания нужно кастомное расширение, используем CSS класс
+                        tiptapEditor.chain().focus().toggleMark('underline').run();
+                        break;
+                    case 'bulletList':
+                        tiptapEditor.chain().focus().toggleBulletList().run();
+                        break;
+                    case 'orderedList':
+                        tiptapEditor.chain().focus().toggleOrderedList().run();
+                        break;
+                    case 'blockquote':
+                        tiptapEditor.chain().focus().toggleBlockquote().run();
+                        break;
+                    case 'codeBlock':
+                        tiptapEditor.chain().focus().toggleCodeBlock().run();
+                        break;
+                }
+
+                this.updateToolbarState();
+            },
+
+            // Форматирование заголовка
+            formatHeading(level) {
+                if (!tiptapEditor) return;
+                
+                if (level === '') {
+                    tiptapEditor.chain().focus().setParagraph().run();
+                } else {
+                    tiptapEditor.chain().focus().toggleHeading({ level: parseInt(level) }).run();
+                }
+            },
+
+            // Вставка ссылки
+            insertLink() {
+                if (!tiptapEditor) return;
+
+                const url = prompt('Введите URL:');
+                if (url) {
+                    tiptapEditor.chain().focus().setLink({ href: url }).run();
+                }
+            },
+
+            // Вставка изображения
+            insertImage() {
+                if (!tiptapEditor) return;
+
+                const url = prompt('Введите URL изображения:');
+                if (url) {
+                    tiptapEditor.chain().focus().setImage({ src: url }).run();
+                }
+            },
+
+            // Вставка таблицы
+            insertTable() {
+                if (!tiptapEditor) return;
+
+                const rows = parseInt(prompt('Количество строк:', '3')) || 3;
+                const cols = parseInt(prompt('Количество столбцов:', '3')) || 3;
+
+                tiptapEditor.chain().focus().insertTable({ 
+                    rows: rows, 
+                    cols: cols, 
+                    withHeaderRow: true 
+                }).run();
+            },
+
+            // Вставка внутренней ссылки
+            insertInternalLink() {
+                if (!tiptapEditor) return;
+
+                const techName = prompt('Введите название технологии:');
+                if (techName) {
+                    tiptapEditor.chain().focus().setLink({ 
+                        href: `#${techName}`,
+                        class: 'internal-link'
+                    }).run();
+                }
+            },
+
+            // Очистка форматирования
+            clearFormat() {
+                if (!tiptapEditor) return;
+                tiptapEditor.chain().focus().clearNodes().unsetAllMarks().run();
+            },
+
+            // Отмена действия
+            undo() {
+                if (!tiptapEditor) return;
+                tiptapEditor.chain().focus().undo().run();
+            },
+
+            // Повтор действия
+            redo() {
+                if (!tiptapEditor) return;
+                tiptapEditor.chain().focus().redo().run();
+            },
+
+            // Получение HTML контента
+            getHTML() {
+                return tiptapEditor ? tiptapEditor.getHTML() : '';
+            },
+
+            // Установка контента
+            setContent(content) {
+                if (tiptapEditor) {
+                    tiptapEditor.commands.setContent(content);
+                }
+            },
+
+            // Обработчик обновления контента
+            onContentUpdate() {
+                this.updateToolbarState();
+                knowledgeManager.renderPreview();
+            },
+
+            // Уничтожение редактора
+            destroy() {
+                if (tiptapEditor) {
+                    tiptapEditor.destroy();
+                    tiptapEditor = null;
+                }
+            }
+        };
+
+        // === ОБНОВЛЕННЫЙ КОД ДЛЯ МЕНЕДЖЕРА ЗНАНИЙ ===
+        
+        const knowledgeManager = {
+            currentItem: null,
+            
+            // Открытие базы знаний для элемента
+            openKnowledgeBase(pathStr, index) {
+                const path = JSON.parse(pathStr);
+                const item = dataManager.getNodeAtIndex(path, index);
+                
+                if (!item) {
+                    uiManager.showNotification('Элемент не найден', 'error');
+                    return;
+                }
+                
+                this.currentItem = item;
+                currentKnowledgeItem = item;
+                
+                // Инициализируем поля, если их нет
+                if (!item.content) item.content = '';
+                if (!item.media) item.media = [];
+                if (!item.links) item.links = [];
+                
+                document.getElementById('knowledgeTitle').textContent = `База знаний: ${item.name}`;
+                
+                // Инициализируем TipTap редактор
+                knowledgeEditor.init(document.getElementById('knowledgeEditor'), item.content);
+                
+                this.renderPreview();
+                this.renderMedia();
+                this.renderLinks();
+                
+                uiManager.showModal('knowledgeModal');
+            },
+            
+            // Сохранение контента
+            saveContent() {
+                if (!this.currentItem) return;
+                
+                this.currentItem.content = knowledgeEditor.getHTML();
+                this.scheduleSave();
+                uiManager.showNotification('Контент сохранен!', 'success');
+            },
+            
+            // Рендер превью контента
+            renderPreview() {
+                const content = knowledgeEditor.getHTML();
+                document.getElementById('knowledgePreview').innerHTML = content;
+                this.processInternalLinks();
+            },
+
+            // Переключение между вкладками
+            switchTab(tabName) {
+                // Скрываем все вкладки
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Убираем активный класс со всех вкладок
+                document.querySelectorAll('.content-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Показываем выбранную вкладку
+                document.getElementById(`${tabName}Tab`).classList.add('active');
+                
+                // Активируем соответствующую кнопку вкладки
+                document.querySelectorAll('.content-tab').forEach(tab => {
+                    if (tab.textContent.includes(this.getTabIcon(tabName))) {
+                        tab.classList.add('active');
+                    }
+                });
+                
+                // Если переключились на просмотр, обновляем превью
+                if (tabName === 'preview') {
+                    this.renderPreview();
+                }
+            },
+
+            getTabIcon(tabName) {
+                const icons = {
+                    'editor': '✏️',
+                    'preview': '👁️',
+                    'media': '🖼️',
+                    'links': '🔗'
+                };
+                return icons[tabName] || '';
+            },
+
+            // Обработка внутренних ссылок в превью
+            processInternalLinks() {
+                const internalLinks = document.querySelectorAll('.internal-link');
+                internalLinks.forEach(link => {
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        const targetId = link.getAttribute('href')?.replace('#', '');
+                        if (targetId) {
+                            this.navigateToInternalLink(targetId);
+                        }
+                    };
+                });
+            },
+
+            // Навигация по внутренним ссылкам
+            navigateToInternalLink(targetId) {
+                uiManager.showNotification(`Переход к: ${targetId}`, 'warning');
+                // Здесь можно добавить логику поиска и открытия связанной технологии
+            },
+
+            // Остальные методы остаются без изменений
+            // ... ваш существующий код для media, links и т.д. ...
+
+            // Планирование сохранения
+            scheduleSave() {
+                dataManager.saveToLocalStorage();
+                authManager.scheduleAutoSave();
+                accordionManager.renderAccordion();
+            }
+        };
+
+        // === ОБНОВЛЕНИЕ UI MANAGER ДЛЯ УНИЧТОЖЕНИЯ РЕДАКТОРА ===
+        
+        // Добавляем в uiManager.hideModals уничтожение редактора
+        const originalHideModals = uiManager.hideModals;
+        uiManager.hideModals = function() {
+            originalHideModals.call(this);
+            knowledgeEditor.destroy();
+        };
+
+        // Ваш остальной JavaScript код остается без изменений
+        // ... ваш существующий JavaScript ...
+    </script>
+</body>
+</html>
