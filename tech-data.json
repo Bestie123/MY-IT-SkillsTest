@@ -322,7 +322,10 @@
               "type": "technology",
               "checklist": [],
               "completed": false,
-              "id": "tech_w0zmqfhg0"
+              "id": "tech_w0zmqfhg0",
+              "content": "",
+              "media": [],
+              "links": []
             }
           ]
         }
@@ -533,19 +536,22 @@
           "name": "Depseek",
           "type": "technology",
           "checklist": [],
-          "completed": false
+          "completed": false,
+          "id": "tech_8b56htaxs"
         },
         {
           "name": "BlackBox Grok",
           "type": "technology",
           "checklist": [],
-          "completed": false
+          "completed": false,
+          "id": "tech_5bgo5z4o7"
         },
         {
           "name": "Microsoft Copilot",
           "type": "technology",
           "checklist": [],
-          "completed": false
+          "completed": false,
+          "id": "tech_d2jf1w241"
         }
       ]
     }
